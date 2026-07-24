@@ -452,6 +452,58 @@ test.describe('Phase 4 — Structural / rendering', () => {
     expect(text).toMatch(/contact@civicgrid\.dev/);
   });
 
+  test('fresh load, no scroll: hero h1 fully revealed within 3s, ≥1 hero stat counter non-zero', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'single-browser reveal check');
+    await page.goto('/');
+    await expect
+      .poll(() => page.locator('.hero h1').evaluate((el) => getComputedStyle(el).opacity), { timeout: 3000 })
+      .toBe('1');
+    // One hero counter ("Untraceable Incident Records") is deliberately 0 — assert
+    // that at least one of the others has animated to a non-zero value.
+    await expect
+      .poll(async () => {
+        const texts = await page.locator('.hero-stats [data-count]').allTextContents();
+        return texts.filter((t) => /[1-9]/.test(t)).length;
+      }, { timeout: 3000 })
+      .toBeGreaterThan(0);
+  });
+
+  // Encodes the 2026-07-23 hidden-tab failure mode: a page loaded in a background tab
+  // defers IntersectionObserver callbacks, so in-viewport .reveal elements sit at
+  // opacity 0 until the visibilitychange/pageshow fallback runs. Playwright cannot
+  // genuinely background-load a tab (headless pages always render as visible), so this
+  // emulates the two observable properties of that state before any page script runs:
+  // document.visibilityState reports 'hidden', and IO callbacks are never delivered.
+  // The pre-flip assertion (hero still at opacity 0) keeps the test non-vacuous — if
+  // the emulation stopped reproducing the failure mode, that assertion fails, and if
+  // the fallback handler were removed, the post-flip assertion fails.
+  test('hidden-tab load: hero stays hidden while backgrounded, reveals within 3s of tab becoming visible', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'single-browser reveal check');
+    await page.addInitScript(() => {
+      (window as unknown as { __visState: string }).__visState = 'hidden';
+      const state = () => (window as unknown as { __visState: string }).__visState;
+      Object.defineProperty(document, 'visibilityState', { configurable: true, get: state });
+      Object.defineProperty(document, 'hidden', { configurable: true, get: () => state() === 'hidden' });
+      // Background tabs defer IO callbacks until first render — emulate by never delivering them.
+      (window as unknown as { IntersectionObserver: unknown }).IntersectionObserver = class {
+        observe() {}
+        unobserve() {}
+        disconnect() {}
+        takeRecords() { return []; }
+      };
+    });
+    await page.goto('/');
+    await page.waitForTimeout(1000);
+    expect(await page.locator('.hero h1').evaluate((el) => getComputedStyle(el).opacity)).toBe('0');
+    await page.evaluate(() => {
+      (window as unknown as { __visState: string }).__visState = 'visible';
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    await expect
+      .poll(() => page.locator('.hero h1').evaluate((el) => getComputedStyle(el).opacity), { timeout: 3000 })
+      .toBe('1');
+  });
+
   test('civicgrid.ph reachability — known issue until DNS cutover', async ({ browserName }) => {
     test.skip(browserName !== 'chromium', 'single-browser network check');
     try {

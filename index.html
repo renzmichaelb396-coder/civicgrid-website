@@ -1835,6 +1835,27 @@
 
         revealElements.forEach(el => revealObserver.observe(el));
 
+        // Hidden-tab fallback: when the page loads in a background tab, browsers
+        // defer IntersectionObserver callbacks until the tab is rendered, which can
+        // leave in-viewport .reveal elements stuck at opacity 0. When the tab
+        // becomes visible (or is restored from the back/forward cache), reveal
+        // anything already inside the viewport; below-fold elements stay with the
+        // observer so scroll-reveal behavior is unchanged. On a normal foreground
+        // load the observer has already added .visible, so this is a no-op.
+        function revealInViewportOnShow() {
+            if (document.visibilityState !== 'visible') return;
+            const viewportBottom = (window.innerHeight || document.documentElement.clientHeight) - 40; // mirrors observer rootMargin
+            revealElements.forEach(el => {
+                if (el.classList.contains('visible')) return;
+                const rect = el.getBoundingClientRect();
+                if (rect.top < viewportBottom && rect.bottom > 0) {
+                    el.classList.add('visible');
+                }
+            });
+        }
+        document.addEventListener('visibilitychange', revealInViewportOnShow);
+        window.addEventListener('pageshow', revealInViewportOnShow);
+
         // Counter Animation
         const counters = document.querySelectorAll('[data-count]');
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
