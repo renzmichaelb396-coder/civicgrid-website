@@ -188,6 +188,9 @@ test.describe('Phase 2 — Content regression', () => {
     expect(bioText).not.toMatch(/\bgranted\b/i);
     expect(bioText).not.toMatch(/\bapproved\b/i);
     expect(bioText).toMatch(/Copyright/i);
+    expect(bioText).not.toMatch(/national agencies/i);
+    expect(bioText).not.toMatch(/accountability/i);
+    expect(bioText).not.toMatch(/field-first/i);
   });
 
   test('EOC section (promoted, full section) contains "Live" and UAT-accepted status', async ({ page, browserName }) => {
