@@ -12,7 +12,7 @@ import { test, expect, chromium, type Page, type Route } from '@playwright/test'
  */
 
 const FORMSPREE_URL = 'https://formspree.io/f/xrenylap';
-const NAV_ANCHORS = ['#hero', '#eoc', '#products', '#why', '#serve', '#contact'];
+const NAV_ANCHORS = ['#hero', '#eoc', '#why', '#serve', '#contact'];
 const BASE_URL = process.env.CIVICGRID_BASE_URL || 'https://www.civicgrid.dev';
 
 async function fillValidForm(page: Page, overrides: Partial<{
@@ -26,7 +26,7 @@ async function fillValidForm(page: Page, overrides: Partial<{
     fullName: 'Playwright QA Test',
     agency: 'CivicGrid QA Automation',
     email: 'qa-automation@civicgrid.dev',
-    product: 'RoadSense',
+    product: 'EOC',
     challenge: '',
     ...overrides,
   };
@@ -160,6 +160,33 @@ test.describe('Phase 2 — Content regression', () => {
     await expect(page.locator('.product-card', { has: page.locator('.product-title', { hasText: 'InfraWatch' }) })).toHaveCount(0);
     const productOptions = await page.locator('#product option').allTextContents();
     expect(productOptions.join(' ')).not.toMatch(/InfraWatch/i);
+  });
+
+  // RoadSense was removed from the marketing site (website-only; the product itself keeps
+  // running unchanged at its own deployment). Unlike InfraWatch, "RoadSense" isn't fully
+  // banned text — the IPOPHL filing is legally named "RoadSense EOC System" and that exact
+  // wording stays in the founder bio and milestone card. This asserts RoadSense is gone from
+  // every other surface (no card, no #products section, no form option, no nav/footer link)
+  // and that the only remaining mentions are exactly those two legitimate filing references.
+  test('RoadSense is absent from the page except the IPOPHL filing name in founder bio/milestone', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'single-browser content check');
+    await page.goto('/');
+    await expect(page.locator('#products')).toHaveCount(0);
+    await expect(page.locator('.product-card', { has: page.locator('.product-title', { hasText: 'RoadSense' }) })).toHaveCount(0);
+    const productOptions = await page.locator('#product option').allTextContents();
+    expect(productOptions.join(' ')).not.toMatch(/RoadSense/i);
+    await expect(page.locator('.nav-links a[href="#products"]')).toHaveCount(0);
+    await expect(page.locator('.footer-links a[href="#products"]')).toHaveCount(0);
+
+    const bodyText = await page.locator('body').innerText();
+    const totalMentions = (bodyText.match(/RoadSense/gi) || []).length;
+    const founderBioText = await page.locator('.founder-bio').innerText();
+    const milestoneText = await page
+      .locator('.milestone-item', { has: page.locator('.milestone-body', { hasText: '2026-04892' }) })
+      .innerText();
+    const expectedMentions =
+      (founderBioText.match(/RoadSense/gi) || []).length + (milestoneText.match(/RoadSense/gi) || []).length;
+    expect(totalMentions).toBe(expectedMentions);
   });
 
   // IPOPHL ref. 2026-04892 is a Copyright Registration Application (Bureau of Copyright

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="CivicGrid's EOC platform gives Philippine LGUs one tamper-proof chain of custody for every emergency response — from citizen SOS to command dispatch to after-action record. Live in Mandaluyong City CDRRMD.">
-    <meta name="keywords" content="CivicGrid, EOC, emergency operations center, disaster response, CDRRMD, Mandaluyong, Philippine local government, LGU, RoadSense, infrastructure accountability">
+    <meta name="keywords" content="CivicGrid, EOC, emergency operations center, disaster response, CDRRMD, Mandaluyong, Philippine local government, LGU, infrastructure accountability">
     <meta name="author" content="CivicGrid Software Development Services">
     <meta property="og:title" content="CivicGrid — Emergency Operations Infrastructure, Built for the Philippines">
     <meta property="og:description" content="From citizen SOS to command dispatch to after-action record — CivicGrid's EOC platform gives LGUs one tamper-proof chain of custody for every emergency response.">
@@ -294,7 +294,7 @@
             padding-top: 96px;
         }
 
-        /* Animated grid overlay */
+        /* Static grid overlay */
         .hero::before {
             content: '';
             position: absolute;
@@ -303,13 +303,7 @@
                 linear-gradient(rgba(201, 168, 76, 0.04) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(201, 168, 76, 0.04) 1px, transparent 1px);
             background-size: 80px 80px;
-            animation: gridMove 20s linear infinite;
             pointer-events: none;
-        }
-
-        @keyframes gridMove {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(80px, 80px); }
         }
 
         /* Radial glow */
@@ -362,12 +356,6 @@
             inset: -3px;
             border-radius: 50%;
             border: 1px solid #10b981;
-            animation: pulseRing 2s ease-out infinite;
-        }
-
-        @keyframes pulseRing {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(2); opacity: 0; }
         }
 
         .hero h1 {
@@ -461,7 +449,7 @@
 
         .hero-stats {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 32px;
             max-width: 680px;
             margin: 0 auto;
@@ -646,110 +634,6 @@
 
         @media (max-width: 1024px) {
             .eoc-layout { grid-template-columns: 1fr; gap: 32px; }
-        }
-
-        /* ==================== PRODUCTS SECTION ==================== */
-        .products {
-            background-color: var(--bg-light);
-            padding: 120px 0;
-        }
-
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 32px;
-            margin-top: 56px;
-        }
-
-        .products-grid--single {
-            grid-template-columns: 1fr;
-            max-width: 580px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .product-card {
-            background: var(--white);
-            border: 1px solid #e0e6f0;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--shadow-sm);
-            transition: transform 180ms ease-out, border-color 180ms ease-out;
-        }
-
-        .product-card:hover {
-            border-color: rgba(201, 168, 76, 0.35);
-            transform: translateY(-3px);
-        }
-
-        .product-header {
-            padding: 32px 28px;
-            border-bottom: 1px solid #e8ecf4;
-        }
-
-        .product-tag {
-            display: inline-block;
-            font-size: 10px;
-            font-weight: 700;
-            padding: 5px 12px;
-            border-radius: 100px;
-            margin-bottom: 16px;
-            letter-spacing: 0.8px;
-            text-transform: uppercase;
-        }
-
-        .product-tag.blue {
-            background: linear-gradient(135deg, #dbeafe, #eff6ff);
-            color: #1e40af;
-        }
-
-        .product-title {
-            font-size: 26px;
-            font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 10px;
-            letter-spacing: -0.3px;
-        }
-
-        .product-description {
-            font-size: 14px;
-            color: var(--gray);
-            line-height: 1.7;
-        }
-
-        .product-preview {
-            background: linear-gradient(145deg, var(--primary) 0%, var(--secondary) 100%);
-            height: 240px;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .window-controls {
-            display: flex;
-            gap: 7px;
-            margin-bottom: 14px;
-        }
-
-        .control-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-        }
-
-        .control-dot.red { background: #ef4444; }
-        .control-dot.yellow { background: #eab308; }
-        .control-dot.green { background: #22c55e; }
-
-        .dashboard-label {
-            font-size: 11px;
-            color: var(--gray);
-            font-weight: 600;
-            margin-bottom: 12px;
-            letter-spacing: 0.3px;
         }
 
         .filter-pills {
@@ -1005,7 +889,6 @@
             height: 8px;
             background-color: var(--accent);
             border-radius: 50%;
-            animation: pulseRing 2s ease-out infinite;
             flex-shrink: 0;
         }
 
@@ -1415,7 +1298,6 @@
 
         /* ==================== RESPONSIVE ==================== */
         @media (max-width: 1024px) {
-            .products-grid { grid-template-columns: 1fr; }
             .why-grid { grid-template-columns: repeat(2, 1fr); }
             .serve-cards { grid-template-columns: repeat(2, 1fr); }
         }
@@ -1459,7 +1341,7 @@
             .hero-buttons { flex-direction: column; }
             .hero-buttons .btn-primary,
             .hero-buttons .btn-secondary { width: 100%; justify-content: center; }
-            .hero-stats { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+            .hero-stats { grid-template-columns: repeat(3, 1fr); gap: 20px; }
             .stat-item:not(:last-child)::after { display: none; }
             .stat-number { font-size: 32px; }
 
@@ -1475,13 +1357,13 @@
             .section-title { font-size: 32px; }
             .section-subtitle { font-size: 15px; }
 
-            .problem, .eoc, .products, .why, .serve, .contact { padding: 80px 0; }
+            .problem, .eoc, .why, .serve, .contact { padding: 80px 0; }
         }
 
         @media (max-width: 480px) {
             .hero h1 { font-size: 28px; }
             .section-title { font-size: 26px; }
-            .hero-stats { grid-template-columns: repeat(2, 1fr); }
+            .hero-stats { grid-template-columns: repeat(3, 1fr); }
             .contact-form { padding: 24px; }
             .pilot-banner-content { flex-direction: column; }
         }
@@ -1512,7 +1394,6 @@
         </a>
         <div class="nav-links" id="navLinks">
             <a href="#eoc">EOC</a>
-            <a href="#products">Products</a>
             <a href="#why">Why CivicGrid</a>
             <a href="#serve">Who We Serve</a>
             <a href="#contact" class="btn-demo">Request a Demo</a>
@@ -1547,16 +1428,12 @@
                     <div class="stat-label">Live Government Deployment</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number" data-count="2">0</div>
-                    <div class="stat-label">Platforms in Production</div>
-                </div>
-                <div class="stat-item">
                     <div class="stat-number" data-count="100" data-suffix="%">0</div>
                     <div class="stat-label">Field Traceability</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-number" data-count="0">0</div>
-                    <div class="stat-label">Ghost Projects Possible</div>
+                    <div class="stat-label">Untraceable Incident Records</div>
                 </div>
             </div>
         </div>
@@ -1616,46 +1493,6 @@
         </div>
     </section>
 
-    <!-- Products Section -->
-    <section class="products" id="products">
-        <div class="container">
-            <div class="section-label reveal">Built on the Same Methodology</div>
-            <h2 class="section-title reveal">One more platform, the same field-first evidence architecture.</h2>
-            <p class="section-subtitle reveal">RoadSense shares the EOC platform's core discipline — verified field evidence, structured records, no unverifiable claims.</p>
-            <div class="products-grid products-grid--single">
-                <!-- RoadSense Card -->
-                <div class="product-card reveal reveal-delay-1">
-                    <div class="product-header">
-                        <span class="product-tag blue">LGU · Road Monitoring</span>
-                        <h3 class="product-title">RoadSense</h3>
-                        <p class="product-description">LGU road hazard monitoring — active deployment.</p>
-                    </div>
-                    <div class="product-features">
-                        <div class="feature-item">
-                            <div class="feature-check">✓</div>
-                            <div class="feature-text">GPS-tagged photo capture from the field — geo-fenced, timestamped, uneditable</div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-check">✓</div>
-                            <div class="feature-text">Hazard classification by severity, type, and category with district-level filtering</div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-check">✓</div>
-                            <div class="feature-text">City engineer dashboard with real-time status, overdue alerts, and resolution tracking</div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-check">✓</div>
-                            <div class="feature-text">Export to CSV and PDF — audit-ready reports for LGU records</div>
-                        </div>
-                    </div>
-                    <div class="product-button">
-                        <a href="#contact" class="btn-primary">Request RoadSense Demo</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Why Section -->
     <section class="why" id="why">
         <div class="container">
@@ -1681,7 +1518,7 @@
                 <div class="why-card reveal reveal-delay-1">
                     <div class="why-card-icon">🛡️</div>
                     <h3 class="why-card-title">Structural Prevention, Not Detection</h3>
-                    <p class="why-card-body">Payment gating and multi-party sign-off make irregularities structurally difficult — not just harder to hide after the fact.</p>
+                    <p class="why-card-body">Every incident is logged automatically from citizen SOS through dispatch to resolution, producing a structured, tamper-proof chain of custody — not just a record reviewable after the fact.</p>
                 </div>
                 <div class="why-card reveal reveal-delay-2">
                     <div class="why-card-icon">📡</div>
@@ -1702,7 +1539,7 @@
         <div class="container">
             <div class="section-label reveal">Who We Serve</div>
             <h2 class="section-title reveal">Built for anyone accountable for infrastructure outcomes.</h2>
-            <p class="section-subtitle reveal">From barangay-level road monitoring to national project accountability — CivicGrid scales to the scope of your organization.</p>
+            <p class="section-subtitle reveal">From local government emergency response to national agency coordination — CivicGrid scales to the scope of your organization.</p>
             <div class="serve-cards">
                 <div class="serve-card reveal reveal-delay-1">
                     <div class="serve-card-icon">🏘️</div>
@@ -1822,8 +1659,6 @@
                                 <select id="product" name="product" required>
                                     <option value="">Select an option</option>
                                     <option value="EOC">EOC</option>
-                                    <option value="RoadSense">RoadSense</option>
-                                    <option value="Both products">Both products</option>
                                     <option value="Not sure yet">Not sure yet</option>
                                 </select>
                             </div>
@@ -1887,7 +1722,6 @@
                 </div>
                 <ul class="footer-links">
                     <li><a href="#eoc">EOC</a></li>
-                    <li><a href="#products">Products</a></li>
                     <li><a href="#why">Why CivicGrid</a></li>
                     <li><a href="#contact">Contact</a></li>
                     <li><a href="#privacy">Privacy</a></li>
