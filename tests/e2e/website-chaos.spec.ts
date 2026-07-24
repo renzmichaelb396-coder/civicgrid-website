@@ -175,6 +175,21 @@ test.describe('Phase 2 — Content regression', () => {
     expect(milestoneText).toMatch(/For Verification/i);
   });
 
+  // The founder bio references the same IPOPHL filing as the milestone card above and
+  // must agree with it: no "Trademark", no claim of grant/approval, scoped to RoadSense EOC.
+  test('founder bio IP wording matches the milestone section — no trademark claim, no overstated status', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'single-browser content check');
+    await page.goto('/');
+    const bio = page.locator('.founder-bio');
+    await expect(bio).toHaveCount(1);
+    const bioText = await bio.innerText();
+    expect(bioText).toMatch(/IPOPHL/);
+    expect(bioText).not.toMatch(/Trademark/i);
+    expect(bioText).not.toMatch(/\bgranted\b/i);
+    expect(bioText).not.toMatch(/\bapproved\b/i);
+    expect(bioText).toMatch(/Copyright/i);
+  });
+
   test('EOC section (promoted, full section) contains "Live" and UAT-accepted status', async ({ page, browserName }) => {
     test.skip(browserName !== 'chromium', 'single-browser content check');
     await page.goto('/');
