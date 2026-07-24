@@ -604,6 +604,74 @@
             margin-top: 56px;
         }
 
+        /* One signature scroll-linked moment — see CIVICGRID-WEBSITE-EOC-RECONSTRUCTION-PACKET.md §3.
+           The connecting line draws in via animation-timeline: view() where supported; the
+           .reveal wrapper (existing IntersectionObserver pattern) covers browsers that don't. */
+        .eoc-flow {
+            max-width: 640px;
+            margin: 40px auto 0;
+        }
+
+        .eoc-flow-svg {
+            display: block;
+            width: 100%;
+            height: 24px;
+        }
+
+        .eoc-flow-line {
+            fill: none;
+            stroke: var(--accent);
+            stroke-width: 2;
+            stroke-linecap: round;
+        }
+
+        .eoc-flow-node {
+            fill: var(--white);
+            stroke: var(--accent);
+            stroke-width: 2;
+        }
+
+        .eoc-flow-labels {
+            display: flex;
+            margin-top: 10px;
+        }
+
+        .eoc-flow-labels span {
+            flex: 1;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .eoc-flow-labels span:first-child { text-align: left; }
+        .eoc-flow-labels span:last-child { text-align: right; }
+
+        @supports (animation-timeline: view()) {
+            /* animation-timeline: view() needs a subject with real block-size for its
+               entry/exit math — the <path> itself is a horizontal line with a
+               zero-height bounding box, so the timeline source is named on the
+               wrapper instead and referenced from the path being animated. */
+            .eoc-flow {
+                view-timeline-name: --eoc-flow-enter;
+                view-timeline-axis: block;
+            }
+
+            .eoc-flow-line {
+                stroke-dasharray: 1;
+                stroke-dashoffset: 1;
+                animation: eocFlowDraw 1s linear both;
+                animation-timeline: --eoc-flow-enter;
+                animation-range: entry 0% entry 100%;
+            }
+
+            @keyframes eocFlowDraw {
+                to { stroke-dashoffset: 0; }
+            }
+        }
+
         .eoc-visual {
             border-radius: var(--border-radius);
             overflow: hidden;
@@ -1379,6 +1447,10 @@
                 opacity: 1 !important;
                 transform: none !important;
             }
+            .eoc-flow-line {
+                animation: none !important;
+                stroke-dashoffset: 0 !important;
+            }
         }
     </style>
 </head>
@@ -1459,6 +1531,21 @@
             <div class="section-label reveal">Our Primary Platform</div>
             <h2 class="section-title reveal">EOC — Emergency Operations Center</h2>
             <p class="section-subtitle reveal">Live deployment: Mandaluyong City CDRRMD, UAT-accepted June 2026. One tamper-proof chain of custody from citizen SOS to command dispatch to after-action record.</p>
+            <div class="eoc-flow reveal reveal-delay-1">
+                <svg class="eoc-flow-svg" viewBox="0 0 800 24" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
+                    <path class="eoc-flow-line" d="M50,12 L750,12" pathLength="1"></path>
+                    <circle class="eoc-flow-node" cx="50" cy="12" r="6"></circle>
+                    <circle class="eoc-flow-node" cx="283" cy="12" r="6"></circle>
+                    <circle class="eoc-flow-node" cx="517" cy="12" r="6"></circle>
+                    <circle class="eoc-flow-node" cx="750" cy="12" r="6"></circle>
+                </svg>
+                <div class="eoc-flow-labels">
+                    <span>Citizen SOS</span>
+                    <span>Dispatch</span>
+                    <span>Response</span>
+                    <span>Record</span>
+                </div>
+            </div>
             <div class="eoc-layout">
                 <div class="eoc-visual-wrap reveal reveal-delay-1">
                     <div class="eoc-visual">
