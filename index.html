@@ -1611,28 +1611,17 @@
                                 <div class="control-dot green"></div>
                             </div>
                             <div class="dashboard-label">InfraWatch · National Dashboard</div>
-                        </div>
-                        <div class="stats-grid">
-                            <div class="stat-box">
-                                <div class="stat-box-number">4</div>
-                                <div class="stat-box-label">Projects</div>
-                            </div>
-                            <div class="stat-box">
-                                <div class="stat-box-number">2</div>
-                                <div class="stat-box-label">Active</div>
-                            </div>
-                            <div class="stat-box">
-                                <div class="stat-box-number">3</div>
-                                <div class="stat-box-label">Alerts</div>
-                            </div>
-                            <div class="stat-box">
-                                <div class="stat-box-number">0</div>
-                                <div class="stat-box-label">Ghost</div>
+                            <div class="filter-pills">
+                                <div class="filter-pill">PAYMENT GATING</div>
+                                <div class="filter-pill">MULTI-PARTY SIGN-OFF</div>
+                                <div class="filter-pill">COA EXPORT</div>
                             </div>
                         </div>
-                        <div class="portfolio-banner">
-                            <div class="portfolio-value">P2.73B</div>
-                            <div class="portfolio-label">Total Portfolio Value Tracked</div>
+                        <div class="map-area">
+                            <div class="map-pin red" style="top:30%;left:35%"></div>
+                            <div class="map-pin orange" style="top:55%;left:60%"></div>
+                            <div class="map-pin yellow" style="top:40%;left:75%"></div>
+                            <div class="map-label">NATIONAL PROJECT MAP</div>
                         </div>
                     </div>
                     <div class="product-features">
@@ -1784,7 +1773,7 @@
             <div class="pilot-banner reveal">
                 <div class="pilot-banner-content">
                     <div class="pulse-dot"></div>
-                    <div class="pilot-text">Currently in active pilot alignment with local government units in Metro Manila. Available for government partnership discussions and district-level pilot proposals. Contact us to explore a structured 30-day pilot.</div>
+                    <div class="pilot-text">Currently engaging local government units in Metro Manila for pilot partnerships. Available for government partnership discussions and district-level pilot proposals. Contact us to explore a structured 30-day pilot.</div>
                 </div>
             </div>
         </div>
@@ -1981,15 +1970,13 @@
         }, { threshold: 0.1, rootMargin: '0px 0px -10% 0px' });
         counters.forEach(c => counterObserver.observe(c));
 
-        // Fallback: force-animate any counter still at rest if it's already in view
-        // (guards against the hero's above-the-fold layout never crossing the IO threshold)
+        // Fallback: force-animate any hero counter still at rest shortly after load.
+        // These counters live in the hero, which is always the first thing rendered —
+        // they must not depend on scroll/viewport-height to reach their target value.
         setTimeout(() => {
             counters.forEach(c => {
                 if (c.dataset.animated === 'true') return;
-                const rect = c.getBoundingClientRect();
-                if (rect.top < window.innerHeight && rect.bottom > 0) {
-                    animateCounter(c);
-                }
+                animateCounter(c);
             });
         }, 1500);
 
