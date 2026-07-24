@@ -12,7 +12,7 @@ import { test, expect, chromium, type Page, type Route } from '@playwright/test'
  */
 
 const FORMSPREE_URL = 'https://formspree.io/f/xrenylap';
-const NAV_ANCHORS = ['#hero', '#products', '#why', '#serve', '#contact'];
+const NAV_ANCHORS = ['#hero', '#eoc', '#products', '#why', '#serve', '#contact'];
 const BASE_URL = process.env.CIVICGRID_BASE_URL || 'https://www.civicgrid.dev';
 
 async function fillValidForm(page: Page, overrides: Partial<{
@@ -130,6 +130,15 @@ test.describe('Phase 1 — Contact form', () => {
     // graceful either way: success UI shown, no blank/crashed page
     await expect(page.locator('#formSuccess')).toHaveClass(/show/);
   });
+
+  test('contact form product select includes an "EOC" option', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'single-browser structural check');
+    await page.goto('/');
+    const options = await page.locator('#product option').allTextContents();
+    expect(options).toContain('EOC');
+    await page.locator('#product').selectOption('EOC');
+    expect(await page.locator('#product').inputValue()).toBe('EOC');
+  });
 });
 
 test.describe('Phase 2 — Content regression', () => {
@@ -140,27 +149,55 @@ test.describe('Phase 2 — Content regression', () => {
     expect(bodyText).not.toContain('active pilot alignment');
   });
 
-  test('InfraWatch section contains zero peso figures or Projects/Active/Alerts/Ghost stat counts', async ({ page, browserName }) => {
+  // NOTE (Packet B): this cycle deliberately moves the real, previously-approved COA
+  // statistics (421 Ghost Projects Flagged / P138B COA-flagged) from the old opening
+  // Problem section into InfraWatch's own card — that's Phase 3 of this packet, not a
+  // regression. What must never come back is the OLD *fabricated* live-dashboard readout
+  // (P2.73B portfolio value, "4 Projects / 2 Active / 3 Alerts / 0 Ghost" fake counters)
+  // and any "live"/"production" language, since InfraWatch has no live deployment.
+  test('InfraWatch: no fabricated live-dashboard metrics, no live/production language, real audit stats present', async ({ page, browserName }) => {
     test.skip(browserName !== 'chromium', 'single-browser content check');
     await page.goto('/');
     const card = page.locator('.product-card', { has: page.locator('.product-title', { hasText: 'InfraWatch' }) });
     await expect(card).toHaveCount(1);
     const cardText = await card.innerText();
-    expect(cardText).not.toMatch(/₱|P\d[\d,.]*\s*[BMK]?\b/);
-    expect(cardText).not.toMatch(/\bProjects\b/);
+    // the old fabricated "live dashboard" readout must never return
+    expect(cardText).not.toMatch(/P2\.73B/);
+    expect(cardText).not.toMatch(/Total Portfolio Value Tracked/i);
+    expect(cardText).not.toMatch(/National Dashboard/i);
     expect(cardText).not.toMatch(/\bActive\b/);
     expect(cardText).not.toMatch(/\bAlerts\b/);
-    expect(cardText).not.toMatch(/\bGhost\b/);
+    // InfraWatch is explicitly not live and has no live deployment
+    expect(cardText).not.toMatch(/\blive\b/i);
+    expect(cardText).not.toMatch(/\bproduction\b/i);
+    expect(cardText).toMatch(/in development/i);
+    // the real, previously-approved COA statistics are intentionally still here
+    expect(cardText).toMatch(/421/);
+    expect(cardText).toMatch(/Ghost Projects Flagged/i);
+    expect(cardText).toMatch(/P138B/);
   });
 
-  test('EOC section contains "Live" and "UAT Accepted"', async ({ page, browserName }) => {
+  test('EOC section (promoted, full section) contains "Live" and UAT-accepted status', async ({ page, browserName }) => {
     test.skip(browserName !== 'chromium', 'single-browser content check');
     await page.goto('/');
-    const card = page.locator('.product-card', { has: page.locator('.product-title', { hasText: 'EOC' }) });
-    await expect(card).toHaveCount(1);
-    const cardText = await card.innerText();
-    expect(cardText).toMatch(/Live/);
-    expect(cardText).toMatch(/UAT Accepted/);
+    const section = page.locator('section#eoc');
+    await expect(section).toHaveCount(1);
+    const sectionText = await section.innerText();
+    expect(sectionText).toMatch(/Live/);
+    expect(sectionText).toMatch(/UAT.?accepted/i);
+    expect(sectionText).toMatch(/Mandaluyong City CDRRMD/);
+  });
+
+  test('hero leads with EOC positioning (verbatim packet copy)', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'single-browser content check');
+    await page.goto('/');
+    const h1 = await page.locator('.hero h1').innerText();
+    expect(h1).toContain('Emergency Operations Infrastructure');
+    const badge = await page.locator('.hero-badge').innerText();
+    expect(badge).toContain('Mandaluyong City CDRRMD');
+    const subtitle = await page.locator('.hero-subtitle').innerText();
+    expect(subtitle).toContain('tamper-proof chain of custody');
+    expect(subtitle).toContain('Live in production today, not a pilot');
   });
 
   test('all [data-count] hero counters show their target values within 3s, no scroll', async ({ page, browserName }) => {
@@ -323,18 +360,53 @@ test.describe('Phase 4 — Structural / rendering', () => {
     }
   });
 
-  test('og:image and twitter:card meta tags — known-missing until Packet B ships', async ({ page, browserName }) => {
+  test('og:image and twitter:card meta tags present, image path resolves', async ({ page, browserName, request }) => {
     test.skip(browserName !== 'chromium', 'single-browser meta check');
     await page.goto('/');
-    const ogImage = await page.locator('meta[property="og:image"]').count();
-    const twitterCard = await page.locator('meta[name="twitter:card"]').count();
-    if (ogImage === 0 || twitterCard === 0) {
-      test.info().annotations.push({
-        type: 'known-issue',
-        description: `og:image present=${ogImage > 0}, twitter:card present=${twitterCard > 0} — expected missing until Packet B ships. Not a failure.`,
-      });
-    }
-    // Not asserted as a failure — logged as known-missing per Packet B status.
+    const ogImageContent = await page.locator('meta[property="og:image"]').getAttribute('content');
+    const twitterCard = await page.locator('meta[name="twitter:card"]').getAttribute('content');
+    expect(ogImageContent, 'og:image meta tag must be present').toBeTruthy();
+    expect(twitterCard).toBe('summary_large_image');
+    // og:image is intentionally an absolute production URL (required for social-preview
+    // scrapers, and matches the existing og:url pattern) — this resolves against prod
+    // regardless of which BASE_URL is under test, which is the correct check for a tag
+    // that must work when a real platform scrapes the canonical URL.
+    const res = await request.get(ogImageContent!);
+    expect(res.ok(), `og:image ${ogImageContent} must resolve — asset needs to be placed in repo root and deployed`).toBeTruthy();
+  });
+
+  test('#eoc section exists and contains the real dashboard image (not the shared CSS mock chrome)', async ({ page, browserName, request }) => {
+    test.skip(browserName !== 'chromium', 'single-browser structural check');
+    await page.goto('/');
+    const eocSection = page.locator('section#eoc');
+    await expect(eocSection).toHaveCount(1);
+    const img = eocSection.locator('img.eoc-dashboard-img');
+    await expect(img, 'EOC section must use a real <img>, not .product-preview mock-dashboard chrome').toHaveCount(1);
+    expect(await eocSection.locator('.window-controls').count(), 'EOC section must not reuse the shared CSS mock-dashboard chrome').toBe(0);
+    const src = await img.getAttribute('src');
+    expect(src).toBeTruthy();
+    const resolved = new URL(src!, page.url()).toString();
+    const res = await request.get(resolved);
+    expect(res.ok(), `EOC dashboard image (${resolved}) must resolve — asset needs to be placed in repo root and deployed`).toBeTruthy();
+  });
+
+  test('EOC nav anchor exists in nav and footer, and resolves to the #eoc section', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'single-browser structural check');
+    await page.goto('/');
+    await expect(page.locator('.nav-links a[href="#eoc"]')).toHaveCount(1);
+    await expect(page.locator('.footer-links a[href="#eoc"]')).toHaveCount(1);
+    await expect(page.locator('section#eoc')).toHaveCount(1);
+  });
+
+  test('RA 10173 privacy statement present with real contact info', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'single-browser content check');
+    await page.goto('/');
+    const privacy = page.locator('#privacy');
+    await expect(privacy).toHaveCount(1);
+    const text = await privacy.innerText();
+    expect(text).toMatch(/Data Privacy Act|RA 10173/i);
+    expect(text).toMatch(/geolocation/i);
+    expect(text).toMatch(/contact@civicgrid\.dev/);
   });
 
   test('civicgrid.ph reachability — known issue until DNS cutover', async ({ browserName }) => {

@@ -3,14 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="CivicGrid builds field-first software that creates tamper-proof evidence chains for Philippine government infrastructure projects. RoadSense for LGUs. InfraWatch for national accountability.">
-    <meta name="keywords" content="CivicGrid, infrastructure accountability, Philippine government, LGU, RoadSense, InfraWatch, flood control, road monitoring">
+    <meta name="description" content="CivicGrid's EOC platform gives Philippine LGUs one tamper-proof chain of custody for every emergency response — from citizen SOS to command dispatch to after-action record. Live in Mandaluyong City CDRRMD.">
+    <meta name="keywords" content="CivicGrid, EOC, emergency operations center, disaster response, CDRRMD, Mandaluyong, Philippine local government, LGU, RoadSense, InfraWatch, infrastructure accountability">
     <meta name="author" content="CivicGrid Software Development Services">
-    <meta property="og:title" content="CivicGrid — Accountability Infrastructure for Philippine Government Projects">
-    <meta property="og:description" content="Field-first software that creates tamper-proof evidence chains for every infrastructure project.">
+    <meta property="og:title" content="CivicGrid — Emergency Operations Infrastructure, Built for the Philippines">
+    <meta property="og:description" content="From citizen SOS to command dispatch to after-action record — CivicGrid's EOC platform gives LGUs one tamper-proof chain of custody for every emergency response.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://civicgrid.dev">
-    <title>CivicGrid — Accountability Infrastructure for Philippine Government Projects</title>
+    <meta property="og:image" content="https://civicgrid.dev/og-image.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="CivicGrid — Emergency Operations Infrastructure, Built for the Philippines">
+    <meta name="twitter:description" content="From citizen SOS to command dispatch to after-action record — CivicGrid's EOC platform gives LGUs one tamper-proof chain of custody for every emergency response.">
+    <meta name="twitter:image" content="https://civicgrid.dev/og-image.jpg">
+    <title>CivicGrid — Emergency Operations Infrastructure, Built for the Philippines</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230A1628'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%23C9A84C'/%3E%3Ccircle cx='8' cy='8' r='2' fill='white'/%3E%3Ccircle cx='24' cy='8' r='2' fill='white'/%3E%3Ccircle cx='8' cy='24' r='2' fill='white'/%3E%3Ccircle cx='24' cy='24' r='2' fill='white'/%3E%3Cline x1='8' y1='8' x2='24' y2='8' stroke='white' stroke-width='1'/%3E%3Cline x1='8' y1='24' x2='24' y2='24' stroke='white' stroke-width='1'/%3E%3Cline x1='8' y1='8' x2='8' y2='24' stroke='white' stroke-width='1'/%3E%3Cline x1='24' y1='8' x2='24' y2='24' stroke='white' stroke-width='1'/%3E%3Cline x1='8' y1='8' x2='24' y2='24' stroke='white' stroke-width='0.5'/%3E%3Cline x1='24' y1='8' x2='8' y2='24' stroke='white' stroke-width='0.5'/%3E%3Cline x1='16' y1='8' x2='16' y2='24' stroke='white' stroke-width='0.5'/%3E%3Cline x1='8' y1='16' x2='24' y2='16' stroke='white' stroke-width='0.5'/%3E%3C/svg%3E">
@@ -597,6 +602,45 @@
             line-height: 1.7;
         }
 
+        /* ==================== EOC SECTION ==================== */
+        .eoc {
+            background-color: var(--white);
+            padding: 120px 0;
+        }
+
+        .eoc-layout {
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            gap: 56px;
+            align-items: center;
+            margin-top: 56px;
+        }
+
+        .eoc-visual {
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            aspect-ratio: 16 / 10;
+            background-color: var(--bg-light);
+        }
+
+        .eoc-dashboard-img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .eoc-details .product-features {
+            padding: 0;
+            border-top: none;
+            margin-bottom: 32px;
+        }
+
+        @media (max-width: 1024px) {
+            .eoc-layout { grid-template-columns: 1fr; gap: 32px; }
+        }
+
         /* ==================== PRODUCTS SECTION ==================== */
         .products {
             background-color: var(--bg-light);
@@ -605,7 +649,7 @@
 
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 32px;
             margin-top: 56px;
         }
@@ -748,7 +792,7 @@
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 10px;
             margin-bottom: 14px;
         }
@@ -1261,6 +1305,43 @@
 
         .form-error.show { display: block; }
 
+        /* ==================== PRIVACY SECTION ==================== */
+        .privacy {
+            background-color: var(--bg-light);
+            padding: 72px 0;
+            border-top: 1px solid #e0e6f0;
+        }
+
+        .privacy-content {
+            max-width: 760px;
+        }
+
+        .privacy-block {
+            margin-bottom: 24px;
+        }
+
+        .privacy-block:last-child {
+            margin-bottom: 0;
+        }
+
+        .privacy-block h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .privacy-block p,
+        .privacy-block li {
+            font-size: 13.5px;
+            color: var(--gray);
+            line-height: 1.7;
+        }
+
+        .privacy-block ul {
+            padding-left: 20px;
+        }
+
         /* ==================== FOOTER ==================== */
         footer {
             background-color: var(--primary);
@@ -1415,7 +1496,7 @@
             .section-title { font-size: 32px; }
             .section-subtitle { font-size: 15px; }
 
-            .problem, .products, .why, .serve, .contact { padding: 80px 0; }
+            .problem, .eoc, .products, .why, .serve, .contact { padding: 80px 0; }
         }
 
         @media (max-width: 480px) {
@@ -1452,6 +1533,7 @@
             </div>
         </a>
         <div class="nav-links" id="navLinks">
+            <a href="#eoc">EOC</a>
             <a href="#products">Products</a>
             <a href="#why">Why CivicGrid</a>
             <a href="#serve">Who We Serve</a>
@@ -1469,16 +1551,16 @@
         <div class="hero-content">
             <div class="hero-badge reveal">
                 <div class="pulse-dot"></div>
-                Live in Philippine Government — Metro Manila
+                Live in Philippine Local Government — Mandaluyong City CDRRMD
             </div>
-            <h1 class="reveal reveal-delay-1">Infrastructure Accountability Software <span class="gold">Built for the Philippines</span></h1>
-            <p class="hero-subtitle reveal reveal-delay-2">CivicGrid builds field-first software that creates tamper-proof evidence chains for every infrastructure project — so every peso spent is traceable, every milestone is verified, and every stakeholder is protected.</p>
+            <h1 class="reveal reveal-delay-1">Emergency Operations Infrastructure, <span class="gold">Built for the Philippines</span></h1>
+            <p class="hero-subtitle reveal reveal-delay-2">From citizen SOS to command dispatch to after-action record — CivicGrid's EOC platform gives LGUs one tamper-proof chain of custody for every emergency response. Live in production today, not a pilot.</p>
             <div class="hero-buttons reveal reveal-delay-3">
                 <a href="#contact" class="btn-primary">
                     Request a Demo
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </a>
-                <a href="#products" class="btn-secondary">See Our Products</a>
+                <a href="#eoc" class="btn-secondary">See the EOC Platform</a>
             </div>
             <div class="hero-divider reveal reveal-delay-3"></div>
             <div class="hero-stats reveal reveal-delay-4">
@@ -1487,7 +1569,7 @@
                     <div class="stat-label">Live Government Deployment</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number" data-count="3">0</div>
+                    <div class="stat-number" data-count="2">0</div>
                     <div class="stat-label">Platforms in Production</div>
                 </div>
                 <div class="stat-item">
@@ -1511,26 +1593,43 @@
     <section class="problem" id="problem">
         <div class="container">
             <div class="section-label reveal">The Problem</div>
-            <h2 class="section-title reveal">Infrastructure projects fail when accountability stops at the office.</h2>
-            <p class="section-subtitle reveal">Whether you're a government agency, a private developer, or a project owner — the same problem exists: once work moves to the field, verification breaks down. CivicGrid was built to close that gap.</p>
-            <div class="problem-cards">
-                <div class="problem-card reveal reveal-delay-1">
-                    <div class="problem-card-icon">👻</div>
-                    <div class="problem-card-stat">421</div>
-                    <div class="problem-card-title">Ghost Projects Flagged</div>
-                    <div class="problem-card-body">Infrastructure projects billed and paid with no verifiable field evidence — a structural problem no dashboard alone can solve.</div>
+            <h2 class="section-title reveal">When disaster strikes, coordination breaks down before response does.</h2>
+            <p class="section-subtitle reveal">When disaster strikes, a Philippine LGU has to coordinate up to 15 response clusters — police, health, engineering, social welfare, logistics — over radios, group chats, and paper logs. There's no shared incident record. No dispatch audit trail. No way to show COA, the Mayor, or the public afterward that the response actually happened the way it's being described.</p>
+        </div>
+    </section>
+
+    <!-- EOC Section -->
+    <section class="eoc" id="eoc">
+        <div class="container">
+            <div class="section-label reveal">Our Primary Platform</div>
+            <h2 class="section-title reveal">EOC — Emergency Operations Center</h2>
+            <p class="section-subtitle reveal">Live deployment: Mandaluyong City CDRRMD, UAT-accepted June 2026. One tamper-proof chain of custody from citizen SOS to command dispatch to after-action record.</p>
+            <div class="eoc-layout">
+                <div class="eoc-visual reveal reveal-delay-1">
+                    <img src="eoc-dashboard.webp" alt="EOC command dashboard for Mandaluyong City CDRRMD" class="eoc-dashboard-img" loading="lazy">
                 </div>
-                <div class="problem-card reveal reveal-delay-2">
-                    <div class="problem-card-icon">⚠️</div>
-                    <div class="problem-card-stat">P138B</div>
-                    <div class="problem-card-title">COA-Flagged Irregularities</div>
-                    <div class="problem-card-body">Commission on Audit flagged P138 billion in flood control irregularities in 2024 — largely due to unverified contractor submissions.</div>
-                </div>
-                <div class="problem-card reveal reveal-delay-3">
-                    <div class="problem-card-icon">📋</div>
-                    <div class="problem-card-stat">0</div>
-                    <div class="problem-card-title">Existing Systems with Payment Gating</div>
-                    <div class="problem-card-body">No current government platform structurally blocks disbursement until independent field verification is complete. Until now.</div>
+                <div class="eoc-details reveal reveal-delay-2">
+                    <div class="product-features">
+                        <div class="feature-item">
+                            <div class="feature-check">✓</div>
+                            <div class="feature-text">Citizen SOS reporting via the public "Maging Alerto" PWA — no login required</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-check">✓</div>
+                            <div class="feature-text">Cluster-based dispatch across all 15 official CDRRMD response clusters</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-check">✓</div>
+                            <div class="feature-text">Full incident lifecycle tracking — report through response to resolution — with audit logging at every step</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-check">✓</div>
+                            <div class="feature-text">Real-time command dashboard built for large-screen emergency operations center displays</div>
+                        </div>
+                    </div>
+                    <div class="product-button">
+                        <a href="#contact" class="btn-primary">Request EOC Demo</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1539,39 +1638,16 @@
     <!-- Products Section -->
     <section class="products" id="products">
         <div class="container">
-            <div class="section-label reveal">Our Products</div>
-            <h2 class="section-title reveal">Three platforms. One accountability methodology.</h2>
-            <p class="section-subtitle reveal">All three products share the same field-first evidence architecture — built specifically for Philippine government workflows.</p>
+            <div class="section-label reveal">Built on the Same Methodology</div>
+            <h2 class="section-title reveal">Two more platforms, same field-first evidence architecture.</h2>
+            <p class="section-subtitle reveal">RoadSense and InfraWatch share the EOC platform's core discipline — verified field evidence, structured records, no unverifiable claims.</p>
             <div class="products-grid">
                 <!-- RoadSense Card -->
                 <div class="product-card reveal reveal-delay-1">
                     <div class="product-header">
                         <span class="product-tag blue">LGU · Road Monitoring</span>
                         <h3 class="product-title">RoadSense</h3>
-                        <p class="product-description">A field inspection platform for local government units — turning road condition monitoring into a structured, auditable workflow for city engineers.</p>
-                    </div>
-                    <div class="product-preview">
-                        <div>
-                            <div class="window-controls">
-                                <div class="control-dot red"></div>
-                                <div class="control-dot yellow"></div>
-                                <div class="control-dot green"></div>
-                            </div>
-                            <div class="dashboard-label">LGU Dashboard · 37 Reports Active</div>
-                            <div class="filter-pills">
-                                <div class="filter-pill">ALL SEVERITY</div>
-                                <div class="filter-pill">ALL TYPES</div>
-                                <div class="filter-pill">ALL CATEGORY</div>
-                            </div>
-                        </div>
-                        <div class="map-area">
-                            <div class="map-pin red" style="top:20%;left:30%"></div>
-                            <div class="map-pin orange" style="top:40%;left:50%"></div>
-                            <div class="map-pin yellow" style="top:60%;left:70%"></div>
-                            <div class="map-pin red" style="top:50%;left:20%"></div>
-                            <div class="map-pin orange" style="top:30%;left:80%"></div>
-                            <div class="map-label">METRO MANILA MAP VIEW</div>
-                        </div>
+                        <p class="product-description">LGU road hazard monitoring — active deployment.</p>
                     </div>
                     <div class="product-features">
                         <div class="feature-item">
@@ -1601,27 +1677,20 @@
                     <div class="product-header">
                         <span class="product-tag dark">National · Infrastructure Accountability</span>
                         <h3 class="product-title">InfraWatch</h3>
-                        <p class="product-description">A government-grade accountability platform for infrastructure projects — with payment gating, multi-party sign-off, and COA-ready evidence export built into every workflow.</p>
+                        <p class="product-description">National infrastructure payment-gating — in development.</p>
                     </div>
-                    <div class="product-preview">
-                        <div>
-                            <div class="window-controls">
-                                <div class="control-dot red"></div>
-                                <div class="control-dot yellow"></div>
-                                <div class="control-dot green"></div>
-                            </div>
-                            <div class="dashboard-label">InfraWatch · National Dashboard</div>
-                            <div class="filter-pills">
-                                <div class="filter-pill">PAYMENT GATING</div>
-                                <div class="filter-pill">MULTI-PARTY SIGN-OFF</div>
-                                <div class="filter-pill">COA EXPORT</div>
-                            </div>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-box-number">421</div>
+                            <div class="stat-box-label">Ghost Projects Flagged</div>
                         </div>
-                        <div class="map-area">
-                            <div class="map-pin red" style="top:30%;left:35%"></div>
-                            <div class="map-pin orange" style="top:55%;left:60%"></div>
-                            <div class="map-pin yellow" style="top:40%;left:75%"></div>
-                            <div class="map-label">NATIONAL PROJECT MAP</div>
+                        <div class="stat-box">
+                            <div class="stat-box-number">P138B</div>
+                            <div class="stat-box-label">COA-Flagged (2024)</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-box-number">0</div>
+                            <div class="stat-box-label">Payment-Gated Systems</div>
                         </div>
                     </div>
                     <div class="product-features">
@@ -1644,57 +1713,6 @@
                     </div>
                     <div class="product-button">
                         <a href="#contact" class="btn-primary">Request InfraWatch Demo</a>
-                    </div>
-                </div>
-
-                <!-- EOC Card -->
-                <div class="product-card reveal reveal-delay-3">
-                    <div class="product-header">
-                        <span class="product-tag blue">LGU · Emergency Response</span>
-                        <h3 class="product-title">EOC</h3>
-                        <p class="product-description">Emergency Operations Center — Live · UAT Accepted June 2026 · Mandaluyong City CDRRMD.</p>
-                    </div>
-                    <div class="product-preview">
-                        <div>
-                            <div class="window-controls">
-                                <div class="control-dot red"></div>
-                                <div class="control-dot yellow"></div>
-                                <div class="control-dot green"></div>
-                            </div>
-                            <div class="dashboard-label">EOC Dashboard · Mandaluyong City CDRRMD</div>
-                            <div class="filter-pills">
-                                <div class="filter-pill">LIVE</div>
-                                <div class="filter-pill">UAT ACCEPTED</div>
-                                <div class="filter-pill">JUN 2026</div>
-                            </div>
-                        </div>
-                        <div class="map-area">
-                            <div class="map-pin red" style="top:35%;left:45%"></div>
-                            <div class="map-pin orange" style="top:55%;left:60%"></div>
-                            <div class="map-pin yellow" style="top:45%;left:30%"></div>
-                            <div class="map-label">MANDALUYONG CITY</div>
-                        </div>
-                    </div>
-                    <div class="product-features">
-                        <div class="feature-item">
-                            <div class="feature-check">✓</div>
-                            <div class="feature-text">Citizen SOS reporting via a public PWA — geofenced intake routed straight to dispatch, no app install required</div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-check">✓</div>
-                            <div class="feature-text">Cluster-based dispatch routing with automated SMS alerts to on-duty responders</div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-check">✓</div>
-                            <div class="feature-text">Full incident lifecycle tracking — report through response to resolution — with audit logging at every step</div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-check">✓</div>
-                            <div class="feature-text">Real-time command dashboard built for large-screen emergency operations center displays</div>
-                        </div>
-                    </div>
-                    <div class="product-button">
-                        <a href="#contact" class="btn-primary">Request EOC Demo</a>
                     </div>
                 </div>
             </div>
@@ -1866,6 +1884,7 @@
                                 <label for="product">Which product are you interested in?</label>
                                 <select id="product" name="product" required>
                                     <option value="">Select an option</option>
+                                    <option value="EOC">EOC</option>
                                     <option value="RoadSense">RoadSense</option>
                                     <option value="InfraWatch">InfraWatch</option>
                                     <option value="Both products">Both products</option>
@@ -1888,6 +1907,37 @@
         </div>
     </section>
 
+    <!-- Data Privacy (RA 10173) -->
+    <!-- DRAFT: plain-language disclosure, not legally reviewed. Confirm with counsel before treating as compliant. -->
+    <section class="privacy" id="privacy">
+        <div class="container">
+            <div class="privacy-content">
+                <div class="section-label reveal">Data Privacy</div>
+                <h2 class="section-title reveal" style="font-size: 26px;">How We Handle Your Data</h2>
+                <p class="section-subtitle reveal" style="font-size: 14px; margin-bottom: 32px;">In line with the Philippine Data Privacy Act of 2012 (RA 10173), here's what we collect on this site and through the Alerto PWA, and why.</p>
+                <div class="privacy-block reveal">
+                    <h3>What We Collect</h3>
+                    <ul>
+                        <li><strong>Alerto PWA (citizen SOS reporting):</strong> your approximate location (geolocation), a description of the incident you're reporting, and an optional photo. No account or login is required to submit a report.</li>
+                        <li><strong>Contact form on this site:</strong> your name, agency or organization, email address, and anything you write in the optional message field.</li>
+                    </ul>
+                </div>
+                <div class="privacy-block reveal">
+                    <h3>Why We Collect It</h3>
+                    <p>Alerto PWA data is used to route your report to the appropriate CDRRMD response cluster and to maintain an auditable incident record for the LGU you're reporting to. Contact form data is used only to respond to your inquiry about CivicGrid's products.</p>
+                </div>
+                <div class="privacy-block reveal">
+                    <h3>Retention</h3>
+                    <p>Incident reports are retained as part of the LGU's official incident record, consistent with standard government recordkeeping practice. Contact form submissions are retained only as long as needed to respond to your inquiry.</p>
+                </div>
+                <div class="privacy-block reveal">
+                    <h3>Your Rights & Contact</h3>
+                    <p>Under RA 10173, you have the right to access, correct, and request deletion of your personal data. For privacy concerns or requests, contact us at contact@civicgrid.dev.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer>
         <div class="container">
@@ -1900,9 +1950,11 @@
                     &copy; 2026 CivicGrid Software Development Services, Metro Manila, Philippines
                 </div>
                 <ul class="footer-links">
+                    <li><a href="#eoc">EOC</a></li>
                     <li><a href="#products">Products</a></li>
                     <li><a href="#why">Why CivicGrid</a></li>
                     <li><a href="#contact">Contact</a></li>
+                    <li><a href="#privacy">Privacy</a></li>
                 </ul>
             </div>
         </div>
