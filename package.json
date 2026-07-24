@@ -1,0 +1,15 @@
+{
+  "name": "civicgrid-website-chaos",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Playwright chaos/regression suite for the CivicGrid marketing site (civicgrid.dev)",
+  "scripts": {
+    "test": "playwright test",
+    "test:e2e": "playwright test tests/e2e/website-chaos.spec.ts"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "lighthouse": "^12.2.1",
+    "playwright-lighthouse": "^4.0.0"
+  }
+}
