@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="CivicGrid's EOC platform gives Philippine LGUs one tamper-proof chain of custody for every emergency response — from citizen SOS to command dispatch to after-action record. Live in Mandaluyong City CDRRMD.">
-    <meta name="keywords" content="CivicGrid, EOC, emergency operations center, disaster response, CDRRMD, Mandaluyong, Philippine local government, LGU, RoadSense, InfraWatch, infrastructure accountability">
+    <meta name="keywords" content="CivicGrid, EOC, emergency operations center, disaster response, CDRRMD, Mandaluyong, Philippine local government, LGU, RoadSense, infrastructure accountability">
     <meta name="author" content="CivicGrid Software Development Services">
     <meta property="og:title" content="CivicGrid — Emergency Operations Infrastructure, Built for the Philippines">
     <meta property="og:description" content="From citizen SOS to command dispatch to after-action record — CivicGrid's EOC platform gives LGUs one tamper-proof chain of custody for every emergency response.">
@@ -631,6 +631,13 @@
             object-fit: cover;
         }
 
+        .eoc-image-caption {
+            font-size: 12px;
+            color: var(--gray);
+            margin-top: 14px;
+            text-align: center;
+        }
+
         .eoc-details .product-features {
             padding: 0;
             border-top: none;
@@ -652,6 +659,13 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 32px;
             margin-top: 56px;
+        }
+
+        .products-grid--single {
+            grid-template-columns: 1fr;
+            max-width: 580px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .product-card {
@@ -687,11 +701,6 @@
         .product-tag.blue {
             background: linear-gradient(135deg, #dbeafe, #eff6ff);
             color: #1e40af;
-        }
-
-        .product-tag.dark {
-            background: linear-gradient(135deg, #e8ecf4, #f0f3f8);
-            color: var(--primary);
         }
 
         .product-title {
@@ -788,36 +797,6 @@
             color: rgba(255,255,255,0.25);
             font-weight: 700;
             letter-spacing: 2px;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 14px;
-        }
-
-        .stat-box {
-            background: rgba(201, 168, 76, 0.08);
-            padding: 14px 8px;
-            border-radius: 8px;
-            text-align: center;
-            border: 1px solid rgba(201, 168, 76, 0.06);
-        }
-
-        .stat-box-number {
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--accent);
-        }
-
-        .stat-box-label {
-            font-size: 9px;
-            color: var(--gray);
-            font-weight: 600;
-            margin-top: 4px;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
         }
 
         .portfolio-banner {
@@ -1503,7 +1482,6 @@
             .hero h1 { font-size: 28px; }
             .section-title { font-size: 26px; }
             .hero-stats { grid-template-columns: repeat(2, 1fr); }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
             .contact-form { padding: 24px; }
             .pilot-banner-content { flex-direction: column; }
         }
@@ -1605,8 +1583,11 @@
             <h2 class="section-title reveal">EOC — Emergency Operations Center</h2>
             <p class="section-subtitle reveal">Live deployment: Mandaluyong City CDRRMD, UAT-accepted June 2026. One tamper-proof chain of custody from citizen SOS to command dispatch to after-action record.</p>
             <div class="eoc-layout">
-                <div class="eoc-visual reveal reveal-delay-1">
-                    <img src="eoc-dashboard.webp" alt="EOC command dashboard for Mandaluyong City CDRRMD" class="eoc-dashboard-img" loading="lazy">
+                <div class="eoc-visual-wrap reveal reveal-delay-1">
+                    <div class="eoc-visual">
+                        <img src="eoc-dashboard.webp" alt="EOC command dashboard for Mandaluyong City CDRRMD" class="eoc-dashboard-img" loading="lazy">
+                    </div>
+                    <p class="eoc-image-caption">Illustrative interface rendering - not a live screenshot.</p>
                 </div>
                 <div class="eoc-details reveal reveal-delay-2">
                     <div class="product-features">
@@ -1639,9 +1620,9 @@
     <section class="products" id="products">
         <div class="container">
             <div class="section-label reveal">Built on the Same Methodology</div>
-            <h2 class="section-title reveal">Two more platforms, same field-first evidence architecture.</h2>
-            <p class="section-subtitle reveal">RoadSense and InfraWatch share the EOC platform's core discipline — verified field evidence, structured records, no unverifiable claims.</p>
-            <div class="products-grid">
+            <h2 class="section-title reveal">One more platform, the same field-first evidence architecture.</h2>
+            <p class="section-subtitle reveal">RoadSense shares the EOC platform's core discipline — verified field evidence, structured records, no unverifiable claims.</p>
+            <div class="products-grid products-grid--single">
                 <!-- RoadSense Card -->
                 <div class="product-card reveal reveal-delay-1">
                     <div class="product-header">
@@ -1669,50 +1650,6 @@
                     </div>
                     <div class="product-button">
                         <a href="#contact" class="btn-primary">Request RoadSense Demo</a>
-                    </div>
-                </div>
-
-                <!-- InfraWatch Card -->
-                <div class="product-card reveal reveal-delay-2">
-                    <div class="product-header">
-                        <span class="product-tag dark">National · Infrastructure Accountability</span>
-                        <h3 class="product-title">InfraWatch</h3>
-                        <p class="product-description">National infrastructure payment-gating — in development.</p>
-                    </div>
-                    <div class="stats-grid">
-                        <div class="stat-box">
-                            <div class="stat-box-number">421</div>
-                            <div class="stat-box-label">Ghost Projects Flagged</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-box-number">P138B</div>
-                            <div class="stat-box-label">COA-Flagged (2024)</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-box-number">0</div>
-                            <div class="stat-box-label">Payment-Gated Systems</div>
-                        </div>
-                    </div>
-                    <div class="product-features">
-                        <div class="feature-item">
-                            <div class="feature-check">✓</div>
-                            <div class="feature-text">Payment gating — disbursements structurally blocked until field verification is complete</div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-check">✓</div>
-                            <div class="feature-text">Multi-party digital sign-off: Contractor + Inspector + Supervising Engineer required per stage</div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-check">✓</div>
-                            <div class="feature-text">Fraud alert detection for duplicate photos, payment anomalies, and contractor irregularities</div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-check">✓</div>
-                            <div class="feature-text">One-click COA Audit Export — complete evidence pack per project, automatically generated</div>
-                        </div>
-                    </div>
-                    <div class="product-button">
-                        <a href="#contact" class="btn-primary">Request InfraWatch Demo</a>
                     </div>
                 </div>
             </div>
@@ -1831,8 +1768,8 @@
                         <div class="milestone-dot"></div>
                         <div>
                             <div class="milestone-date">July 2026</div>
-                            <div class="milestone-title">IPOPHL Filing Submitted</div>
-                            <div class="milestone-body">Trademark application filed with the Intellectual Property Office of the Philippines, reference no. 2026-04892.</div>
+                            <div class="milestone-title">IPOPHL Copyright Application — Under Verification</div>
+                            <div class="milestone-body">Copyright Registration Application for the RoadSense EOC System submitted to IPOPHL's Bureau of Copyright and Related Rights, reference no. 2026-04892. Currently tagged "For Verification."</div>
                         </div>
                     </div>
                 </div>
@@ -1886,7 +1823,6 @@
                                     <option value="">Select an option</option>
                                     <option value="EOC">EOC</option>
                                     <option value="RoadSense">RoadSense</option>
-                                    <option value="InfraWatch">InfraWatch</option>
                                     <option value="Both products">Both products</option>
                                     <option value="Not sure yet">Not sure yet</option>
                                 </select>

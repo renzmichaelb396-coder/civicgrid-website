@@ -149,32 +149,30 @@ test.describe('Phase 2 — Content regression', () => {
     expect(bodyText).not.toContain('active pilot alignment');
   });
 
-  // NOTE (Packet B): this cycle deliberately moves the real, previously-approved COA
-  // statistics (421 Ghost Projects Flagged / P138B COA-flagged) from the old opening
-  // Problem section into InfraWatch's own card — that's Phase 3 of this packet, not a
-  // regression. What must never come back is the OLD *fabricated* live-dashboard readout
-  // (P2.73B portfolio value, "4 Projects / 2 Active / 3 Alerts / 0 Ghost" fake counters)
-  // and any "live"/"production" language, since InfraWatch has no live deployment.
-  test('InfraWatch: no fabricated live-dashboard metrics, no live/production language, real audit stats present', async ({ page, browserName }) => {
+  // InfraWatch was discontinued and removed from the site entirely (no market interest;
+  // its stats — 421 Ghost Projects Flagged / P138B COA-flagged — were invented, not real).
+  // This asserts it stays gone: no card, no lingering "InfraWatch" text anywhere in the DOM.
+  test('InfraWatch is absent from the page entirely', async ({ page, browserName }) => {
     test.skip(browserName !== 'chromium', 'single-browser content check');
     await page.goto('/');
-    const card = page.locator('.product-card', { has: page.locator('.product-title', { hasText: 'InfraWatch' }) });
-    await expect(card).toHaveCount(1);
-    const cardText = await card.innerText();
-    // the old fabricated "live dashboard" readout must never return
-    expect(cardText).not.toMatch(/P2\.73B/);
-    expect(cardText).not.toMatch(/Total Portfolio Value Tracked/i);
-    expect(cardText).not.toMatch(/National Dashboard/i);
-    expect(cardText).not.toMatch(/\bActive\b/);
-    expect(cardText).not.toMatch(/\bAlerts\b/);
-    // InfraWatch is explicitly not live and has no live deployment
-    expect(cardText).not.toMatch(/\blive\b/i);
-    expect(cardText).not.toMatch(/\bproduction\b/i);
-    expect(cardText).toMatch(/in development/i);
-    // the real, previously-approved COA statistics are intentionally still here
-    expect(cardText).toMatch(/421/);
-    expect(cardText).toMatch(/Ghost Projects Flagged/i);
-    expect(cardText).toMatch(/P138B/);
+    const bodyText = await page.locator('body').innerText();
+    expect(bodyText).not.toMatch(/InfraWatch/i);
+    await expect(page.locator('.product-card', { has: page.locator('.product-title', { hasText: 'InfraWatch' }) })).toHaveCount(0);
+    const productOptions = await page.locator('#product option').allTextContents();
+    expect(productOptions.join(' ')).not.toMatch(/InfraWatch/i);
+  });
+
+  // IPOPHL ref. 2026-04892 is a Copyright Registration Application (Bureau of Copyright
+  // and Related Rights), currently tagged "For Verification" — not a trademark, not granted.
+  test('IPOPHL milestone accurately describes a copyright application under verification, not a trademark', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'single-browser content check');
+    await page.goto('/');
+    const milestones = page.locator('.milestone-item', { has: page.locator('.milestone-body', { hasText: '2026-04892' }) });
+    await expect(milestones).toHaveCount(1);
+    const milestoneText = await milestones.innerText();
+    expect(milestoneText).not.toMatch(/Trademark/i);
+    expect(milestoneText).toMatch(/Copyright/i);
+    expect(milestoneText).toMatch(/For Verification/i);
   });
 
   test('EOC section (promoted, full section) contains "Live" and UAT-accepted status', async ({ page, browserName }) => {
