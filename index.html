@@ -447,55 +447,6 @@
             margin: 0 auto 44px;
         }
 
-        .hero-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 32px;
-            max-width: 680px;
-            margin: 0 auto;
-        }
-
-        .stat-item {
-            text-align: center;
-            position: relative;
-        }
-
-        .stat-item:not(:last-child)::after {
-            content: '';
-            position: absolute;
-            right: -16px;
-            top: 20%;
-            height: 60%;
-            width: 1px;
-            background: rgba(201, 168, 76, 0.2);
-        }
-
-        .stat-number {
-            font-size: 40px;
-            font-weight: 900;
-            color: var(--accent);
-            margin-bottom: 6px;
-            letter-spacing: -1px;
-        }
-
-        .stat-number.zero-pop {
-            animation: zeroPop 900ms cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        @keyframes zeroPop {
-            0% { transform: scale(1); color: var(--accent); }
-            30% { transform: scale(1.3); color: #2dd4bf; text-shadow: 0 0 16px rgba(45, 212, 191, 0.55); }
-            100% { transform: scale(1); color: var(--accent); }
-        }
-
-        .stat-label {
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 1.5px;
-            color: var(--gray);
-            text-transform: uppercase;
-        }
-
         /* ==================== TRUST BAR ==================== */
         .trust-bar {
             background-color: var(--primary);
@@ -1409,9 +1360,6 @@
             .hero-buttons { flex-direction: column; }
             .hero-buttons .btn-primary,
             .hero-buttons .btn-secondary { width: 100%; justify-content: center; }
-            .hero-stats { grid-template-columns: repeat(3, 1fr); gap: 20px; }
-            .stat-item:not(:last-child)::after { display: none; }
-            .stat-number { font-size: 32px; }
 
             .problem-cards { grid-template-columns: 1fr; }
             .why-grid { grid-template-columns: 1fr; }
@@ -1431,7 +1379,6 @@
         @media (max-width: 480px) {
             .hero h1 { font-size: 28px; }
             .section-title { font-size: 26px; }
-            .hero-stats { grid-template-columns: repeat(3, 1fr); }
             .contact-form { padding: 24px; }
             .pilot-banner-content { flex-direction: column; }
         }
@@ -1494,20 +1441,6 @@
                 <a href="#eoc" class="btn-secondary">See the EOC Platform</a>
             </div>
             <div class="hero-divider reveal reveal-delay-3"></div>
-            <div class="hero-stats reveal reveal-delay-4">
-                <div class="stat-item">
-                    <div class="stat-number" data-count="1">0</div>
-                    <div class="stat-label">Live Government Deployment</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number" data-count="100" data-suffix="%">0</div>
-                    <div class="stat-label">Field Traceability</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number" data-count="0">0</div>
-                    <div class="stat-label">Untraceable Incident Records</div>
-                </div>
-            </div>
         </div>
     </section>
 
@@ -1855,60 +1788,6 @@
         }
         document.addEventListener('visibilitychange', revealInViewportOnShow);
         window.addEventListener('pageshow', revealInViewportOnShow);
-
-        // Counter Animation
-        const counters = document.querySelectorAll('[data-count]');
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-        function animateCounter(el) {
-            if (el.dataset.animated === 'true') return;
-            el.dataset.animated = 'true';
-
-            const target = parseInt(el.dataset.count, 10);
-            const suffix = el.dataset.suffix || '';
-
-            if (target === 0) {
-                el.textContent = '0' + suffix;
-                if (!prefersReducedMotion) el.classList.add('zero-pop');
-                return;
-            }
-
-            if (prefersReducedMotion) {
-                el.textContent = target + suffix;
-                return;
-            }
-
-            const duration = 1200;
-            let startTime = null;
-            function step(timestamp) {
-                if (startTime === null) startTime = timestamp;
-                const progress = Math.min((timestamp - startTime) / duration, 1);
-                const eased = 1 - Math.pow(2, -10 * progress);
-                el.textContent = (progress >= 1 ? target : Math.floor(eased * target)) + suffix;
-                if (progress < 1) requestAnimationFrame(step);
-            }
-            requestAnimationFrame(step);
-        }
-
-        const counterObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    animateCounter(entry.target);
-                    counterObserver.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1, rootMargin: '0px 0px -10% 0px' });
-        counters.forEach(c => counterObserver.observe(c));
-
-        // Fallback: force-animate any hero counter still at rest shortly after load.
-        // These counters live in the hero, which is always the first thing rendered —
-        // they must not depend on scroll/viewport-height to reach their target value.
-        setTimeout(() => {
-            counters.forEach(c => {
-                if (c.dataset.animated === 'true') return;
-                animateCounter(c);
-            });
-        }, 1500);
 
         // Nav scroll effect
         const navbar = document.getElementById('navbar');
