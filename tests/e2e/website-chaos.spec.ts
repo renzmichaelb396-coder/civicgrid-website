@@ -521,3 +521,278 @@ test.describe('Phase 4 — Structural / rendering', () => {
     // Intentionally not asserted — expected FAIL until DNS cutover, logged not failed.
   });
 });
+
+/**
+ * Phase A — 2026-07 design-compliance packet
+ * (CIVICGRID-WEBSITE-DESIGN-COMPLIANCE-PHASE-A-PACKET.md)
+ * Asserts exact computed styles / absences, not just "renders".
+ */
+test.describe('Phase A — Design compliance', () => {
+  const EASE = 'cubic-bezier(0.16, 1, 0.3, 1)';
+  const ACCENT_RGB = 'rgb(201, 168, 76)'; // #C9A84C civic-amber, solid
+
+  test('source: zero gradients, zero backdrop-filter, zero banned hex, no 100px radius, mono font loaded', async ({ page, browserName, request }) => {
+    test.skip(browserName !== 'chromium', 'single-browser source audit');
+    const res = await request.get('/');
+    const html = await res.text();
+    expect(html).not.toMatch(/linear-gradient|radial-gradient/i);
+    expect(html).not.toMatch(/backdrop-filter/i);
+    expect(html).not.toMatch(/border-radius:\s*100px/);
+    for (const banned of ['#b8943e', '#e8d48b', '#e0c068', '#EF9F27', '#FAC775', '#5DCAA5', '#10b981']) {
+      expect(html.toLowerCase(), `banned hex ${banned} present in source`).not.toContain(banned.toLowerCase());
+    }
+    // #C9A84C may exist only as a solid value, never as a gradient stop — gradients are
+    // globally banned above, which covers the "as gradient stop" clause.
+    const fontLinks = html.match(/fonts\.googleapis\.com\/css2\?[^"]+/g) || [];
+    expect(fontLinks.length).toBeGreaterThan(0);
+    for (const link of fontLinks) {
+      expect(link, 'every Google Fonts stylesheet URL must load IBM Plex Mono').toContain('IBM+Plex+Mono');
+    }
+  });
+
+  test('rendered body text contains at most 2 em-dashes', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'single-browser content audit');
+    await page.goto('/');
+    const bodyText = await page.locator('body').innerText();
+    const emDashes = (bodyText.match(/—/g) || []).length;
+    expect(emDashes, `em-dash budget exceeded: found ${emDashes}`).toBeLessThanOrEqual(2);
+  });
+
+  test('.hero-badge: rectangular radius (4px or 8px), not a 100px/50% pill', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'single-browser computed-style check');
+    await page.goto('/');
+    const radius = await page.locator('.hero-badge').evaluate((el) => getComputedStyle(el).borderRadius);
+    expect(['100px', '50%']).not.toContain(radius);
+    expect(['4px', '8px']).toContain(radius);
+  });
+
+  test('.hero-badge .pulse-dot: no #10b981 green, uses brand accent', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'single-browser computed-style check');
+    await page.goto('/');
+    const bg = await page.locator('.hero-badge .pulse-dot').evaluate((el) => getComputedStyle(el).backgroundColor);
+    expect(bg).not.toBe('rgb(16, 185, 129)');
+    expect(bg).toBe(ACCENT_RGB);
+  });
+
+  test('nav: backdrop-filter is none in default, scrolled, and mobile drawer states', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'single-browser computed-style check');
+    await page.goto('/');
+    const bf = (el: Element) => {
+      const cs = getComputedStyle(el);
+      return cs.backdropFilter || (cs as unknown as { webkitBackdropFilter: string }).webkitBackdropFilter || 'none';
+    };
+    expect(await page.locator('nav#navbar').evaluate(bf)).toBe('none');
+    await page.evaluate(() => window.scrollTo(0, 600));
+    await expect(page.locator('nav#navbar')).toHaveClass(/scrolled/);
+    expect(await page.locator('nav#navbar').evaluate(bf)).toBe('none');
+    // mobile drawer
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.locator('#hamburger').click();
+    await expect(page.locator('#navLinks')).toHaveClass(/active/);
+    expect(await page.locator('#navLinks').evaluate(bf)).toBe('none');
+  });
+
+  test('.hero h1 weight 600, .gold is solid accent with no gradient text fill', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'single-browser computed-style check');
+    await page.goto('/');
+    expect(await page.locator('.hero h1').evaluate((el) => getComputedStyle(el).fontWeight)).toBe('600');
+    const gold = await page.locator('.hero h1 .gold').evaluate((el) => {
+      const cs = getComputedStyle(el);
+      return { backgroundImage: cs.backgroundImage, color: cs.color, fill: cs.webkitTextFillColor };
+    });
+    expect(gold.backgroundImage).toBe('none');
+    expect(gold.color).toBe(ACCENT_RGB);
+    expect(gold.fill).not.toBe('rgba(0, 0, 0, 0)'); // no transparent text-fill gradient trick
+  });
+
+  test('every .section-title has font-weight 600 (was 800)', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'single-browser computed-style check');
+    await page.goto('/');
+    const titles = page.locator('.section-title');
+    const n = await titles.count();
+    expect(n).toBeGreaterThan(0);
+    for (let i = 0; i < n; i++) {
+      expect(await titles.nth(i).evaluate((el) => getComputedStyle(el).fontWeight)).toBe('600');
+    }
+  });
+
+  test('why/serve: old identical icon+h3+p card selectors gone; all 6 Why + 4 Serve texts preserved', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'single-browser structural check');
+    await page.goto('/');
+    for (const dead of ['.why-grid', '.why-card', '.why-card-icon', '.serve-cards', '.serve-card', '.serve-card-icon']) {
+      await expect(page.locator(dead), `${dead} must no longer match`).toHaveCount(0);
+    }
+    await expect(page.locator('#why .why-item')).toHaveCount(6);
+    await expect(page.locator('#serve .serve-item')).toHaveCount(4);
+    const bodyText = await page.locator('body').innerText();
+    for (const t of [
+      'Built for Philippine Government Workflows',
+      'Field-First, Not Dashboard-First',
+      'Audit-Ready by Default',
+      'Structural Prevention, Not Detection',
+      'Offline-Capable Mobile App',
+      'Pilot-Ready in 30 Days',
+      'Local Government Units',
+      'Government Agencies',
+      'Private Developers',
+      'NGOs & Development Partners',
+    ]) {
+      expect(bodyText, `point "${t}" missing after restructure`).toContain(t);
+    }
+    // point bodies survive too (distinctive fragments, avoiding the de-em-dashed spans)
+    for (const frag of [
+      'local procurement rules',
+      'capture verified evidence before anything reaches a dashboard',
+      'COA-ready evidence record',
+      'reviewable after the fact',
+      'syncing when connection is restored',
+      'clear success metrics',
+      'road and infrastructure programs',
+      'district or national level',
+      'contractor accountability',
+      'auditable project records',
+    ]) {
+      expect(bodyText, `point body fragment "${frag}" missing after restructure`).toContain(frag);
+    }
+  });
+
+  test('founder card: no #5DCAA5 mint on border, title, milestone dots/dates', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'single-browser computed-style check');
+    await page.goto('/');
+    const MINT = 'rgb(93, 202, 165)';
+    const border = await page.locator('.founder-card').evaluate((el) => getComputedStyle(el).borderColor);
+    expect(border).not.toBe(MINT);
+    expect(await page.locator('.founder-title').evaluate((el) => getComputedStyle(el).color)).not.toBe(MINT);
+    const dots = page.locator('.milestone-dot');
+    for (let i = 0; i < (await dots.count()); i++) {
+      expect(await dots.nth(i).evaluate((el) => getComputedStyle(el).backgroundColor)).not.toBe(MINT);
+    }
+    const dates = page.locator('.milestone-date');
+    for (let i = 0; i < (await dates.count()); i++) {
+      expect(await dates.nth(i).evaluate((el) => getComputedStyle(el).color)).not.toBe(MINT);
+    }
+  });
+
+  test('CTA buttons: solid civic-amber, background-image none', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'single-browser computed-style check');
+    await page.goto('/');
+    for (const sel of ['.hero-buttons .btn-primary', '.product-button .btn-primary', '.btn-demo']) {
+      const cta = await page.locator(sel).first().evaluate((el) => {
+        const cs = getComputedStyle(el);
+        return { backgroundImage: cs.backgroundImage, backgroundColor: cs.backgroundColor };
+      });
+      expect(cta.backgroundImage, `${sel} still has a background-image`).toBe('none');
+      expect(cta.backgroundColor, `${sel} not solid civic-amber`).toBe(ACCENT_RGB);
+    }
+    // form submit + back-to-top also de-gradiented
+    expect(await page.locator('.form-submit').evaluate((el) => getComputedStyle(el).backgroundImage)).toBe('none');
+    expect(await page.locator('.back-to-top').evaluate((el) => getComputedStyle(el).backgroundImage)).toBe('none');
+  });
+
+  // .map-pin has no live DOM instances (leftover component CSS), so computed style can't be
+  // queried on elements — assert against the stylesheet rules themselves so the check is
+  // non-vacuous and survives the pins being re-instantiated later.
+  test('map pin rules: severity colors are oklch (no raw #ef4444/#f97316/#eab308), no glow box-shadow', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'single-browser stylesheet check');
+    await page.goto('/');
+    const rules = await page.evaluate(() => {
+      const out: string[] = [];
+      for (const sheet of Array.from(document.styleSheets)) {
+        let list: CSSRuleList;
+        try { list = sheet.cssRules; } catch { continue; }
+        for (const rule of Array.from(list)) {
+          if (rule.cssText.includes('.map-pin')) out.push(rule.cssText);
+        }
+      }
+      return out;
+    });
+    expect(rules.length, 'expected .map-pin rules in the stylesheet').toBeGreaterThan(0);
+    const joined = rules.join('\n');
+    expect(joined).not.toMatch(/#ef4444|#f97316|#eab308/i);
+    expect(joined).not.toMatch(/rgb\(239,\s*68,\s*68\)|rgb\(249,\s*115,\s*22\)|rgb\(234,\s*179,\s*8\)/);
+    expect(joined).toMatch(/oklch\(/);
+    expect(joined, '.map-pin must not carry a glow box-shadow').not.toMatch(/box-shadow/);
+  });
+
+  test('transition timing on nav/links/cards/inputs/back-to-top is cubic-bezier(0.16,1,0.3,1)', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'single-browser computed-style check');
+    await page.goto('/');
+    // .problem-card is dead CSS with no DOM instances — cards are covered by .why-item/.serve-item
+    for (const sel of [
+      'nav#navbar',
+      '.nav-links a >> nth=0',
+      '.why-item >> nth=0',
+      '.serve-item >> nth=0',
+      '#fullName',
+      '.back-to-top',
+      '.footer-links a >> nth=0',
+    ]) {
+      const tf = await page.locator(sel).evaluate((el) => getComputedStyle(el).transitionTimingFunction);
+      expect(tf, `${sel} timing-function drifted`).toBe(EASE);
+    }
+  });
+
+  test('Mono-Is-Data: DTI/PhilGEPS/IPOPHL reference values render in IBM Plex Mono', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'single-browser computed-style check');
+    await page.goto('/');
+    const refs = page.locator('.ref-mono');
+    await expect(refs).toHaveCount(4); // DTI, PhilGEPS, milestone IPOPHL ref, founder-bio IPOPHL ref
+    const texts = await refs.allTextContents();
+    expect(texts).toContain('7980659');
+    expect(texts).toContain('476941');
+    expect(texts.filter((t) => t === '2026-04892')).toHaveLength(2);
+    for (let i = 0; i < 4; i++) {
+      const ff = await refs.nth(i).evaluate((el) => getComputedStyle(el).fontFamily);
+      expect(ff, 'reference value not in the mono data face').toContain('IBM Plex Mono');
+    }
+  });
+
+  test('scope guard: registration facts, founder bio, and milestone dates byte-identical in rendered text', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'single-browser content guard');
+    await page.goto('/');
+    const bodyText = await page.locator('body').innerText();
+    expect(bodyText).toContain('DTI Reg. No. 7980659');
+    expect(bodyText).toContain('PhilGEPS Supplier No. 476941');
+    expect(bodyText).toContain('2026-04892');
+    const bio = await page.locator('.founder-bio').innerText();
+    expect(bio).toBe(
+      "Renz Michael Bautista is the founder of CivicGrid Software Development Services, building EOC and emergency-operations software for Philippine local government units. Under his leadership, CivicGrid's EOC platform passed UAT with Mandaluyong City CDRRMD, and the company is PhilGEPS-registered, with a Copyright Registration Application for the RoadSense EOC System (ref. 2026-04892) currently under verification with IPOPHL.",
+    );
+    const dates = await page.locator('.milestone-date').allTextContents();
+    expect(dates.map((d) => d.trim().toUpperCase())).toEqual(['JUNE 2026', 'JUNE 2026', 'JULY 2026']);
+  });
+
+  for (const viewport of [
+    { width: 1440, height: 900 },
+    { width: 768, height: 1024 },
+    { width: 375, height: 812 },
+  ]) {
+    test(`cross-viewport smoke at ${viewport.width}px: no overflow, why/serve restructure holds, screenshot saved`, async ({ page, browserName }) => {
+      test.skip(browserName !== 'chromium', 'single-browser layout smoke');
+      await page.setViewportSize(viewport);
+      await page.goto('/');
+      const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+      const clientWidth = await page.evaluate(() => document.documentElement.clientWidth);
+      expect(scrollWidth, `horizontal overflow at ${viewport.width}px`).toBeLessThanOrEqual(clientWidth + 1);
+      await expect(page.locator('#why .why-item')).toHaveCount(6);
+      await expect(page.locator('#serve .serve-item')).toHaveCount(4);
+      // no overlap between the first two why items (restructure holds)
+      const a = await page.locator('#why .why-item').nth(0).boundingBox();
+      const b = await page.locator('#why .why-item').nth(1).boundingBox();
+      expect(a).not.toBeNull();
+      expect(b).not.toBeNull();
+      if (a && b) {
+        const horizontallySeparate = a.x + a.width <= b.x + 1 || b.x + b.width <= a.x + 1;
+        const verticallySeparate = a.y + a.height <= b.y + 1 || b.y + b.height <= a.y + 1;
+        expect(horizontallySeparate || verticallySeparate, `why items overlap at ${viewport.width}px`).toBe(true);
+      }
+      // Below-fold .reveal elements sit at opacity 0 until scrolled into view, which
+      // would leave the full-page screenshot blank — force-reveal for the visual record
+      // (the reveal mechanic itself is covered by the dedicated reveal tests above).
+      await page.evaluate(() => document.querySelectorAll('.reveal').forEach((el) => el.classList.add('visible')));
+      await page.waitForTimeout(900);
+      await page.screenshot({ path: `test-results/phase-a-${viewport.width}px.png`, fullPage: true });
+    });
+  }
+});
