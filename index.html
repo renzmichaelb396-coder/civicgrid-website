@@ -1095,26 +1095,31 @@
 
         .form-error.show { display: block; }
 
-        /* ==================== PRIVACY SECTION ==================== */
-        .privacy {
+        /* ==================== PRIVACY / ELIGIBILITY SECTIONS ==================== */
+        .privacy,
+        .eligibility {
             background-color: var(--bg-light);
             padding: 72px 0;
             border-top: 1px solid #e0e6f0;
         }
 
-        .privacy-content {
+        .privacy-content,
+        .eligibility-content {
             max-width: 760px;
         }
 
-        .privacy-block {
+        .privacy-block,
+        .eligibility-block {
             margin-bottom: 24px;
         }
 
-        .privacy-block:last-child {
+        .privacy-block:last-child,
+        .eligibility-block:last-child {
             margin-bottom: 0;
         }
 
-        .privacy-block h3 {
+        .privacy-block h3,
+        .eligibility-block h3 {
             font-size: 15px;
             font-weight: 700;
             color: var(--primary);
@@ -1122,13 +1127,16 @@
         }
 
         .privacy-block p,
-        .privacy-block li {
+        .privacy-block li,
+        .eligibility-block p,
+        .eligibility-block li {
             font-size: 13.5px;
             color: var(--gray);
             line-height: 1.7;
         }
 
-        .privacy-block ul {
+        .privacy-block ul,
+        .eligibility-block ul {
             padding-left: 20px;
         }
 
@@ -1625,6 +1633,29 @@
         </div>
     </section>
 
+    <!-- Procurement Eligibility -->
+    <section class="eligibility" id="eligibility">
+        <div class="container">
+            <div class="eligibility-content">
+                <div class="section-label reveal">Procurement Eligibility</div>
+                <h2 class="section-title reveal" style="font-size: 26px;">Registered to Do Business With Philippine Government Agencies</h2>
+                <p class="section-subtitle reveal" style="font-size: 14px; margin-bottom: 32px;">CivicGrid is a registered Philippine business, eligible to transact with government agencies and LGUs under existing procurement rules.</p>
+                <div class="eligibility-block reveal">
+                    <h3>Business Registration</h3>
+                    <p>DTI Certificate of Business Name Registration No. 7980659, CivicGrid Software Development Services, Metro Manila, Philippines.</p>
+                </div>
+                <div class="eligibility-block reveal">
+                    <h3>PhilGEPS Registration</h3>
+                    <p>PhilGEPS Supplier Registration No. 476941, enabling participation in Philippine government procurement processes.</p>
+                </div>
+                <div class="eligibility-block reveal">
+                    <h3>Additional Documentation</h3>
+                    <p>Additional procurement documentation (business permits, tax registration, and PhilGEPS membership-class certificates) is available directly to evaluating agencies upon request during formal bid or pilot evaluation.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Data Privacy (RA 10173) -->
     <!-- DRAFT: plain-language disclosure, not legally reviewed. Confirm with counsel before treating as compliant. -->
     <section class="privacy" id="privacy">
@@ -1671,6 +1702,7 @@
                     <li><a href="#eoc">EOC</a></li>
                     <li><a href="#why">Why CivicGrid</a></li>
                     <li><a href="#contact">Contact</a></li>
+                    <li><a href="#eligibility">Eligibility</a></li>
                     <li><a href="#privacy">Privacy</a></li>
                 </ul>
             </div>
