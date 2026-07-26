@@ -529,7 +529,7 @@ test.describe('Phase 4 — Structural / rendering', () => {
  */
 test.describe('Phase A — Design compliance', () => {
   const EASE = 'cubic-bezier(0.16, 1, 0.3, 1)';
-  const ACCENT_RGB = 'rgb(201, 168, 76)'; // #C9A84C civic-amber, solid
+  const ACCENT_RGB = 'rgb(242, 166, 24)'; // #F2A618 civic-amber (oklch(78% 0.16 75)), solid
 
   test('source: zero gradients, zero backdrop-filter, zero banned hex, no 100px radius, mono font loaded', async ({ page, browserName, request }) => {
     test.skip(browserName !== 'chromium', 'single-browser source audit');
@@ -538,11 +538,10 @@ test.describe('Phase A — Design compliance', () => {
     expect(html).not.toMatch(/linear-gradient|radial-gradient/i);
     expect(html).not.toMatch(/backdrop-filter/i);
     expect(html).not.toMatch(/border-radius:\s*100px/);
-    for (const banned of ['#b8943e', '#e8d48b', '#e0c068', '#EF9F27', '#FAC775', '#5DCAA5', '#10b981']) {
+    for (const banned of ['#b8943e', '#e8d48b', '#e0c068', '#EF9F27', '#FAC775', '#5DCAA5', '#10b981', '#C9A84C']) {
       expect(html.toLowerCase(), `banned hex ${banned} present in source`).not.toContain(banned.toLowerCase());
     }
-    // #C9A84C may exist only as a solid value, never as a gradient stop — gradients are
-    // globally banned above, which covers the "as gradient stop" clause.
+    // #C9A84C (legacy accent) is fully retired — civic-amber is #F2A618, civic-amber-deep #D08600.
     const fontLinks = html.match(/fonts\.googleapis\.com\/css2\?[^"]+/g) || [];
     expect(fontLinks.length).toBeGreaterThan(0);
     for (const link of fontLinks) {
