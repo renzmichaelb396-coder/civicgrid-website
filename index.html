@@ -682,6 +682,32 @@
             justify-content: center;
         }
 
+        /* ==================== HOW IT WORKS SECTION ==================== */
+        .how-it-works {
+            background-color: var(--bg-light);
+            padding: 120px 0;
+        }
+
+        .how-it-works-figure {
+            max-width: 800px;
+            margin: 56px auto 0;
+        }
+
+        .how-it-works-img {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .how-it-works-caption {
+            font-size: 12px;
+            color: var(--gray);
+            margin-top: 14px;
+            text-align: center;
+        }
+
         /* ==================== WHY SECTION ==================== */
         .why {
             background-color: var(--white);
@@ -1253,7 +1279,7 @@
             .section-title { font-size: 32px; }
             .section-subtitle { font-size: 15px; }
 
-            .problem, .eoc, .why, .serve, .contact { padding: 80px 0; }
+            .problem, .eoc, .how-it-works, .why, .serve, .contact { padding: 80px 0; }
         }
 
         @media (max-width: 480px) {
@@ -1389,6 +1415,19 @@
                         <a href="#contact" class="btn-primary">Request EOC Demo</a>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-label reveal">How It Works</div>
+            <h2 class="section-title reveal">From citizen report to verified resolution.</h2>
+            <p class="section-subtitle reveal">One workflow, three stages, fully audited. A citizen files a report, the EOC reviews and dispatches it to the correct Lead Office cluster, and the response is closed out with an auditable proof-of-response trail.</p>
+            <div class="how-it-works-figure reveal reveal-delay-1">
+                <img src="how-it-works-infographic.png" width="1600" height="3765" alt="Three-stage CivicGrid workflow: a citizen files an emergency report through the citizen reporting app, the Emergency Operations Center reviews and dispatches it to the correct Lead Office cluster, and the incident is resolved and verified with an auditable proof-of-response report" class="how-it-works-img" loading="lazy">
+                <p class="how-it-works-caption">Illustrative interface rendering - not a live screenshot.</p>
             </div>
         </div>
     </section>
