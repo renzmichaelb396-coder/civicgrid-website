@@ -1,0 +1,7 @@
+playwright-report/
+test-results/
+tests/
+package.json
+playwright.config.ts
+*.pdf
+CIVICGRID-WEBSITE-DESIGN-COMPLIANCE-PHASE-A-PACKET.md
