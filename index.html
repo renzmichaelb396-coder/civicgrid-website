@@ -3,2006 +3,817 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CivicGrid: Emergency Operations Center Software for Philippine LGUs</title>
     <meta name="description" content="Emergency operations center software for Philippine LGUs: citizen reports, cluster dispatch and an audit-logged record of every response. Live at Mandaluyong City CDRRMD since July 2026.">
     <meta name="keywords" content="CivicGrid, EOC, emergency operations center, disaster response, DRRMO, CDRRMD, Mandaluyong, Philippine local government, LGU, barangay">
     <meta name="author" content="CivicGrid Software Development Services">
     <meta property="og:title" content="CivicGrid: Emergency Operations Center Software for Philippine LGUs">
     <meta property="og:description" content="Citizen reports, cluster dispatch and an audit-logged record of every response. Live at Mandaluyong City CDRRMD since July 2026.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://civicgrid.dev">
-    <meta property="og:image" content="https://civicgrid.dev/og-image.png">
+    <meta property="og:url" content="https://www.civicgrid.dev/">
+    <meta property="og:image" content="https://www.civicgrid.dev/og-image.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="CivicGrid: Emergency Operations Center Software for Philippine LGUs">
     <meta name="twitter:description" content="Citizen reports, cluster dispatch and an audit-logged record of every response. Live at Mandaluyong City CDRRMD since July 2026.">
-    <meta name="twitter:image" content="https://civicgrid.dev/og-image.png">
-    <title>CivicGrid: Emergency Operations Center Software for Philippine LGUs</title>
+    <meta name="twitter:image" content="https://www.civicgrid.dev/og-image.png">
+    <meta name="theme-color" content="#0b1424">
+    <link rel="canonical" href="https://www.civicgrid.dev/">
+    <link rel="icon" href="/favicon.ico" sizes="32x32">
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"Organization","name":"CivicGrid Software Development Services","url":"https://www.civicgrid.dev/","logo":"https://www.civicgrid.dev/logo.svg","email":"contact@civicgrid.dev","description":"Emergency operations software for Philippine LGUs.","address":{"@type":"PostalAddress","addressLocality":"City of Manila","addressCountry":"PH"},"areaServed":"PH"}
+    </script>
 
-    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230A1628'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%23F2A618'/%3E%3Ccircle cx='8' cy='8' r='2' fill='white'/%3E%3Ccircle cx='24' cy='8' r='2' fill='white'/%3E%3Ccircle cx='8' cy='24' r='2' fill='white'/%3E%3Ccircle cx='24' cy='24' r='2' fill='white'/%3E%3Cline x1='8' y1='8' x2='24' y2='8' stroke='white' stroke-width='1'/%3E%3Cline x1='8' y1='24' x2='24' y2='24' stroke='white' stroke-width='1'/%3E%3Cline x1='8' y1='8' x2='8' y2='24' stroke='white' stroke-width='1'/%3E%3Cline x1='24' y1='8' x2='24' y2='24' stroke='white' stroke-width='1'/%3E%3Cline x1='8' y1='8' x2='24' y2='24' stroke='white' stroke-width='0.5'/%3E%3Cline x1='24' y1='8' x2='8' y2='24' stroke='white' stroke-width='0.5'/%3E%3Cline x1='16' y1='8' x2='16' y2='24' stroke='white' stroke-width='0.5'/%3E%3Cline x1='8' y1='16' x2='24' y2='16' stroke='white' stroke-width='0.5'/%3E%3C/svg%3E">
 
-    <!-- Google Fonts (loaded async so the stylesheet fetch doesn't block first paint) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet"><!-- taste-skill-ignore: brand faces (DESIGN.md); Plex Mono is for data only -->
 
-    <!-- Hero background (largest visual asset, drives LCP) -->
-    <link rel="preload" as="image" href="hero-bg-v2.webp" fetchpriority="high">
 
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* CivicGrid operations palette (DESIGN.md). Amber is the one signal. */
         :root {
-            --primary: #0A1628;
-            --secondary: #112240;
-            /* civic-amber oklch(78% 0.16 75) = #F2A618; civic-amber-deep oklch(68% 0.16 75) = #D08600
-               (CIVICGRID-DESIGN.md §2 — correction confirmed, replaces the legacy gold accent) */
-            --accent: #F2A618;
-            --accent-deep: #D08600;
-            --bg-light: #F4F6FA;
-            --text: #1a1a2e;
-            --gray: #8892A4;
-            --gray-light: #b0b8c8;
-            --white: #ffffff;
-            --dark-overlay: #060f1e;
-            --border-radius: 16px;
-            --border-radius-sm: 8px;
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
-            --shadow-md: 0 8px 24px rgba(0,0,0,0.1);
-            --shadow-lg: 0 16px 48px rgba(0,0,0,0.15);
-            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --navy: oklch(15% 0.035 255);
+            --surface: oklch(20% 0.03 255);
+            --elevated: oklch(25% 0.025 255);
+            --step: oklch(30% 0.02 255);
+            --amber: oklch(78% 0.16 75);
+            --amber-deep: oklch(68% 0.16 75);
+            --ink: oklch(95% 0.005 255);
+            --ink-2: oklch(76% 0.008 255);
+            --ink-3: oklch(68% 0.008 255);
+            --on-amber: oklch(14% 0.01 255);
+
+            --display: 'IBM Plex Sans', system-ui, sans-serif;
+            --text: 'Plus Jakarta Sans', system-ui, sans-serif;
+            --data: 'IBM Plex Mono', ui-monospace, monospace; /* taste-skill-ignore: brand Mono-Is-Data rule */
+
+            --margin: clamp(20px, 4vw, 64px);
+            --radius: 4px;
+            --cut: clamp(40px, 6vw, 96px);
+            --gap-section: clamp(72px, 8vw, 120px);
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Light sections: secondary text and amber labels darkened to pass WCAG AA (4.5:1) */
-        :is(.eoc, .how-it-works, .why, .contact, .eligibility, .privacy) {
-            --gray: #566074;
-        }
-        :is(.eoc, .how-it-works, .why, .contact, .eligibility, .privacy) :is(.section-label, .contact-info-label, .why-item-num) {
-            color: #8A5A00;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
         body {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-            color: var(--text);
-            line-height: 1.7;
-            background-color: var(--white);
+            background: var(--navy);
+            color: var(--ink);
+            font: 400 17px/1.6 var(--text);
             overflow-x: hidden;
         }
-
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-        }
-
-        /* Scroll Reveal Animations */
-        .reveal {
-            opacity: 0;
-            transform: translateY(24px);
-            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .reveal-delay-1 { transition-delay: 0.06s; }
-        .reveal-delay-2 { transition-delay: 0.12s; }
-        .reveal-delay-3 { transition-delay: 0.18s; }
-        .reveal-delay-4 { transition-delay: 0.24s; }
-
-        /* Utility */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        .section-label {
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 3px;
-            color: var(--accent);
-            text-transform: uppercase;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .section-label::before {
-            content: '';
-            width: 24px;
-            height: 2px;
-            background: var(--accent);
-        }
-
-        .section-title {
-            font-size: 44px;
-            font-weight: 600;
-            line-height: 1.15;
-            margin-bottom: 20px;
-            letter-spacing: -0.5px;
-        }
-
-        .section-subtitle {
-            font-size: 17px;
-            color: var(--gray);
-            line-height: 1.7;
-            margin-bottom: 48px;
-            max-width: 640px;
-        }
-
-        /* ==================== NAVIGATION ==================== */
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 72px;
-            background-color: rgba(10, 22, 40, 0.97);
-            border-bottom: 1px solid transparent;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 36px;
-            z-index: 1000;
-            transition: var(--transition);
-        }
-
-        nav.scrolled {
-            background-color: var(--primary);
-            border-bottom-color: rgba(242, 166, 24, 0.12);
-            box-shadow: 0 4px 24px rgba(0,0,0,0.3);
-        }
-
-        .nav-logo-container {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            text-decoration: none;
-        }
-
-        .nav-logo-svg {
-            width: 38px;
-            height: 38px;
-        }
-
-        .nav-logo-text {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .nav-logo-main {
-            font-weight: 800;
-            color: var(--white);
-            font-size: 17px;
-            line-height: 1;
-            letter-spacing: -0.3px;
-        }
-
-        .nav-logo-sub {
-            font-size: 8.5px;
-            color: var(--gray);
-            font-weight: 600;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            margin-top: 3px;
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 36px;
-            list-style: none;
-        }
-
-        .nav-links a {
-            color: var(--gray-light);
-            text-decoration: none;
-            font-size: 13.5px;
-            font-weight: 500;
-            transition: var(--transition);
-            position: relative;
-            letter-spacing: 0.2px;
-        }
-
-        .nav-links a:hover,
-        .nav-links a.active {
-            color: var(--white);
-        }
-
-        .nav-links a.active::after {
-            content: '';
-            position: absolute;
-            bottom: -6px;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: var(--accent);
-            border-radius: 2px;
-        }
-
-        .btn-demo {
-            background: var(--accent);
-            color: var(--primary);
-            padding: 10px 24px;
-            border-radius: var(--border-radius-sm);
-            font-weight: 700;
-            font-size: 13px;
-            border: none;
-            cursor: pointer;
-            transition: var(--transition);
-            text-decoration: none;
-            display: inline-block;
-            letter-spacing: 0.3px;
-        }
-
-        /* .nav-links a sets light text; the CTA must keep navy on amber */
-        .nav-links a.btn-demo,
-        .nav-links a.btn-demo:hover { color: var(--primary); }
-
-        .btn-demo:hover {
-            background: var(--accent-deep);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(242, 166, 24, 0.35);
-        }
-
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            cursor: pointer;
-            gap: 5px;
-        }
-
-        .hamburger span {
-            width: 24px;
-            height: 2px;
-            background-color: var(--white);
-            transition: var(--transition);
-            border-radius: 2px;
-        }
-
-        .hamburger.active span:nth-child(1) {
-            transform: rotate(45deg) translate(5px, 5px);
-        }
-        .hamburger.active span:nth-child(2) {
-            opacity: 0;
-        }
-        .hamburger.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(5px, -5px);
-        }
-
-        /* ==================== HERO ==================== */
-        .hero {
-            min-height: 100vh;
-            background: url('hero-bg-v2.webp');
-            background-color: var(--dark-overlay);
-            background-size: cover;
-            background-position: center top;
-            background-attachment: fixed;
-            display: flex;
-            align-items: center;
-            align-items: safe center;
-            justify-content: center;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            padding-top: 96px;
-        }
-
-        /* Solid scrim over the hero photo for text contrast */
-        .hero::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-color: rgba(6, 15, 30, 0.78);
-            pointer-events: none;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            max-width: 860px;
-            padding: 80px 24px;
-        }
-
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(242, 166, 24, 0.08);
-            border: 1px solid rgba(242, 166, 24, 0.2);
-            padding: 8px 20px;
-            border-radius: var(--border-radius-sm);
-            margin-bottom: 36px;
-            font-size: 12px;
-            color: var(--accent);
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        .pulse-dot {
-            width: 8px;
-            height: 8px;
-            background-color: var(--accent);
-            border-radius: 50%;
-            position: relative;
-        }
-
-        .pulse-dot::after {
-            content: '';
-            position: absolute;
-            inset: -3px;
-            border-radius: 50%;
-            border: 1px solid var(--accent);
-        }
-
-        .hero h1 {
-            font-size: 60px;
-            font-weight: 600;
-            color: var(--white);
-            line-height: 1.1;
-            margin-bottom: 28px;
-            letter-spacing: -1.5px;
-        }
-
-        .hero h1 .gold {
-            color: var(--accent);
-        }
-
-        .hero-subtitle {
-            font-size: 18px;
-            color: var(--gray-light);
-            line-height: 1.8;
-            margin-bottom: 44px;
-            max-width: 680px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            margin-bottom: 72px;
-            flex-wrap: wrap;
-        }
-
-        .btn-primary {
-            background: var(--accent);
-            color: var(--primary);
-            padding: 16px 36px;
-            border-radius: var(--border-radius-sm);
-            font-weight: 700;
-            font-size: 15px;
-            border: none;
-            cursor: pointer;
-            transition: var(--transition);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            letter-spacing: 0.3px;
-        }
-
-        .btn-primary:hover {
-            background: var(--accent-deep);
-            transform: translateY(-3px);
-            box-shadow: 0 12px 32px rgba(242, 166, 24, 0.35);
-        }
-
-        .btn-primary svg {
-            width: 16px;
-            height: 16px;
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: var(--white);
-            padding: 16px 36px;
-            border-radius: var(--border-radius-sm);
-            font-weight: 600;
-            font-size: 15px;
-            border: 1.5px solid rgba(255,255,255,0.25);
-            cursor: pointer;
-            transition: var(--transition);
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255,255,255,0.08);
-            border-color: rgba(255,255,255,0.5);
-            transform: translateY(-3px);
-        }
-
-        .hero-divider {
-            width: 48px;
-            height: 1px;
-            background: var(--accent);
-            margin: 0 auto 44px;
-        }
-
-        /* ==================== TRUST BAR ==================== */
-        .trust-bar {
-            background-color: var(--primary);
-            padding: 14px 24px;
-            text-align: center;
-            border-bottom: 1px solid rgba(242, 166, 24, 0.08);
-        }
-
-        .trust-bar-text {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.65);
-            letter-spacing: 0.04em;
-            line-height: 1.6;
-        }
-
-        /* Mono-Is-Data: registry/reference numbers render in the data face */
-        .ref-mono {
-            font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
-            font-size: 0.95em;
-        }
-
-        @media (max-width: 768px) {
-            .trust-bar-text { font-size: 13px; }
-        }
-
-        /* ==================== PROBLEM SECTION ==================== */
-        .problem {
-            background: var(--primary);
-            color: var(--white);
-            padding: 120px 0;
-        }
-
-        .problem .section-title { color: var(--white); }
-        .problem .section-subtitle { color: var(--gray); }
-
-        /* ==================== EOC SECTION ==================== */
-        .eoc {
-            background-color: var(--white);
-            padding: 120px 0;
-        }
-
-        .eoc-layout {
-            display: grid;
-            grid-template-columns: 1.1fr 1fr;
-            gap: 56px;
-            align-items: center;
-            margin-top: 56px;
-        }
-
-        /* One signature scroll-linked moment — see CIVICGRID-WEBSITE-EOC-RECONSTRUCTION-PACKET.md §3.
-           The connecting line draws in via animation-timeline: view() where supported; the
-           .reveal wrapper (existing IntersectionObserver pattern) covers browsers that don't. */
-        .eoc-flow {
-            max-width: 640px;
-            margin: 40px auto 0;
-        }
-
-        .eoc-flow-svg {
-            display: block;
-            width: 100%;
-            height: 24px;
-        }
-
-        .eoc-flow-line {
-            fill: none;
-            stroke: var(--accent);
-            stroke-width: 2;
-            stroke-linecap: round;
-        }
-
-        .eoc-flow-node {
-            fill: var(--white);
-            stroke: var(--accent);
-            stroke-width: 2;
-        }
-
-        .eoc-flow-labels {
-            display: flex;
-            margin-top: 10px;
-        }
-
-        .eoc-flow-labels span {
-            flex: 1;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.4px;
-            text-transform: uppercase;
-            color: var(--primary);
-            text-align: center;
-        }
-
-        .eoc-flow-labels span:first-child { text-align: left; }
-        .eoc-flow-labels span:last-child { text-align: right; }
-
-        @supports (animation-timeline: view()) {
-            /* animation-timeline: view() needs a subject with real block-size for its
-               entry/exit math — the <path> itself is a horizontal line with a
-               zero-height bounding box, so the timeline source is named on the
-               wrapper instead and referenced from the path being animated. */
-            .eoc-flow {
-                view-timeline-name: --eoc-flow-enter;
-                view-timeline-axis: block;
-            }
-
-            .eoc-flow-line {
-                stroke-dasharray: 1;
-                stroke-dashoffset: 1;
-                animation: eocFlowDraw 1s linear both;
-                animation-timeline: --eoc-flow-enter;
-                animation-range: entry 0% entry 100%;
-            }
-
-            @keyframes eocFlowDraw {
-                to { stroke-dashoffset: 0; }
-            }
-        }
-
-        .eoc-visual {
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--shadow-lg);
-            aspect-ratio: 16 / 10;
-            background-color: var(--bg-light);
-        }
-
-        .eoc-dashboard-img {
-            display: block;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .eoc-image-caption {
-            font-size: 12px;
-            color: var(--gray);
-            margin-top: 14px;
-            text-align: center;
-        }
-
-        .eoc-details .product-features {
-            padding: 0;
-            border-top: none;
-            margin-bottom: 32px;
-        }
-
-        @media (max-width: 1024px) {
-            .eoc-layout { grid-template-columns: 1fr; gap: 32px; }
-        }
-
-        .filter-pills {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 14px;
-            flex-wrap: wrap;
-        }
-
-        .filter-pill {
-            font-size: 10px;
-            padding: 3px 10px;
-            background: rgba(242, 166, 24, 0.1);
-            color: var(--accent);
-            border-radius: 4px;
-            font-weight: 600;
-            letter-spacing: 0.3px;
-        }
-
-        .map-area {
-            flex: 1;
-            background: rgba(10, 22, 40, 0.7);
-            border-radius: 8px;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .map-pin {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            position: absolute;
-        }
-
-        /* Severity tokens per design system: high / medium (= civic-amber) / low */
-        .map-pin.red { background: oklch(60% 0.22 25); color: oklch(60% 0.22 25); }
-        .map-pin.orange { background: var(--accent); color: var(--accent); }
-        .map-pin.yellow { background: oklch(65% 0.13 180); color: oklch(65% 0.13 180); }
-
-        .map-label {
-            font-size: 10px;
-            color: rgba(255,255,255,0.25);
-            font-weight: 700;
-            letter-spacing: 2px;
-        }
-
-        .portfolio-banner {
-            background: rgba(242, 166, 24, 0.07);
-            padding: 14px;
-            border-radius: 8px;
-            text-align: center;
-            border: 1px solid rgba(242, 166, 24, 0.1);
-        }
-
-        .portfolio-value {
-            font-size: 26px;
-            font-weight: 900;
-            color: var(--accent);
-            margin-bottom: 2px;
-            letter-spacing: -0.5px;
-        }
-
-        .portfolio-label {
-            font-size: 10px;
-            color: var(--gray);
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        .product-features {
-            padding: 28px;
-            border-top: 1px solid #e8ecf4;
-        }
-
-        .feature-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 14px;
-            margin-bottom: 14px;
-        }
-
-        .feature-item:last-child { margin-bottom: 0; }
-
-        .feature-check {
-            width: 22px;
-            height: 22px;
-            background: var(--accent);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary);
-            font-weight: 800;
-            font-size: 12px;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-
-        .feature-text {
-            font-size: 13.5px;
-            color: var(--text);
-            line-height: 1.6;
-        }
-
-        .product-button {
-            padding: 24px 28px;
-            border-top: 1px solid #e8ecf4;
-        }
-
-        .product-button .btn-primary {
-            width: 100%;
-            justify-content: center;
-        }
-
-        /* ==================== HOW IT WORKS SECTION ==================== */
-        .how-it-works {
-            background-color: var(--bg-light);
-            padding: 120px 0;
-        }
-
-        .how-it-works-figure {
-            max-width: 800px;
-            margin: 56px auto 0;
-        }
-
-        .how-steps {
-            list-style: none;
-            counter-reset: how-step;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 40px;
-            margin: 56px 0 0;
-            padding: 0;
-        }
-
-        .how-step {
-            counter-increment: how-step;
-            padding-top: 24px;
-            border-top: 2px solid var(--primary);
-        }
-
-        .how-step-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-
-        .how-step-title::before {
-            content: counter(how-step) ".";
-            color: #8A5A00;
-            margin-right: 8px;
-        }
-
-        .how-step-body {
-            font-size: 15px;
-            color: #4A5468;
-            line-height: 1.7;
-            max-width: 38ch;
-        }
-
-        @media (max-width: 900px) {
-            .how-steps { grid-template-columns: 1fr; gap: 32px; }
-        }
-
-        .eoc-visual-phone {
-            aspect-ratio: auto;
-            max-width: 380px;
-            margin: 0 auto;
-            background: transparent;
-            box-shadow: none;
-        }
-
-        .how-it-works-img {
-            display: block;
-            width: 100%;
-            height: auto;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .how-it-works-caption {
-            font-size: 12px;
-            color: var(--gray);
-            margin-top: 14px;
-            text-align: center;
-        }
-
-        /* ==================== WHY SECTION ==================== */
-        .why {
-            background-color: var(--white);
-            padding: 120px 0;
-        }
-
-        .why-list {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 40px 56px;
-            margin-top: 56px;
-        }
-
-        .why-item {
-            display: flex;
-            gap: 20px;
-            padding-top: 24px;
-            border-top: 1px solid #e8ecf4;
-            transition: var(--transition);
-        }
-
-        .why-item:hover {
-            border-top-color: rgba(242, 166, 24, 0.5);
-        }
-
-        .why-item-num {
-            font-family: 'IBM Plex Mono', ui-monospace, monospace;
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--accent);
-            line-height: 1.9;
-            flex-shrink: 0;
-        }
-
-        .why-item-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 8px;
-        }
-
-        .why-item-body {
-            font-size: 14px;
-            color: var(--gray);
-            line-height: 1.7;
-        }
-
-        /* ==================== SERVE SECTION ==================== */
-        .serve {
-            background: var(--primary);
-            color: var(--white);
-            padding: 120px 0;
-        }
-
-        .serve .section-title { color: var(--white); }
-        .serve .section-subtitle { color: var(--gray); }
-
-        .serve-list {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 60px;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .serve-item {
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            gap: 24px;
-            padding: 22px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            transition: var(--transition);
-        }
-
-        .serve-item:hover {
-            border-bottom-color: rgba(242, 166, 24, 0.4);
-        }
-
-        .serve-item-title {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--white);
-        }
-
-        .serve-item-body {
-            font-size: 14px;
-            color: var(--gray);
-            line-height: 1.6;
-        }
-
-        .pilot-banner {
-            background: rgba(242, 166, 24, 0.06);
-            border: 1px solid rgba(242, 166, 24, 0.15);
-            padding: 32px;
-            border-radius: var(--border-radius);
-            text-align: center;
-        }
-
-        .pilot-banner-content {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 14px;
-        }
-
-        .pilot-dot {
-            width: 8px;
-            height: 8px;
-            background-color: var(--accent);
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
-
-        .pilot-text {
-            font-size: 14px;
-            color: var(--gray-light);
-            line-height: 1.7;
-        }
-
-        /* ==================== FOUNDER + MILESTONES SECTION ==================== */
-        .founder {
-            background-color: #0A1628;
-            padding: 120px 0;
-        }
-
-        .founder .section-title { color: var(--white); }
-        .founder .section-subtitle { color: var(--gray); }
-
-        .founder-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 48px;
-            margin-top: 56px;
-            align-items: start;
-        }
-
-        .founder-card {
-            background: #101F35;
-            border: 1px solid rgba(242, 166, 24, 0.15);
-            border-radius: 6px;
-            padding: 32px;
-        }
-
-        .founder-grid:has(.founder-media) {
-            grid-template-columns: minmax(260px, 340px) 1fr;
-            gap: 56px;
-        }
-
-        .founder-media { margin: 0; }
-
-        .founder-video {
-            display: block;
-            width: 100%;
-            height: auto;
-            aspect-ratio: 9 / 16;
-            border-radius: var(--border-radius);
-            background: #101F35;
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
-        }
-
-        .founder-video-caption {
-            font-size: 13px;
-            color: var(--gray-light);
-            margin-top: 14px;
-            line-height: 1.6;
-        }
-
-        .founder-side {
-            display: flex;
-            flex-direction: column;
-            gap: 40px;
-        }
-
-        .founder-quote {
-            font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-            font-size: 18px;
-            line-height: 1.55;
-            font-weight: 500;
-            color: var(--white);
-            margin: 0 0 18px;
-            text-wrap: balance;
-        }
-
-        .founder-links {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px 24px;
-            margin-top: 22px;
-        }
-
-        .founder-links a,
-        .contact-info-value a,
-        .form-error a {
-            color: inherit;
-            text-decoration: underline;
-            text-decoration-color: var(--accent);
-            text-decoration-thickness: 2px;
-            text-underline-offset: 4px;
-        }
-
-        .founder-links a {
-            color: var(--white);
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .founder-links a:hover,
-        .contact-info-value a:hover { color: var(--accent); }
-
-        .founder-links a:focus-visible,
-        .contact-info-value a:focus-visible {
-            outline: 2px solid var(--accent);
-            outline-offset: 3px;
-            border-radius: 2px;
-        }
-
-        .founder-monogram {
-            width: 56px;
-            height: 56px;
-            border-radius: 4px;
-            background: var(--accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 18px;
-            color: #0A1628;
-            letter-spacing: 0.5px;
-            margin-bottom: 20px;
-        }
-
-        .founder-name {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--white);
-            margin-bottom: 2px;
-        }
-
-        .founder-title {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--accent);
-            letter-spacing: 0.5px;
-            margin-bottom: 18px;
-        }
-
-        .founder-bio {
-            font-size: 14px;
-            color: var(--gray);
-            line-height: 1.7;
-        }
-
-        .milestones-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0;
-        }
-
-        .milestone-item {
-            display: flex;
-            gap: 16px;
-            padding: 20px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        .milestone-item:first-child { padding-top: 0; }
-        .milestone-item:last-child { border-bottom: none; padding-bottom: 0; }
-
-        .milestone-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 3px;
-            background: var(--accent);
-            flex-shrink: 0;
-            margin-top: 6px;
-        }
-
-        .milestone-date {
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            color: var(--accent);
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-
-        .milestone-title {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--white);
-            margin-bottom: 4px;
-        }
-
-        .milestone-body {
-            font-size: 13px;
-            color: var(--gray);
-            line-height: 1.6;
-        }
-
-        @media (max-width: 1024px) {
-            .founder-grid,
-            .founder-grid:has(.founder-media) { grid-template-columns: 1fr; gap: 32px; }
-            .founder-media { max-width: 360px; width: 100%; margin: 0 auto; }
-        }
-
-        /* ==================== CONTACT SECTION ==================== */
-        .contact {
-            background-color: var(--bg-light);
-            padding: 120px 0;
-        }
-
-        .contact-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 72px;
-            align-items: flex-start;
-        }
-
-        .contact-info h2 { color: var(--primary); }
-
-        .contact-info-item {
-            margin-bottom: 28px;
-        }
-
-        .contact-info-label {
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            color: var(--accent);
-            text-transform: uppercase;
-            margin-bottom: 6px;
-        }
-
-        .contact-info-value {
-            font-size: 16px;
-            color: var(--text);
-            font-weight: 600;
-        }
-
-        .contact-form {
-            background: var(--white);
-            padding: 40px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-md);
-            border: 1px solid #e8ecf4;
-        }
-
-        .contact-form h3 {
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 28px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 16px;
-        }
-
-        .form-row.full { grid-template-columns: 1fr; }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group label {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text);
-            margin-bottom: 6px;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            padding: 12px 16px;
-            border: 1.5px solid #e0e6f0;
-            border-radius: var(--border-radius-sm);
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 14px;
-            color: var(--text);
-            transition: var(--transition);
-            background: var(--white);
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(242, 166, 24, 0.1);
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .form-submit {
-            width: 100%;
-            padding: 14px;
-            background: var(--primary);
-            color: var(--white);
-            border: none;
-            border-radius: var(--border-radius-sm);
-            font-weight: 700;
-            font-size: 15px;
-            cursor: pointer;
-            transition: var(--transition);
-            margin-top: 16px;
-            letter-spacing: 0.3px;
-        }
-
-        .form-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(10, 22, 40, 0.3);
-        }
-
-        .form-submit:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .form-note {
-            font-size: 12px;
-            color: var(--gray);
-            margin-top: 14px;
-            text-align: center;
-        }
-
-        .form-success {
-            display: none;
-            background: oklch(65% 0.13 180 / 0.08);
-            border: 1px solid oklch(65% 0.13 180);
-            color: oklch(45% 0.1 180);
-            padding: 14px 20px;
-            border-radius: var(--border-radius-sm);
-            margin-bottom: 20px;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .form-success.show { display: block; }
-
-        .form-error {
-            display: none;
-            background: oklch(60% 0.22 25 / 0.08);
-            border: 1px solid oklch(60% 0.22 25);
-            color: oklch(48% 0.19 25);
-            padding: 14px 20px;
-            border-radius: var(--border-radius-sm);
-            margin-top: 14px;
-            font-size: 14px;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        .form-error.show { display: block; }
-
-        /* ==================== PRIVACY / ELIGIBILITY SECTIONS ==================== */
-        .privacy,
-        .eligibility {
-            background-color: var(--bg-light);
-            padding: 72px 0;
-            border-top: 1px solid #e0e6f0;
-        }
-
-        .privacy-content,
-        .eligibility-content {
-            max-width: 760px;
-        }
-
-        .privacy-block,
-        .eligibility-block {
-            margin-bottom: 24px;
-        }
-
-        .privacy-block:last-child,
-        .eligibility-block:last-child {
-            margin-bottom: 0;
-        }
-
-        .privacy-block h3,
-        .eligibility-block h3 {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 8px;
-        }
-
-        .privacy-block p,
-        .privacy-block li,
-        .eligibility-block p,
-        .eligibility-block li {
-            font-size: 13.5px;
-            color: var(--gray);
-            line-height: 1.7;
-        }
-
-        .privacy-block ul,
-        .eligibility-block ul {
-            padding-left: 20px;
-        }
-
-        /* ==================== FOOTER ==================== */
-        footer {
-            background-color: var(--primary);
-            border-top: 1px solid rgba(255, 255, 255, 0.04);
-            padding: 48px 0;
-            color: var(--gray);
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 40px;
-            align-items: center;
-        }
-
-        .footer-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .footer-logo-svg {
-            width: 28px;
-            height: 28px;
-        }
-
-        .footer-logo-text {
-            font-weight: 700;
-            color: var(--white);
-            font-size: 15px;
-        }
-
-        .footer-center {
-            text-align: center;
-            font-size: 12px;
-            color: var(--gray);
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: flex-end;
-            gap: 28px;
-            list-style: none;
-        }
-
-        .footer-links a {
-            color: var(--gray);
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 500;
-            transition: var(--transition);
-        }
-
-        .footer-links a:hover { color: var(--accent); }
-
-        /* ==================== BACK TO TOP ==================== */
-        .back-to-top {
-            position: fixed;
-            bottom: 32px;
-            right: 32px;
-            width: 44px;
-            height: 44px;
-            background: var(--accent);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            opacity: 0;
-            visibility: hidden;
-            transition: var(--transition);
-            z-index: 999;
-            border: none;
-            box-shadow: 0 4px 16px rgba(242, 166, 24, 0.3);
-        }
-
-        .back-to-top.visible {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .back-to-top:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 24px rgba(242, 166, 24, 0.4);
-        }
-
-        .back-to-top svg {
-            width: 18px;
-            height: 18px;
-            fill: var(--primary);
-        }
-
-        /* ==================== RESPONSIVE ==================== */
-        @media (max-width: 1024px) {
-            .serve-item { grid-template-columns: 220px 1fr; }
-        }
-
-        @media (max-width: 768px) {
-            .hamburger { display: flex; }
-
-            .nav-links {
-                position: absolute;
-                top: 72px;
-                left: 0;
-                right: 0;
-                background: var(--primary);
-                flex-direction: column;
-                gap: 0;
-                max-height: 0;
-                overflow: hidden;
-                transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-                border-bottom: 1px solid rgba(242, 166, 24, 0.15);
-            }
-
-            .nav-links.active { max-height: 320px; }
-
-            .nav-links a {
-                padding: 18px 36px;
-                border-bottom: 1px solid rgba(242, 166, 24, 0.06);
-                color: var(--white);
-            }
-
-            .nav-links a.active::after { display: none; }
-
-            .btn-demo {
-                margin: 12px 24px;
-                text-align: center;
-            }
-
-            .hero { min-height: auto; padding: 100px 20px 80px; background-attachment: scroll; }
-            .hero h1 { font-size: 36px; letter-spacing: -0.5px; }
-            .hero-subtitle { font-size: 16px; }
-            .hero-buttons { flex-direction: column; }
-            .hero-buttons .btn-primary,
-            .hero-buttons .btn-secondary { width: 100%; justify-content: center; }
-
-            .why-list { grid-template-columns: 1fr; gap: 28px; }
-            .serve-item { grid-template-columns: 1fr; gap: 6px; }
-            .contact-container { grid-template-columns: 1fr; gap: 40px; }
-            .form-row { grid-template-columns: 1fr; }
-            .footer-content { grid-template-columns: 1fr; text-align: center; gap: 16px; }
-            .footer-logo { justify-content: center; }
-            .footer-links { justify-content: center; }
-
-            .section-title { font-size: 32px; }
-            .section-subtitle { font-size: 15px; }
-
-            .problem, .eoc, .how-it-works, .why, .serve, .contact { padding: 80px 0; }
-        }
-
-        @media (max-width: 480px) {
-            .hero h1 { font-size: 28px; }
-            .section-title { font-size: 26px; }
-            .contact-form { padding: 24px; }
-            .pilot-banner-content { flex-direction: column; }
-        }
-
+        img, video { display: block; max-width: 100%; }
+        a { color: inherit; }
+        ::selection { background: var(--amber); color: var(--on-amber); }
+        :focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; border-radius: 2px; }
+
+        h1, h2, h3 { font-family: var(--display); font-weight: 600; letter-spacing: -0.02em; text-wrap: balance; }
+        .data { font-family: var(--data); font-variant-numeric: tabular-nums; }
+        .wrap { padding: 0 var(--margin); max-width: 1520px; margin: 0 auto; }
+        .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+        /* The motif: a block with one chamfered corner, from the record bar */
+        .cut { clip-path: polygon(var(--cut) 0, 100% 0, 100% 100%, 0 100%, 0 var(--cut)); }
+        .cut-sm { --cut: 14px; }
+
+        /* Buttons: flat amber, square-ish, one shape */
+        .btn {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: var(--amber); color: var(--on-amber);
+            font: 600 15px/1 var(--display); letter-spacing: 0.04em; text-transform: uppercase;
+            text-decoration: none; padding: 18px 24px; border: 0; border-radius: var(--radius);
+            cursor: pointer; transition: background 150ms var(--ease), transform 250ms var(--ease);
+        }
+        .btn:hover { background: var(--amber-deep); transform: translateY(-1px); }
+        .btn:active { transform: translateY(1px); }
+        .link {
+            font: 500 16px/1.4 var(--display); text-decoration: underline;
+            text-decoration-color: var(--amber); text-decoration-thickness: 2px; text-underline-offset: 6px;
+            transition: color 150ms var(--ease);
+        }
+        .link:hover { color: var(--amber); }
+
+        /* ============ NAV ============ */
+        .nav {
+            position: sticky; top: 0; z-index: 20; background: var(--navy);
+            display: flex; align-items: center; justify-content: space-between;
+            height: 76px; padding: 0 var(--margin);
+        }
+        .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; font: 600 21px var(--display); letter-spacing: -0.01em; }
+        .nav-links { display: flex; align-items: center; gap: clamp(20px, 2.6vw, 40px); }
+        .nav-links a:not(.btn) { font: 500 15px var(--display); text-decoration: none; color: var(--ink-2); transition: color 150ms var(--ease); }
+        .nav-links a:not(.btn):hover { color: var(--ink); }
+        .nav-links .btn { padding: 13px 18px; font-size: 13px; }
+        .menu-toggle { display: none; background: none; border: 0; color: var(--ink); font: 600 13px var(--display); letter-spacing: .06em; text-transform: uppercase; padding: 12px 0 12px 12px; cursor: pointer; }
+
+        /* ============ HERO ============ */
+        .hero { position: relative; min-height: calc(100svh - 76px); padding-top: clamp(32px, 6vh, 88px); display: flex; flex-direction: column; overflow: hidden; }
+        .hero-copy { position: relative; z-index: 2; max-width: 1060px; }
+        .hero h1 { font-size: clamp(38px, 3.9vw, 66px); line-height: 1.05; letter-spacing: -0.025em; max-width: 30ch; }
+        .hero-lede { font-size: clamp(17px, 1.3vw, 19px); color: var(--ink-2); max-width: 64ch; margin-top: 18px; }
+        .hero-lede strong { color: var(--ink); font-weight: 600; }
+        .hero-actions { display: flex; flex-wrap: wrap; gap: 28px; align-items: center; margin-top: 22px; }
+
+        .stage {
+            position: relative; z-index: 1; flex: 1 0 auto; min-height: 300px;
+            margin: clamp(24px, 3vh, 40px) calc(var(--margin) * -1) 0 30%;
+            background: var(--surface); padding: clamp(28px, 3.6vw, 56px) 0 clamp(24px, 3vw, 40px) clamp(28px, 4vw, 64px);
+        }
+        .board { width: max(880px, 100%); color: var(--ink-2); }
+        .board-head { display: flex; justify-content: space-between; align-items: center; padding-right: var(--margin); font: 600 13px var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+        .tick { display: inline-block; width: 12px; height: 12px; background: var(--amber); clip-path: polygon(35% 0, 100% 0, 100% 100%, 0 100%, 0 35%); margin-right: 10px; vertical-align: -1px; }
+        .board-m { display: none; }
+        .ruler, .lane { display: grid; grid-template-columns: 150px repeat(5, minmax(0, 1fr)); column-gap: 10px; }
+        .ruler { margin-top: 22px; font: 500 14px var(--data); color: var(--ink-3); }
+        .lane { margin-top: 12px; align-items: stretch; }
+        .lane-name { font: 600 13px var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); padding-top: 18px; }
+        .ev { padding: 16px 16px 18px; font-size: 15px; line-height: 1.4; min-height: 92px; }
+        .lane-today .ev { background: var(--elevated); color: var(--ink-2); }
+        .lane-cg .ev { background: var(--navy); color: var(--ink); }
+        .lane-cg .ev b { display: block; font: 600 14px var(--data); color: var(--amber); margin-bottom: 6px; }
+        .lane-cg .ev.done { background: var(--amber); color: var(--on-amber); }
+        .lane-cg .ev.done b { color: var(--on-amber); }
+        .board-note { margin-top: 16px; font-size: 13px; color: var(--ink-3); }
+        .now { position: absolute; top: 0; bottom: 0; width: 3px; background: var(--amber); left: 0; opacity: 0; pointer-events: none; }
+
+        /* ============ PROOF BOARD ============ */
+        .section { padding-top: var(--gap-section); }
+        .section h2 { font-size: clamp(40px, 4.6vw, 76px); line-height: 1.02; max-width: 16ch; }
+        .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 56px; }
+        .tile { background: var(--surface); padding: 28px; min-height: 220px; display: flex; flex-direction: column; justify-content: space-between; gap: 18px; }
+        .tile.w2 { grid-column: span 2; }
+        .tile.lead { background: var(--elevated); }
+        .tile.lead h2 { font-size: clamp(32px, 3.2vw, 52px); }
+        .tile-k { font: 600 13px var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+        .tile-v { font: 600 clamp(26px, 2.4vw, 38px)/1.1 var(--display); letter-spacing: -0.02em; }
+        .tile-v.data { font: 600 clamp(26px, 2.4vw, 38px)/1.1 var(--data); letter-spacing: -0.02em; color: var(--amber); }
+        .tile p { color: var(--ink-2); font-size: 16px; }
+        .tile.media { padding: 0; overflow: hidden; position: relative; }
+        .tile.media img { width: 100%; height: 100%; object-fit: cover; object-position: top; position: absolute; inset: 0; }
+        .tile.media figcaption { position: absolute; left: 0; bottom: 0; background: var(--navy); color: var(--ink-2); font-size: 14px; padding: 10px 14px; }
+
+        /* Deployment facts as one segmented record bar */
+        .facts { list-style: none; display: flex; gap: 6px; margin-top: 8px; }
+        .facts li { flex: 1 1 0; background: var(--surface); padding: 24px 24px 28px; display: grid; gap: 10px; align-content: start; min-height: 200px; }
+        .facts li:first-child { clip-path: polygon(var(--cut) 0, 100% 0, 100% 100%, 0 100%, 0 var(--cut)); --cut: 28px; }
+        .facts li.now-seg { background: var(--amber); color: var(--on-amber); }
+        .fact-w { font: 600 13px var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+        .now-seg .fact-w, .now-seg .fact-n { color: var(--on-amber); }
+        .fact-v { font: 600 clamp(26px, 2.4vw, 38px)/1.1 var(--display); letter-spacing: -0.02em; }
+        .fact-v.data { font-family: var(--data); color: var(--amber); }
+        .fact-n { font-size: 16px; color: var(--ink-2); }
+
+        /* ============ STAGES BAR ============ */
+        .bar { display: flex; gap: 6px; margin-top: 48px; }
+        .seg { padding: 20px; display: flex; flex-direction: column; gap: 14px; flex: 1 1 0; }
+        .seg:nth-child(1) { background: var(--elevated); }
+        .seg:nth-child(2) { background: var(--step); }
+        .seg:nth-child(3) { background: var(--surface); }
+        .seg:nth-child(4) { background: var(--amber); color: var(--on-amber); }
+        .seg-t { font: 600 clamp(20px, 2vw, 30px)/1.1 var(--display); letter-spacing: -0.015em; }
+        .seg-w { font: 600 13px var(--display); letter-spacing: .06em; text-transform: uppercase; opacity: .8; }
+
+        /* ============ TRY IT ============ */
+        .try { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 88px); align-items: start; margin-top: 56px; }
+        .try-intro p { color: var(--ink-2); font-size: 18px; max-width: 40ch; margin-top: 20px; }
+        .chips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 32px; }
+        .chip {
+            text-align: left; background: var(--surface); color: var(--ink); border: 0; border-radius: var(--radius);
+            font: 500 17px/1.3 var(--display); padding: 20px 18px; min-height: 64px; cursor: pointer;
+            transition: background 150ms var(--ease), transform 250ms var(--ease);
+        }
+        .chip:hover { background: var(--elevated); transform: translateY(-1px); }
+        .chip[aria-pressed="true"] { background: var(--amber); color: var(--on-amber); }
+        .record { background: var(--surface); padding: clamp(24px, 3vw, 40px); }
+        .record-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
+        .record-head h3 { font-size: clamp(22px, 2vw, 28px); }
+        .record-tag { font: 600 12px var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+        .record ol { list-style: none; margin-top: 22px; display: grid; gap: 6px; }
+        .record li { display: grid; grid-template-columns: 76px 140px 1fr; gap: 14px; align-items: baseline; background: var(--navy); padding: 16px 18px; }
+        .record li .data { color: var(--amber); font-weight: 600; font-size: 15px; }
+        .record li .st { font: 600 12px var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+        .record li span:last-child { font-size: 16px; }
+        .record li.in { animation: rowin 420ms var(--ease) both; }
+        @keyframes rowin { from { opacity: 0; transform: translateY(10px); } }
+        .record-note { margin-top: 18px; font-size: 14px; color: var(--ink-3); }
+        .phone-shot { margin-top: 40px; max-width: 260px; }
+        .phone-shot img { border-radius: 18px; }
+        .phone-shot figcaption, .work-cap { font-size: 14px; color: var(--ink-3); margin-top: 10px; }
+        .demo-shot { background: var(--elevated); padding: 18px 18px 0; }
+        .demo-shot img { width: 100%; height: auto; }
+        .demo-shot figcaption { font-size: 14px; color: var(--ink-3); padding: 12px 0 16px; }
+
+        /* ============ NO EXTRA WORK ============ */
+        .work { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 88px); align-items: center; }
+        .work-pic { margin-left: calc(var(--margin) * -1 - 6vw); height: min(78svh, 760px); overflow: hidden; }
+        .work-pic img { width: 100%; height: 100%; object-fit: cover; }
+        .points { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px 48px; margin-top: 56px; }
+        .point h3 { font-size: 19px; font-weight: 600; letter-spacing: -0.01em; display: flex; gap: 12px; align-items: baseline; }
+        .point h3::before { content: ""; flex: none; width: 0.72em; height: 0.72em; background: var(--amber); clip-path: polygon(35% 0, 100% 0, 100% 100%, 0 100%, 0 35%); transform: translateY(0.05em); }
+        .point p { color: var(--ink-2); font-size: 16px; margin-top: 8px; padding-left: calc(0.72em + 12px); }
+
+        /* ============ ABOUT ============ */
+        .about { margin: var(--gap-section) clamp(10px, 1.4vw, 20px) 0; background: var(--surface); border-radius: var(--radius); overflow: hidden; }
+        .about-in { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 80px); padding: clamp(32px, 4.4vw, 72px); align-items: start; }
+        .about h2 { font-size: clamp(34px, 3.6vw, 56px); line-height: 1.04; max-width: 16ch; }
+        .about h2 + .said { margin-top: 24px; }
+        .film { background: var(--navy); }
+        .film video { width: 100%; height: auto; aspect-ratio: 9 / 16; object-fit: cover; }
+        .film figcaption { font-size: 14px; color: var(--ink-3); padding: 12px 0 0; background: var(--surface); }
+        blockquote.said { font: 500 clamp(21px, 1.9vw, 28px)/1.32 var(--display); letter-spacing: -0.015em; max-width: 34ch; }
+        .said-by { color: var(--ink-3); font-size: 15px; margin-top: 16px; }
+        .about-blocks { display: grid; gap: 28px; }
+        .about-blocks h3 { font-size: 22px; }
+        .about-blocks p { color: var(--ink-2); font-size: 16px; margin-top: 10px; }
+        .about-actions { display: flex; flex-wrap: wrap; gap: 28px; align-items: center; }
+
+        /* ============ PROCUREMENT ============ */
+        .proc { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 88px); align-items: start; }
+        .proc-intro p { color: var(--ink-2); max-width: 44ch; margin-top: 20px; }
+        .reg { width: 100%; border-collapse: separate; border-spacing: 0 6px; }
+        .reg th, .reg td { background: var(--surface); padding: 22px 20px; text-align: left; vertical-align: baseline; }
+        .reg th { font: 600 13px var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); width: 30%; }
+        .reg td:nth-child(2) { font: 600 clamp(20px, 1.7vw, 26px)/1.15 var(--display); letter-spacing: -0.015em; white-space: nowrap; }
+        .reg td.data { font-family: var(--data); color: var(--amber); }
+        .reg td:last-child { color: var(--ink-2); font-size: 16px; }
+        .reg tr:first-child th { clip-path: polygon(20px 0, 100% 0, 100% 100%, 0 100%, 0 20px); }
+
+        /* ============ CONTACT (coupon) ============ */
+        .coupon {
+            margin-top: 64px; display: grid; grid-template-columns: 46fr 54fr; gap: 6px;
+        }
+        .coupon-l { background: var(--elevated); padding: clamp(28px, 3.4vw, 56px); display: flex; flex-direction: column; justify-content: space-between; gap: 40px; clip-path: polygon(var(--cut) 0, 100% 0, 100% 100%, 0 100%, 0 var(--cut)); --cut: 40px; }
+        .coupon form { background: var(--surface); }
+        .coupon-l h2 { font-size: clamp(30px, 3vw, 48px); line-height: 1.08; max-width: 15ch; }
+        .coupon-l p { color: var(--ink-2); max-width: 36ch; margin-top: 18px; }
+        .direct { display: grid; gap: 14px; }
+        .direct .k { font: 600 12px var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); display: block; margin-bottom: 4px; }
+        .coupon form { padding: clamp(28px, 3.4vw, 56px); display: grid; gap: 10px; align-content: start; }
+        .field input, .field textarea {
+            width: 100%; background: var(--navy); color: var(--ink); border: 1px solid transparent; border-radius: var(--radius);
+            font: 400 16px/1.4 var(--text); padding: 15px 16px; min-height: 54px;
+            transition: border-color 150ms var(--ease);
+        }
+        .field textarea { min-height: 120px; resize: vertical; }
+        .field input::placeholder, .field textarea::placeholder { color: var(--ink-3); }
+        .field input:focus, .field textarea:focus { outline: none; border-color: var(--amber); box-shadow: 0 0 0 3px oklch(78% 0.16 75 / 0.18); } /* taste-skill-ignore: brand focus ring, state only */
+        .field label { display: block; font: 500 14px var(--display); color: var(--ink-2); margin-bottom: 6px; }
+        .coupon .btn { justify-content: center; width: 100%; padding: 20px; margin-top: 6px; }
+        .coupon .btn:disabled { opacity: .6; cursor: wait; }
+        .form-note { font-size: 14px; color: var(--ink-3); }
+        .form-msg { display: none; padding: 14px 16px; border-radius: var(--radius); font-size: 15px; }
+        .form-msg.show { display: block; }
+        .form-ok { background: oklch(65% 0.13 180 / 0.14); color: oklch(85% 0.08 180); }
+        .form-bad { background: oklch(60% 0.22 25 / 0.14); color: oklch(84% 0.08 25); }
+
+        /* ============ PRIVACY ============ */
+        .privacy { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(32px, 5vw, 80px); }
+        .privacy h2 { font-size: clamp(28px, 2.6vw, 40px); }
+        .privacy-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 48px; }
+        .privacy h3 { font-size: 18px; }
+        .privacy p, .privacy li { color: var(--ink-2); font-size: 16px; margin-top: 8px; }
+        .privacy ul { padding-left: 18px; }
+        .privacy .lede { color: var(--ink-2); margin-top: 16px; }
+
+        /* ============ FOOTER ============ */
+        footer { margin-top: var(--gap-section); background: var(--surface); padding: clamp(32px, 4vw, 64px) var(--margin) 28px; }
+        .foot-brand { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; font: 600 21px var(--display); letter-spacing: -0.01em; text-decoration: none; }
+        .foot { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(0, 2fr); gap: 24px; margin-top: 32px; }
+        .foot a { display: block; text-decoration: none; color: var(--ink-2); font-size: 15px; padding: 4px 0; transition: color 150ms var(--ease); }
+        .foot a:hover { color: var(--ink); }
+        .foot .k { font: 600 12px var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; }
+        .foot p { color: var(--ink-2); font-size: 15px; }
+        .foot-last { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 48px; color: var(--ink-3); font-size: 14px; }
+        .foot-last .btn { padding: 12px 16px; font-size: 12px; }
+
+        /* ============ MOTION (content visible without script) ============ */
+        .js .rise { opacity: 0; transform: translateY(24px); transition: opacity 700ms var(--ease), transform 700ms var(--ease); }
+        .js .rise.in { opacity: 1; transform: none; }
+        .js .stage { clip-path: polygon(var(--cut) 0, 100% 0, 100% 100%, 0 100%, 0 var(--cut)); }
+        .js .stage.shutter { animation: shutter 1100ms var(--ease) both; }
+        @keyframes shutter { from { clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%, 100% 0); } }
+        .now.sweep { animation: sweep 2600ms 900ms var(--ease) both; }
+        @keyframes sweep { 0% { opacity: 1; left: 150px; } 92% { opacity: 1; } 100% { opacity: 0; left: 100%; } }
         @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-                scroll-behavior: auto !important;
-            }
-            .reveal {
-                opacity: 1 !important;
-                transform: none !important;
-            }
-            .eoc-flow-line {
-                animation: none !important;
-                stroke-dashoffset: 0 !important;
-            }
+            html { scroll-behavior: auto; }
+            .js .rise { opacity: 1; transform: none; transition: opacity 100ms; }
+            .js .stage.shutter, .now.sweep, .record li.in { animation: none; }
+            .now { display: none; }
+            .btn, .chip { transition: background 100ms; }
+            .btn:hover, .chip:hover { transform: none; }
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 1100px) {
+            .try, .about-in, .privacy { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 760px) {
+            body { font-size: 16px; }
+            .nav { height: 64px; }
+            .hero { min-height: 0; padding-top: 28px; overflow: visible; }
+            .hero h1 { font-size: 10.2vw; }
+            .stage { margin: 40px calc(var(--margin) * -1) 0; padding: 40px var(--margin) 24px; --cut: 48px; flex: none; }
+            .board, .now { display: none; }
+            .board-m { display: grid; gap: 6px; }
+            .bm-head, .bm-row { display: grid; grid-template-columns: 52px 1fr 1fr; gap: 6px; }
+            .bm-head { font: 600 12px var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); padding-bottom: 2px; }
+            .bm-row > span { padding: 12px 10px; font-size: 14px; line-height: 1.35; }
+            .bm-row > span:nth-child(1) { padding: 12px 0; color: var(--amber); font-weight: 600; font-size: 13px; }
+            .bm-row > span:nth-child(2) { background: var(--elevated); color: var(--ink-2); }
+            .bm-row > span:nth-child(3) { background: var(--navy); color: var(--ink); }
+            .bm-row.done > span:nth-child(3) { background: var(--amber); color: var(--on-amber); font-weight: 600; }
+            .tiles { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+            .tile { min-height: 168px; padding: 20px; }
+            .tile.w2 { grid-column: span 2; }
+            .tile.media { min-height: 240px; }
+            .facts { flex-direction: column; }
+            .facts li { min-height: 0; padding: 20px; }
+            .bar { flex-direction: column; }
+            .seg { flex: none; }
+            .chips { grid-template-columns: 1fr 1fr; }
+            .record li { grid-template-columns: 60px 1fr; }
+            .record li span:last-child { grid-column: 1 / -1; }
+            .points { grid-template-columns: 1fr; gap: 28px; }
+            .about-blocks { grid-template-columns: 1fr; gap: 28px; }
+            .coupon { grid-template-columns: 1fr; }
+            .proc { grid-template-columns: 1fr; }
+            .reg th, .reg td { display: block; width: auto; padding: 4px 18px; }
+            .reg th { padding-top: 18px; }
+            .reg td:last-child { padding-bottom: 18px; }
+            .reg tr { display: block; margin-bottom: 6px; }
+            .reg tr:first-child th { clip-path: none; }
+            .privacy-grid { grid-template-columns: 1fr; }
+            .foot { grid-template-columns: 1fr 1fr; }
+            .foot > div:last-child { grid-column: 1 / -1; }
+        }
+        .seg-n { display: block; font-size: 16px; line-height: 1.45; }
+
+        /* ============ LIGHT READING SECTIONS: same brand, tokens re-pointed for a paper ground ============ */
+        .light {
+            --ink: oklch(22% 0.03 255);
+            --ink-2: oklch(38% 0.02 255);
+            --ink-3: oklch(46% 0.015 255);
+            --surface: oklch(100% 0 0);
+            --elevated: oklch(93% 0.006 255);
+            background: oklch(97% 0.005 255);
+            color: var(--ink);
+            margin-top: var(--gap-section);
+            padding-block: var(--gap-section);
+        }
+        .light h2 { font-size: clamp(32px, 3.4vw, 54px); line-height: 1.06; max-width: 20ch; }
+        .light .reg td.data { color: var(--ink); }
+        .light .link:hover { color: var(--ink-2); }
+        .light :focus-visible { outline-color: var(--ink); }
+        .light-last { margin-bottom: calc(var(--gap-section) * -1); }
+
+        /* No extra work: two grouped lists instead of eight loose points */
+        .groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(32px, 5vw, 88px); margin-top: 48px; }
+        .group h3 { font-size: 22px; padding-bottom: 14px; }
+        .point { padding-top: 22px; }
+        .point h4 { font: 600 18px/1.3 var(--display); letter-spacing: -0.01em; display: flex; gap: 12px; align-items: baseline; }
+        .point h4::before { content: ""; flex: none; width: 0.72em; height: 0.72em; background: var(--amber); clip-path: polygon(35% 0, 100% 0, 100% 100%, 0 100%, 0 35%); transform: translateY(0.05em); }
+
+        /* Founder */
+        .portrait img { width: 100%; height: auto; border-radius: var(--radius); }
+        .portrait figcaption { margin-top: 14px; font-size: 15px; color: var(--ink-2); }
+        .portrait figcaption strong { display: block; font: 600 18px/1.3 var(--display); color: var(--ink); }
+        .about-media { display: grid; grid-template-columns: minmax(0, 240px) minmax(0, 1fr); gap: clamp(24px, 3.4vw, 48px); margin-top: 40px; align-items: start; }
+
+        /* Sample record screens */
+        .shots { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 200px); gap: 8px; margin-top: 8px; align-items: start; }
+        .phone-shot img { height: auto; }
+        .demo-shot a { display: block; }
+        .phone-shot { margin-top: 0; max-width: none; background: var(--elevated); padding: 18px 18px 16px; }
+
+        /* Contact */
+        .contact { padding-top: var(--gap-section); }
+        .coupon { margin-top: 0; }
+        .fil { color: var(--ink) !important; font-weight: 500; }
+        .direct > div > span:not(.k) { font: 500 16px/1.4 var(--display); }
+        .other-orgs { font-size: 15px; border-top: 1px solid var(--step); padding-top: 20px; max-width: none !important; margin-top: 0 !important; }
+        .other-orgs strong { color: var(--ink); font-weight: 600; }
+        .proc-pdf { margin-top: 24px !important; }
+
+        /* Tap targets and anchor landings */
+        [id] { scroll-margin-top: 84px; }
+        .brand { min-height: 44px; }
+        .link { display: inline-block; padding-block: 11px; }
+        .foot a { padding: 10px 0; }
+        .nav-book { display: none; }
+        .nav-links a:not(.btn) { display: inline-flex; align-items: center; min-height: 44px; }
+        .nav-links .btn { min-height: 44px; }
+        .foot-last .btn { min-height: 44px; }
+
+        @media (max-width: 1100px) {
+            /* The wide two-lane board can't fit: use the rows version up to here */
+            .hero { min-height: 0; overflow: visible; }
+            .stage { margin: 40px calc(var(--margin) * -1) 0; padding: 40px var(--margin) 24px; --cut: 48px; flex: none; }
+            .board, .now { display: none; }
+            .board-m { display: grid; gap: 6px; }
+            .bm-title { font: 600 13px var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); padding-bottom: 12px; }
+            .bm-head, .bm-row { display: grid; grid-template-columns: 52px 1fr 1fr; gap: 6px; }
+            .bm-head { font: 600 12px var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); padding-bottom: 2px; }
+            .bm-row > span { padding: 12px 10px; font-size: 14px; line-height: 1.35; }
+            .bm-row > span:nth-child(1) { padding: 12px 0; color: var(--amber); font-weight: 600; font-size: 13px; }
+            .bm-row > span:nth-child(2) { background: var(--elevated); color: var(--ink-2); }
+            .bm-row > span:nth-child(3) { background: var(--navy); color: var(--ink); }
+            .bm-row.done > span:nth-child(3) { background: var(--amber); color: var(--on-amber); font-weight: 600; }
+            .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .facts li { min-height: 0; }
+            .proc { grid-template-columns: 1fr; }
+            .portrait { max-width: 360px; }
+            .nav-links a:not(.btn) { font-size: 14px; }
+            .nav-links { gap: 16px; }
+        }
+        @media (max-width: 900px) {
+            .menu-toggle { display: block; min-height: 44px; }
+            .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--navy); flex-direction: column; align-items: stretch; gap: 0; padding: 8px var(--margin) 24px; }
+            .nav-links.open { display: flex; }
+            .nav-links a:not(.btn) { display: flex; padding: 14px 0; font-size: 17px; }
+            .nav-links .btn { margin-top: 10px; justify-content: center; min-height: 48px; }
+            .nav-book { display: inline-flex; padding: 12px 14px; font-size: 12px; min-height: 44px; margin-left: auto; margin-right: 8px; }
+        }
+        @media (max-width: 760px) {
+            .hero h1 { font-size: clamp(33px, 9vw, 44px); line-height: 1.06; }
+            .facts { grid-template-columns: 1fr; }
+            .facts li { flex: none; }
+            .groups, .about-media { grid-template-columns: 1fr; }
+            .film { max-width: 300px; }
+            .shots { grid-template-columns: 1fr; }
+            .phone-shot { max-width: 240px; }
+            .tile.media { min-height: 260px; }
+            .tile.lead h2 { font-size: 30px; }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav id="navbar">
-        <a href="#hero" class="nav-logo-container">
-            <img src="logo.svg" alt="CivicGrid Logo" class="nav-logo-svg" width="38" height="38">
-            <div class="nav-logo-text">
-                <div class="nav-logo-main">CivicGrid</div>
-                <div class="nav-logo-sub">Software Development</div>
-            </div>
-        </a>
-        <div class="nav-links" id="navLinks">
-            <a href="#eoc">EOC</a>
-            <a href="#why">Why CivicGrid</a>
-            <a href="#serve">Who It's For</a>
-            <a href="#founder">About</a>
-            <a href="#contact" class="btn-demo">Book a Walkthrough</a>
-        </div>
-        <div class="hamburger" id="hamburger">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-    </nav>
+    <script>document.documentElement.classList.add('js');</script>
 
-    <!-- Hero Section -->
-    <section class="hero" id="hero">
-        <div class="hero-content">
-            <div class="hero-badge reveal">
-                <div class="pulse-dot"></div>
-                Live at Mandaluyong City CDRRMD since July 2026
-            </div>
-            <h1 class="reveal reveal-delay-1">Emergency operations software, <span class="gold">built for Philippine LGUs</span></h1>
-            <p class="hero-subtitle reveal reveal-delay-2">Citizen reports, cluster dispatch and a complete record of every response, in one system your disaster office already knows how to use, because it is built around the way your team works today.</p>
-            <div class="hero-buttons reveal reveal-delay-3">
-                <a href="#contact" class="btn-primary">
-                    Book a 20-minute walkthrough
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </a>
-                <a href="#founder" class="btn-secondary">Watch the 90-second story</a>
-            </div>
-            <div class="hero-divider reveal reveal-delay-3"></div>
-        </div>
-    </section>
+    <header class="nav" id="top">
+        <a class="brand" href="#top"><img src="logo.svg" alt="" width="34" height="34">CivicGrid</a>
+        <a href="#contact" class="btn nav-book">Book</a>
+        <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="navLinks">Menu</button>
+        <nav class="nav-links" id="navLinks" aria-label="Main">
+            <a href="#how">How it works</a>
+            <a href="#about">The founder</a>
+            <a href="#try">Sample record</a>
+            <a href="#procurement">Procurement</a>
+            <a href="#contact" class="btn">Book a walkthrough</a>
+        </nav>
+    </header>
 
-    <!-- Trust Bar -->
-    <div class="trust-bar">
-        <span class="trust-bar-text">DTI Reg. No. <span class="ref-mono">7980659</span> · PhilGEPS Supplier No. <span class="ref-mono">476941</span> · CivicGrid Software Development Services · Metro Manila, PH</span>
-    </div>
-
-    <!-- Problem Section -->
-    <section class="problem" id="problem">
-        <div class="container">
-            <div class="section-label reveal">The Problem</div>
-            <h2 class="section-title reveal">When disaster strikes, coordination breaks down before response does.</h2>
-            <p class="section-subtitle reveal">When disaster strikes, a Philippine LGU has to coordinate up to 15 response clusters (police, health, engineering, social welfare, logistics) over radios, group chats, and paper logs. There's no shared incident record. No dispatch audit trail. No way to show COA, the Mayor, or the public afterward that the response actually happened the way RA 10121 requires it to be documented.</p>
-        </div>
-    </section>
-
-    <!-- EOC Section -->
-    <section class="eoc" id="eoc">
-        <div class="container">
-            <div class="section-label reveal">Our Primary Platform</div>
-            <h2 class="section-title reveal">EOC — Emergency Operations Center</h2>
-            <p class="section-subtitle reveal">In daily use at Mandaluyong City CDRRMD since July 1, 2026, after the city's own team tested it against a 55-point acceptance checklist. One record from the citizen's first report to the after-action report.</p>
-            <div class="eoc-flow reveal reveal-delay-1">
-                <svg class="eoc-flow-svg" viewBox="0 0 800 24" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
-                    <path class="eoc-flow-line" d="M50,12 L750,12" pathLength="1"></path>
-                    <circle class="eoc-flow-node" cx="50" cy="12" r="6"></circle>
-                    <circle class="eoc-flow-node" cx="283" cy="12" r="6"></circle>
-                    <circle class="eoc-flow-node" cx="517" cy="12" r="6"></circle>
-                    <circle class="eoc-flow-node" cx="750" cy="12" r="6"></circle>
-                </svg>
-                <div class="eoc-flow-labels">
-                    <span>Citizen SOS</span>
-                    <span>Dispatch</span>
-                    <span>Response</span>
-                    <span>Record</span>
+    <main>
+        <!-- HERO: the proof first, then one emergency two ways on one clock -->
+        <section class="hero wrap" aria-labelledby="hero-title">
+            <div class="hero-copy">
+                <h1 id="hero-title" class="rise">Emergency operations software, in daily use at Mandaluyong City since July 2026.</h1>
+                <p class="hero-lede rise">Built for Philippine LGUs. Residents report from any phone, your emergency operations center (EOC) dispatches, and every step lands in one record for COA and the Mayor. Your team keeps its process.</p>
+                <div class="hero-actions rise">
+                    <a href="#contact" class="btn">Book a 20-minute walkthrough</a>
+                    <a href="#about" class="link">Watch the 83-second story</a>
                 </div>
             </div>
-            <div class="eoc-layout">
-                <div class="eoc-visual-wrap reveal reveal-delay-1">
-                    <div class="eoc-visual eoc-visual-phone">
-                        <img src="alerto-panel.png" width="720" height="1270" alt="Citizen emergency report screen: residents pick an incident type such as Medical Emergency, Fire or Flood, or call the emergency hotline directly" class="eoc-dashboard-img" loading="lazy">
-                    </div>
-                    <p class="eoc-image-caption">The citizen report screen. Residents open a link on any phone: no app to install, no login.</p>
-                </div>
-                <div class="eoc-details reveal reveal-delay-2">
-                    <div class="product-features">
-                        <div class="feature-item">
-                            <div class="feature-check">✓</div>
-                            <div class="feature-text">Citizen reporting from any phone browser, no app install and no login</div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-check">✓</div>
-                            <div class="feature-text">Cluster-based dispatch across all 15 official CDRRMD response clusters, structured around the Incident Command System (ICS) cluster approach mandated under RA 10121</div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-check">✓</div>
-                            <div class="feature-text">Full incident lifecycle tracking from report through response to resolution, with audit logging at every step</div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-check">✓</div>
-                            <div class="feature-text">Text-message updates when a report arrives, when responders are dispatched, and when the incident is closed</div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-check">✓</div>
-                            <div class="feature-text">Real-time command dashboard built for large-screen emergency operations center displays</div>
-                        </div>
-                    </div>
-                    <div class="product-button">
-                        <a href="#contact" class="btn-primary">Book a 20-minute walkthrough</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- How It Works Section -->
-    <section class="how-it-works" id="how-it-works">
-        <div class="container">
-            <div class="section-label reveal">How It Works</div>
-            <h2 class="section-title reveal">From citizen report to verified resolution.</h2>
-            <p class="section-subtitle reveal">One workflow, three stages, every step on record.</p>
-            <ol class="how-steps">
-                <li class="how-step reveal reveal-delay-1">
-                    <h3 class="how-step-title">A resident reports</h3>
-                    <p class="how-step-body">They pick what is happening (medical, fire, flood, crime) and the location comes with the report. Your office gets a text message the moment it arrives.</p>
-                </li>
-                <li class="how-step reveal reveal-delay-2">
-                    <h3 class="how-step-title">Your EOC reviews and dispatches</h3>
-                    <p class="how-step-body">Your operators confirm the report and send it to the right lead office among your response clusters. The dashboard shows who is responding and where.</p>
-                </li>
-                <li class="how-step reveal reveal-delay-3">
-                    <h3 class="how-step-title">The response is closed and documented</h3>
-                    <p class="how-step-body">Closed incidents are locked, and the after-action report and data export are ready for COA review, the Mayor, or your council.</p>
-                </li>
+            <div class="stage" id="stage" aria-label="One incident, today and with CivicGrid">
+                <div class="board" data-ui>
+                    <div class="board-head"><span><i class="tick" aria-hidden="true"></i>Same emergency. One record.</span><span>Example times</span></div>
+                    <div class="ruler" aria-hidden="true"><span></span><span>07:42</span><span>07:44</span><span>07:51</span><span>08:31</span><span>Later</span></div>
+                    <div class="lane lane-today">
+                        <span class="lane-name">Today</span>
+                        <span class="ev">Hotline call, written in the logbook</span>
+                        <span class="ev">Radio call to the cluster</span>
+                        <span class="ev">Updates in the group chat</span>
+                        <span class="ev">"Done" sent by text</span>
+                        <span class="ev">Report typed up from notes</span>
+                    </div>
+                    <div class="lane lane-cg">
+                        <span class="lane-name">With CivicGrid</span>
+                        <span class="ev"><b>07:42</b>Resident reports from a phone</span>
+                        <span class="ev"><b>07:44</b>EOC sends it to the lead office</span>
+                        <span class="ev"><b>07:51</b>Team on scene, logged</span>
+                        <span class="ev"><b>08:31</b>Closed and locked</span>
+                        <span class="ev done"><b>08:32</b>After-action report ready</span>
+                    </div>
+                    <p class="board-note">Illustration with example times, not real incident data.</p>
+                </div>
+                <!-- Narrow version of the same board: one row per time, both ways side by side -->
+                <div class="board-m" data-ui>
+                    <p class="bm-title"><i class="tick" aria-hidden="true"></i>Same emergency. One record.</p>
+                    <div class="bm-head"><span></span><span>Today</span><span>With CivicGrid</span></div>
+                    <div class="bm-row"><span class="data">07:42</span><span>Hotline call, written in the logbook</span><span>Resident reports from a phone</span></div>
+                    <div class="bm-row"><span class="data">07:44</span><span>Radio call to the cluster</span><span>EOC sends it to the lead office</span></div>
+                    <div class="bm-row"><span class="data">07:51</span><span>Updates in the group chat</span><span>Team on scene, logged</span></div>
+                    <div class="bm-row"><span class="data">08:31</span><span>"Done" sent by text</span><span>Closed and locked</span></div>
+                    <div class="bm-row done"><span class="data">08:32</span><span>Report typed up later, from notes</span><span>After-action report ready</span></div>
+                    <p class="board-note">Example times, not real incident data.</p>
+                </div>
+                <div class="now" id="now" aria-hidden="true"></div>
+            </div>
+        </section>
+
+        <!-- PROOF -->
+        <section class="section wrap" id="proof" aria-labelledby="proof-title">
+            <div class="tiles">
+                <div class="tile lead w2 rise"><h2 id="proof-title">Tested by the city's own team. Running every day.</h2><p>Mandaluyong City's disaster risk reduction and management department uses it every day to support its emergency operations.</p></div>
+                <figure class="tile media w2 rise">
+                    <img src="img/eoc-room.webp" width="688" height="430" loading="lazy" alt="The City of Mandaluyong Emergency Operations Center sign above its main wall screen">
+                    <figcaption>Mandaluyong City Emergency Operations Center</figcaption>
+                </figure>
+            </div>
+            <ol class="facts rise" aria-label="The Mandaluyong deployment, in order">
+                <li><span class="fact-w">Accepted</span><span class="fact-v data">June 29, 2026</span><span class="fact-n">After the city's own team tested it against a 55-point checklist</span></li>
+                <li><span class="fact-w">Live</span><span class="fact-v data">July 1, 2026</span><span class="fact-n">In daily use by the city's disaster office since this date</span></li>
+                <li><span class="fact-w">Coordinates</span><span class="fact-v">15 clusters</span><span class="fact-n">Dispatch across all 15 official response clusters</span></li>
+                <li class="now-seg"><span class="fact-w">Today</span><span class="fact-v">Still running</span><span class="fact-n">Every day since go-live</span></li>
             </ol>
-        </div>
-    </section>
+        </section>
 
-    <!-- Why Section -->
-    <section class="why" id="why">
-        <div class="container">
-            <div class="section-label reveal">Why CivicGrid</div>
-            <h2 class="section-title reveal">Built around your office, not the other way around.</h2>
-            <p class="section-subtitle reveal">The first question every disaster office asks is whether a new system will add work for their staff. This one is built so it doesn't.</p>
-            <div class="why-list">
-                <div class="why-item reveal reveal-delay-1">
-                    <div class="why-item-num">01</div>
-                    <div>
-                        <h3 class="why-item-title">Your process, put online</h3>
-                        <p class="why-item-body">We start by learning how your office already works: your forms, your clusters, your steps. Then we put that online. Your team doesn't have to learn a new way of working.</p>
-                    </div>
-                </div>
-                <div class="why-item reveal reveal-delay-2">
-                    <div class="why-item-num">02</div>
-                    <div>
-                        <h3 class="why-item-title">Nothing for residents to install</h3>
-                        <p class="why-item-body">Residents report from a link on any phone, with no app download and no account. Fewer steps between an emergency and your operations center.</p>
-                    </div>
-                </div>
-                <div class="why-item reveal reveal-delay-3">
-                    <div class="why-item-num">03</div>
-                    <div>
-                        <h3 class="why-item-title">Ready for COA and the Mayor</h3>
-                        <p class="why-item-body">Every report, dispatch and closure is time-stamped as it happens. The after-action report and data export come out of the same record, so your staff aren't rebuilding it from logbooks.</p>
-                    </div>
-                </div>
-                <div class="why-item reveal reveal-delay-1">
-                    <div class="why-item-num">04</div>
-                    <div>
-                        <h3 class="why-item-title">A record you can stand behind</h3>
-                        <p class="why-item-body">Each step is audit-logged with who did it and when. Once an incident is closed it is locked: only an EOC commander or a system administrator can reopen or change it.</p>
-                    </div>
-                </div>
-                <div class="why-item reveal reveal-delay-2">
-                    <div class="why-item-num">05</div>
-                    <div>
-                        <h3 class="why-item-title">Accepted by a real city's own team</h3>
-                        <p class="why-item-body">Mandaluyong City CDRRMD tested the system against a 55-point acceptance checklist, covering the dashboard, the field app, the citizen app, text messaging and security, before it went live.</p>
-                    </div>
-                </div>
-                <div class="why-item reveal reveal-delay-3">
-                    <div class="why-item-num">06</div>
-                    <div>
-                        <h3 class="why-item-title">Ready for government procurement</h3>
-                        <p class="why-item-body">A DTI- and BIR-registered Philippine business and a PhilGEPS-registered supplier. Registration documents are available to your procurement office on request.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Serve Section -->
-    <section class="serve" id="serve">
-        <div class="container">
-            <div class="section-label reveal">Who It's For</div>
-            <h2 class="section-title reveal">For the people who answer for the response.</h2>
-            <p class="section-subtitle reveal">If your office still coordinates emergencies over radio, group chats and paper logbooks, this was built for you.</p>
-            <div class="serve-list">
-                <div class="serve-item reveal reveal-delay-1">
-                    <h3 class="serve-item-title">City and municipal DRRM offices</h3>
-                    <p class="serve-item-body">Operations centers that receive reports, dispatch response clusters and have to document every incident</p>
-                </div>
-                <div class="serve-item reveal reveal-delay-2">
-                    <h3 class="serve-item-title">Mayors and local chief executives</h3>
-                    <p class="serve-item-body">Leaders who need to see what is happening during an emergency and show COA and the public what was done afterward</p>
-                </div>
-                <div class="serve-item reveal reveal-delay-3">
-                    <h3 class="serve-item-title">Barangays</h3>
-                    <p class="serve-item-body">Barangay emergency teams and fire and rescue brigades that respond first and need their own clear record</p>
-                </div>
-            </div>
-            <div class="pilot-banner reveal">
-                <div class="pilot-banner-content">
-                    <div class="pulse-dot"></div>
-                    <div class="pilot-text">Live at Mandaluyong City CDRRMD since July 2026. Now booking walkthroughs with other LGUs and barangays in Metro Manila.</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Founder + Milestones Section -->
-    <section class="founder" id="founder">
-        <div class="container">
-            <div class="section-label reveal">Who's Behind It</div>
-            <h2 class="section-title reveal">Built by one founder. Accepted by a real city.</h2>
-            <p class="section-subtitle reveal">You'll work with the person who built it, from the first walkthrough to the day your team goes live.</p>
-            <div class="founder-grid">
-                <div class="founder-media reveal reveal-delay-1">
-                    <video class="founder-video" controls playsinline preload="none" poster="founder-video-poster.jpg" width="720" height="1280" aria-label="Founder story video, 1 minute 34 seconds, with captions burned in">
-                        <source src="founder-video.mp4" type="video/mp4">
-                    </video>
-                    <p class="founder-video-caption">How Mandaluyong's emergency operations system came to be, in 94 seconds. Captions are built in.</p>
-                </div>
-                <div class="founder-side">
-                <div class="founder-card reveal reveal-delay-1">
-                    <div class="founder-name">Renz Michael Bautista</div>
-                    <div class="founder-title">Founder, CivicGrid Software Development Services</div>
-                    <blockquote class="founder-quote">"The head of Mandaluyong's disaster office asked me to develop a customized digital tool to support Mandaluyong City's existing emergency operations."</blockquote>
-                    <p class="founder-bio">I was cabin crew before I taught myself to build software. I didn't change the way Mandaluyong's team works: I learned their process first, then put it online. Today their operations center uses it every day.</p>
-                    <div class="founder-links">
-                        <a href="mailto:contact@civicgrid.dev">contact@civicgrid.dev</a>
-                        <a href="https://www.linkedin.com/in/renz-michael-bautista-926724232/" target="_blank" rel="noopener">LinkedIn</a>
-                    </div>
-                </div>
-                <div class="milestones-list reveal reveal-delay-2">
-                    <div class="milestone-item">
-                        <div class="milestone-dot"></div>
-                        <div>
-                            <div class="milestone-date">June 2026</div>
-                            <div class="milestone-title">EOC UAT Accepted</div>
-                            <div class="milestone-body">Mandaluyong City CDRRMD accepted the Emergency Operations Center platform following User Acceptance Testing.</div>
-                        </div>
-                    </div>
-                    <div class="milestone-item">
-                        <div class="milestone-dot"></div>
-                        <div>
-                            <div class="milestone-date">July 2026</div>
-                            <div class="milestone-title">Live at Mandaluyong City CDRRMD</div>
-                            <div class="milestone-body">In daily use by the city's emergency operations center since July 1, 2026.</div>
-                        </div>
-                    </div>
-                    <div class="milestone-item">
-                        <div class="milestone-dot"></div>
-                        <div>
-                            <div class="milestone-date">June 2026</div>
-                            <div class="milestone-title">PhilGEPS Registration Approved</div>
-                            <div class="milestone-body">CivicGrid Software Development Services approved as a registered PhilGEPS supplier.</div>
-                        </div>
-                    </div>
-                    <div class="milestone-item">
-                        <div class="milestone-dot"></div>
-                        <div>
-                            <div class="milestone-date">July 2026</div>
-                            <div class="milestone-title">IPOPHL Copyright Application: Under Verification</div>
-                            <div class="milestone-body">Copyright Registration Application for the RoadSense EOC System submitted to IPOPHL's Bureau of Copyright and Related Rights, reference no. <span class="ref-mono">2026-04892</span>. Currently tagged "For Verification."</div>
-                        </div>
-                    </div>
-                </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section class="contact" id="contact">
-        <div class="container">
-            <div class="contact-container">
-                <div class="contact-info reveal">
-                    <div class="section-label">Get in Touch</div>
-                    <h2 class="section-title">Book a 20-minute walkthrough.</h2>
-                    <p class="section-subtitle">See the system your office would use, on your schedule, at your office or online. Bring your questions about your own process; there's no price talk until you've seen it.</p>
-                    <div class="contact-info-item">
-                        <div class="contact-info-label">Email</div>
-                        <div class="contact-info-value"><a href="mailto:contact@civicgrid.dev">contact@civicgrid.dev</a></div>
-                    </div>
-                    <div class="contact-info-item">
-                        <div class="contact-info-label">LinkedIn</div>
-                        <div class="contact-info-value"><a href="https://www.linkedin.com/in/renz-michael-bautista-926724232/" target="_blank" rel="noopener">Renz Michael Bautista</a></div>
-                    </div>
-                    <div class="contact-info-item">
-                        <div class="contact-info-label">Location</div>
-                        <div class="contact-info-value">Metro Manila, Philippines</div>
-                    </div>
-                </div>
-                <div class="contact-form reveal reveal-delay-2">
-                    <h3>Request a walkthrough</h3>
-                    <form id="contactForm">
-                        <div class="form-success" id="formSuccess">
-                            Thank you! Renz will reply within one working day.
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="fullName">Full Name</label>
-                                <input type="text" id="fullName" name="fullName" placeholder="Juan dela Cruz" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="agency">Office / LGU</label>
-                                <input type="text" id="agency" name="agency" placeholder="City DRRM Office, Barangay ..." required>
+        <!-- ABOUT RENZ -->
+        <section class="about" id="about" aria-labelledby="about-title">
+            <div class="about-in">
+                <figure class="portrait rise">
+                    <img src="img/renz-portrait.webp" width="1000" height="1000" loading="lazy" alt="Portrait of Renz Michael Bautista, founder of CivicGrid">
+                    <figcaption><strong>Renz Michael Bautista</strong>Founder, CivicGrid Software Development Services</figcaption>
+                </figure>
+                <div>
+                    <h2 id="about-title" class="rise">Work directly with the founder.</h2>
+                    <blockquote class="said rise">"The head of Mandaluyong's disaster office asked me to develop a customized digital tool to support Mandaluyong City's existing emergency operations."</blockquote>
+                    <div class="about-media">
+                        <figure class="film rise">
+                            <video controls playsinline preload="none" poster="img/founder-video-poster.webp" width="720" height="1280" aria-label="Founder story video, 1 minute 23 seconds, captions built in">
+                                <source src="founder-video.mp4" type="video/mp4">
+                            </video>
+                            <figcaption>How Mandaluyong's system came to be, in 83 seconds. Captions are built in.</figcaption>
+                        </figure>
+                        <div class="about-blocks">
+                            <div class="rise"><h3>Who you'd work with</h3><p>The person who learns your process is the person who builds your system. With Mandaluyong I didn't change the way their team works: I learned their process first, then put it online. I was cabin crew before I taught myself to build software.</p></div>
+                            <div class="rise"><h3>How it would start</h3><p>A 20-minute walkthrough, at your office or online. I'll ask how your office handles reports today, show you the system, and answer your questions. No price talk until you've seen it.</p></div>
+                            <div class="about-actions rise">
+                                <a href="#contact" class="btn">Book a walkthrough</a>
                             </div>
                         </div>
-                        <div class="form-row full">
-                            <div class="form-group">
-                                <label for="email">Email Address</label>
-                                <input type="email" id="email" name="email" placeholder="you@example.com" required>
-                            </div>
-                        </div>
-                        <div class="form-row full">
-                            <div class="form-group">
-                                <label for="challenge">How does your office handle reports and dispatch today? (optional)</label>
-                                <textarea id="challenge" name="challenge" placeholder="For example: hotline calls logged on paper, dispatch over radio and group chat..."></textarea>
-                            </div>
-                        </div>
-                        <button type="submit" class="form-submit">Request a walkthrough</button>
-                        <p class="form-error" id="formError">Your request didn't go through. Please email <a href="mailto:contact@civicgrid.dev">contact@civicgrid.dev</a> instead.</p>
-                        <p class="form-note">Renz replies within one working day. No sales pressure, just a straight conversation.</p>
-                    </form>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Procurement Eligibility -->
-    <section class="eligibility" id="eligibility">
-        <div class="container">
-            <div class="eligibility-content">
-                <div class="section-label reveal">Procurement Eligibility</div>
-                <h2 class="section-title reveal" style="font-size: 26px;">Registered to Do Business With Philippine Government Agencies</h2>
-                <p class="section-subtitle reveal" style="font-size: 14px; margin-bottom: 32px;">CivicGrid is a registered Philippine business, eligible to transact with government agencies and LGUs under existing procurement rules.</p>
-                <div class="eligibility-block reveal">
-                    <h3>Business Registration</h3>
-                    <p>DTI Certificate of Business Name Registration No. 7980659, CivicGrid Software Development Services, Metro Manila, Philippines.</p>
+        <!-- HOW IT WORKS: the record bar, enlarged -->
+        <section class="section wrap" id="how" aria-labelledby="how-title">
+            <h2 id="how-title" class="rise">From a phone to a closed record.</h2>
+            <div class="bar rise" data-ui>
+                <div class="seg"><span class="seg-w">Report</span><span class="seg-t">A resident taps</span><span class="seg-n">They pick what is happening; the location comes with it. No app, no login.</span></div>
+                <div class="seg"><span class="seg-w">Dispatch</span><span class="seg-t">Your EOC sends it</span><span class="seg-n">Operators confirm and send it to the right lead office, with a text message.</span></div>
+                <div class="seg"><span class="seg-w">Respond</span><span class="seg-t">The team works the incident</span><span class="seg-n">Arrival and updates are logged as they happen, on the big screen and the phone.</span></div>
+                <div class="seg"><span class="seg-w">Close</span><span class="seg-t">Locked and documented</span><span class="seg-n">The after-action report and export are ready for COA and the Mayor.</span></div>
+            </div>
+        </section>
+
+        <!-- NO EXTRA WORK (light reading section) -->
+        <div class="light">
+            <section class="wrap" id="office" aria-labelledby="office-title">
+                <h2 id="office-title" class="rise">No extra work for your staff.</h2>
+                <div class="groups">
+                    <div class="group rise">
+                        <h3>Your team's day</h3>
+                        <div class="point"><h4>Your process, put online</h4><p>I learn your forms, clusters and steps first, then build around them.</p></div>
+                        <div class="point"><h4>Nothing for residents to install</h4><p>A link on any phone. No download, no account.</p></div>
+                        <div class="point"><h4>Text-message updates</h4><p>Your team gets updates by text as an incident moves.</p></div>
+                        <div class="point"><h4>Built for the operations room</h4><p>A command dashboard made for your large EOC screens.</p></div>
+                    </div>
+                    <div class="group rise">
+                        <h3>Your office's record</h3>
+                        <div class="point"><h4>Every step on record</h4><p>Who did what and when, logged as it happens.</p></div>
+                        <div class="point"><h4>Closed means closed</h4><p>Only an EOC commander or system administrator can reopen an incident.</p></div>
+                        <div class="point"><h4>Ready for COA and the Mayor</h4><p>After-action reports and data exports come from the same record.</p></div>
+                        <div class="point"><h4>Your data stays yours</h4><p>Export your records whenever you need them.</p></div>
+                    </div>
                 </div>
-                <div class="eligibility-block reveal">
-                    <h3>PhilGEPS Registration</h3>
-                    <p>PhilGEPS Supplier Registration No. 476941, enabling participation in Philippine government procurement processes.</p>
+            </section>
+        </div>
+
+        <!-- SAMPLE RECORD: the one live thing -->
+        <section class="section wrap" id="try" aria-labelledby="try-title">
+            <div class="try">
+                <div class="try-intro">
+                    <h2 id="try-title" class="rise">See the record one report creates.</h2>
+                    <p class="rise">"What's happening?" is the first question a resident sees on their phone. Pick an answer to see the sample record your office would get.</p>
+                    <div class="chips rise" role="group" aria-label="Choose an incident type">
+                        <button class="chip" data-type="medical" aria-pressed="true">Medical emergency</button>
+                        <button class="chip" data-type="fire" aria-pressed="false">Fire or smoke</button>
+                        <button class="chip" data-type="flood" aria-pressed="false">Flood or rescue</button>
+                        <button class="chip" data-type="crime" aria-pressed="false">Crime in progress</button>
+                        <button class="chip" data-type="crash" aria-pressed="false">Vehicle crash</button>
+                        <button class="chip" data-type="structure" aria-pressed="false">Structural damage</button>
+                    </div>
                 </div>
-                <div class="eligibility-block reveal">
-                    <h3>Additional Documentation</h3>
-                    <p>Additional procurement documentation (business permits, tax registration, and PhilGEPS membership-class certificates) is available directly to evaluating agencies upon request during formal bid or pilot evaluation.</p>
+                <div>
+                    <div class="record cut cut-sm rise" id="record" data-ui aria-live="polite">
+                        <div class="record-head"><h3 id="recTitle">Medical emergency</h3><span class="record-tag">Sample record</span></div>
+                        <ol id="recRows">
+                            <li><span class="data">07:42</span><span class="st">Reported</span><span>Medical emergency, location attached, from a resident's phone</span></li>
+                            <li><span class="data">07:43</span><span class="st">Alerted</span><span>Text message to the operator on duty</span></li>
+                            <li><span class="data">07:44</span><span class="st">Dispatched</span><span>Sent to the health and medical lead office</span></li>
+                            <li><span class="data">07:51</span><span class="st">On scene</span><span>Responders confirm arrival</span></li>
+                            <li><span class="data">08:31</span><span class="st">Closed</span><span>Locked; only an EOC commander or system administrator can reopen it</span></li>
+                            <li><span class="data">08:32</span><span class="st">Report</span><span>After-action report ready, no logbook retyping</span></li>
+                        </ol>
+                        <p class="record-note">Example routing and times. Your office sets its own clusters and steps.</p>
+                    </div>
+                    <div class="shots">
+                        <figure class="demo-shot rise">
+                            <a href="img/demo-dispatch.webp" target="_blank" rel="noopener" aria-label="Open the dispatcher screen at full size"><img src="img/demo-dispatch.webp" width="1400" height="739" loading="lazy" alt="Dispatcher screen in the CivicGrid demo system: a case information sheet with caller details, and today's dispatch log beside it"></a>
+                            <figcaption>The dispatcher's screen, from the demo system with sample data. Tap to enlarge.</figcaption>
+                        </figure>
+                        <figure class="phone-shot rise">
+                            <img src="img/citizen-screen.webp" width="530" height="1118" loading="lazy" alt="The citizen report screen: residents choose an incident type, or call the emergency hotline directly">
+                            <figcaption>The citizen report screen. It opens from a link: no app, no login.</figcaption>
+                        </figure>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Data Privacy (RA 10173) -->
-    <!-- DRAFT: plain-language disclosure, not legally reviewed. Confirm with counsel before treating as compliant. -->
-    <section class="privacy" id="privacy">
-        <div class="container">
-            <div class="privacy-content">
-                <div class="section-label reveal">Data Privacy</div>
-                <h2 class="section-title reveal" style="font-size: 26px;">How We Handle Your Data</h2>
-                <p class="section-subtitle reveal" style="font-size: 14px; margin-bottom: 32px;">In line with the Philippine Data Privacy Act of 2012 (RA 10173), here's what we collect on this site and through our citizen reporting app, and why.</p>
-                <div class="privacy-block reveal">
-                    <h3>What We Collect</h3>
-                    <ul>
-                        <li><strong>Citizen reporting app:</strong> your approximate location (geolocation), a description of the incident you're reporting, and an optional photo. No account or login is required to submit a report.</li>
-                        <li><strong>Contact form on this site:</strong> your name, agency or organization, email address, and anything you write in the optional message field.</li>
-                    </ul>
+        <!-- PROCUREMENT (light reading section) -->
+        <div class="light">
+            <section class="wrap" id="procurement" aria-labelledby="proc-title">
+                <div class="proc">
+                    <div class="proc-intro">
+                        <h2 id="proc-title" class="rise">Registration details for your procurement office.</h2>
+                        <p class="rise">CivicGrid is a registered Philippine business. DTI, BIR and PhilGEPS certificates are available to your procurement office on request.</p>
+                        <p class="proc-pdf rise"><a class="link" href="civicgrid-company-profile.pdf" download>Download the one-page company profile (PDF)</a></p>
+                    </div>
+                    <table class="reg rise">
+                        <caption class="sr-only">CivicGrid registrations</caption>
+                        <tbody>
+                            <tr><th scope="row">DTI business name</th><td class="data">7980659</td><td>CivicGrid Software Development Services</td></tr>
+                            <tr><th scope="row">PhilGEPS supplier</th><td class="data">476941</td><td>Registered supplier since June 2026</td></tr>
+                            <tr><th scope="row">BIR</th><td>Registered</td><td>Certificate available on request</td></tr>
+                            <tr><th scope="row">Located in</th><td>City of Manila</td><td>Full address on your procurement documents</td></tr>
+                        </tbody>
+                    </table>
                 </div>
-                <div class="privacy-block reveal">
-                    <h3>Why We Collect It</h3>
-                    <p>Citizen report data is used to route your report to the appropriate CDRRMD response cluster and to maintain an auditable incident record for the LGU you're reporting to. Contact form data is used only to respond to your inquiry about CivicGrid's products.</p>
+            </section>
+        </div>
+
+        <!-- CONTACT -->
+        <section class="wrap contact" id="contact" aria-labelledby="contact-title">
+            <div class="coupon rise">
+                <div class="coupon-l">
+                    <div>
+                        <h2 id="contact-title">Book a 20&#8209;minute walkthrough.</h2>
+                        <p>Tell me your office and how you'd like to meet. I reply within one working day.</p>
+                        <p class="fil" lang="fil">Puwede po tayong mag-usap sa Filipino.</p>
+                    </div>
+                    <div class="direct">
+                        <div><span class="k">Email</span><a class="link" href="mailto:contact@civicgrid.dev">contact@civicgrid.dev</a></div>
+                        <div><span class="k">LinkedIn</span><a class="link" href="https://www.linkedin.com/in/renz-michael-bautista-926724232/" target="_blank" rel="noopener">Renz Michael Bautista</a></div>
+                        <div><span class="k">Location</span><span>City of Manila, Philippines</span></div>
+                    </div>
+                    <p class="other-orgs"><strong>Not an LGU?</strong> I also build custom systems for organizations that run on logbooks, spreadsheets and group chats. Tell me what you need.</p>
                 </div>
-                <div class="privacy-block reveal">
-                    <h3>Retention</h3>
-                    <p>Incident reports are retained as part of the LGU's official incident record, consistent with standard government recordkeeping practice. Contact form submissions are retained only as long as needed to respond to your inquiry.</p>
-                </div>
-                <div class="privacy-block reveal">
-                    <h3>Your Rights & Contact</h3>
-                    <p>Under RA 10173, you have the right to access, correct, and request deletion of your personal data. For privacy concerns or requests, contact us at contact@civicgrid.dev.</p>
-                </div>
+                <form id="contactForm" novalidate>
+                    <p class="form-msg form-ok" id="formSuccess" role="status">Thank you. Renz will reply within one working day.</p>
+                    <div class="field"><label for="fullName">Your name</label><input id="fullName" name="fullName" autocomplete="name" placeholder="Juan dela Cruz" required></div>
+                    <div class="field"><label for="agency">Office, LGU or organization</label><input id="agency" name="agency" autocomplete="organization" placeholder="City DRRM Office, Barangay ..." required></div>
+                    <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required></div>
+                    <div class="field"><label for="phone">Viber or mobile number (optional)</label><input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="09XX XXX XXXX"></div>
+                    <div class="field"><label for="challenge">How does your office handle reports today? (optional)</label><textarea id="challenge" name="challenge" placeholder="For example: hotline calls logged on paper, dispatch over radio and group chat"></textarea></div>
+                    <button type="submit" class="btn form-submit">Request a walkthrough</button>
+                    <p class="form-msg form-bad" id="formError" role="alert">That didn't send. Please email <a href="mailto:contact@civicgrid.dev">contact@civicgrid.dev</a> instead.</p>
+                    <p class="form-note">Fields are required unless marked optional. No sales pressure, just a straight conversation.</p>
+                </form>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Footer -->
+        <!-- PRIVACY (RA 10173) -->
+        <div class="light light-last">
+            <section class="wrap" id="privacy" aria-labelledby="privacy-title">
+                <div class="privacy">
+                    <div>
+                        <h2 id="privacy-title">How your data is handled</h2>
+                        <p class="lede">What is collected on this site and through the citizen report page, why, and your rights under the Data Privacy Act of 2012 (RA 10173).</p>
+                    </div>
+                    <div class="privacy-grid">
+                        <div><h3>What is collected</h3><ul><li><strong>Citizen report page:</strong> your approximate location, a description of the incident, and an optional photo. No account or login is needed.</li><li><strong>This site's form:</strong> your name, office, email, any number you choose to give, and anything you write in the message.</li></ul></div>
+                        <div><h3>Why</h3><p>Citizen reports are routed to the right response cluster and kept as an auditable incident record for the LGU you're reporting to. Form data is used only to reply to your inquiry, and reaches us through the form service Formspree.</p></div>
+                        <div><h3>Retention</h3><p>Incident reports are kept as part of the LGU's official incident record, in line with government recordkeeping practice. Form messages are kept only as long as needed to reply, in Formspree and in email.</p></div>
+                        <div><h3>Your rights</h3><p>You can ask to see or correct your personal data, and to delete what you sent through this form. Incident reports follow the LGU's records rules, so the LGU decides those requests. Write to Renz Michael Bautista at <a class="link" href="mailto:contact@civicgrid.dev">contact@civicgrid.dev</a>.</p></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
     <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo">
-                    <img src="logo.svg" alt="CivicGrid Logo" class="footer-logo-svg" width="36" height="36">
-                    <div class="footer-logo-text">CivicGrid</div>
-                </div>
-                <div class="footer-center">
-                    &copy; 2026 CivicGrid Software Development Services, Metro Manila, Philippines
-                </div>
-                <ul class="footer-links">
-                    <li><a href="#eoc">EOC</a></li>
-                    <li><a href="#why">Why CivicGrid</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                    <li><a href="#eligibility">Eligibility</a></li>
-                    <li><a href="#privacy">Privacy</a></li>
-                </ul>
-            </div>
+        <a class="foot-brand" href="#top"><img src="logo.svg" alt="" width="34" height="34">CivicGrid</a>
+        <div class="foot">
+            <div><p class="k">The system</p><a href="#how">How it works</a><a href="#try">Sample record</a><a href="#proof">Mandaluyong</a></div>
+            <div><p class="k">About</p><a href="#about">The founder</a><a href="#procurement">Procurement</a><a href="#privacy">Privacy</a></div>
+            <div><p class="k">Contact</p><a href="mailto:contact@civicgrid.dev">Email</a><a href="https://www.linkedin.com/in/renz-michael-bautista-926724232/" target="_blank" rel="noopener">LinkedIn</a></div>
+            <div><p class="k">Registered</p><p class="data">DTI 7980659</p><p class="data">PhilGEPS 476941</p></div>
+            <div><p class="k">CivicGrid Software Development Services</p><p>Emergency operations software for Philippine LGUs. City of Manila, Philippines.</p></div>
         </div>
+        <div class="foot-last"><span>&copy; 2026 CivicGrid Software Development Services</span><a href="#contact" class="btn">Book a walkthrough</a></div>
     </footer>
 
-    <!-- Back to Top -->
-    <button class="back-to-top" id="backToTop" aria-label="Back to top">
-        <svg viewBox="0 0 24 24"><path d="M12 4l-8 8h5v8h6v-8h5z"/></svg>
-    </button>
-
     <script>
-        // Scroll Reveal
-        const revealElements = document.querySelectorAll('.reveal');
-        const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
+        // Entrances: each part rises once as it enters; content stays visible without this script.
+        const risers = document.querySelectorAll('.rise');
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+                const siblings = [...entry.target.parentElement.children].filter((el) => el.classList.contains('rise'));
+                entry.target.style.transitionDelay = Math.min(siblings.indexOf(entry.target), 6) * 75 + 'ms';
+                entry.target.classList.add('in');
+                io.unobserve(entry.target);
             });
-        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-        revealElements.forEach(el => revealObserver.observe(el));
-
-        // Hidden-tab fallback: when the page loads in a background tab, browsers
-        // defer IntersectionObserver callbacks until the tab is rendered, which can
-        // leave in-viewport .reveal elements stuck at opacity 0. When the tab
-        // becomes visible (or is restored from the back/forward cache), reveal
-        // anything already inside the viewport; below-fold elements stay with the
-        // observer so scroll-reveal behavior is unchanged. On a normal foreground
-        // load the observer has already added .visible, so this is a no-op.
-        function revealInViewportOnShow() {
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+        risers.forEach((el) => io.observe(el));
+        // Background-tab fallback: reveal anything already on screen when the tab becomes visible.
+        function revealOnShow() {
             if (document.visibilityState !== 'visible') return;
-            const viewportBottom = (window.innerHeight || document.documentElement.clientHeight) - 40; // mirrors observer rootMargin
-            revealElements.forEach(el => {
-                if (el.classList.contains('visible')) return;
-                const rect = el.getBoundingClientRect();
-                if (rect.top < viewportBottom && rect.bottom > 0) {
-                    el.classList.add('visible');
-                }
-            });
+            risers.forEach((el) => { const r = el.getBoundingClientRect(); if (r.top < innerHeight && r.bottom > 0) el.classList.add('in'); });
         }
-        document.addEventListener('visibilitychange', revealInViewportOnShow);
-        window.addEventListener('pageshow', revealInViewportOnShow);
+        document.addEventListener('visibilitychange', revealOnShow);
+        window.addEventListener('pageshow', revealOnShow);
 
-        // Nav scroll effect
-        const navbar = document.getElementById('navbar');
-        window.addEventListener('scroll', () => {
-            navbar.classList.toggle('scrolled', window.scrollY > 80);
-        });
+        // Signature move: the record stage opens, then the amber "now" marker sweeps the timeline once.
+        document.getElementById('stage').classList.add('shutter');
+        document.getElementById('now').classList.add('sweep');
 
-        // Hamburger
-        const hamburger = document.getElementById('hamburger');
-        const navLinks = document.getElementById('navLinks');
-        hamburger.addEventListener('click', () => {
-            hamburger.classList.toggle('active');
-            navLinks.classList.toggle('active');
+        // Mobile menu
+        const toggle = document.getElementById('menuToggle');
+        const links = document.getElementById('navLinks');
+        toggle.addEventListener('click', () => {
+            const open = links.classList.toggle('open');
+            toggle.setAttribute('aria-expanded', open);
+            toggle.textContent = open ? 'Close' : 'Menu';
         });
-        navLinks.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                hamburger.classList.remove('active');
-                navLinks.classList.remove('active');
-            });
-        });
+        const closeMenu = () => { links.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); toggle.textContent = 'Menu'; };
+        links.querySelectorAll('a').forEach((a) => a.addEventListener('click', closeMenu));
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && links.classList.contains('open')) { closeMenu(); toggle.focus(); } });
 
-        // Active nav on scroll
-        const sections = document.querySelectorAll('section[id]');
-        const navItems = document.querySelectorAll('.nav-links a');
-        window.addEventListener('scroll', () => {
-            let current = '';
-            sections.forEach(section => {
-                if (pageYOffset >= section.offsetTop - 200) {
-                    current = section.getAttribute('id');
-                }
-            });
-            navItems.forEach(item => {
-                item.classList.remove('active');
-                if (item.getAttribute('href') === '#' + current) {
-                    item.classList.add('active');
-                }
-            });
-        });
-
-        // Back to top
-        const backToTop = document.getElementById('backToTop');
-        window.addEventListener('scroll', () => {
-            backToTop.classList.toggle('visible', window.scrollY > 600);
-        });
-        backToTop.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-
-        // Contact form
-        const contactForm = document.getElementById('contactForm');
-        const formSuccess = document.getElementById('formSuccess');
-        const formError = document.getElementById('formError');
-        contactForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(contactForm);
-            const submitBtn = contactForm.querySelector('.form-submit');
-            const originalText = submitBtn.textContent;
-            try {
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Sending...';
-                formError.classList.remove('show');
-                const response = await fetch('https://formspree.io/f/xrenylap', {
-                    method: 'POST',
-                    body: formData,
-                    headers: { 'Accept': 'application/json' }
-                });
-                if (response.ok) {
-                    formSuccess.classList.add('show');
-                    contactForm.reset();
-                    submitBtn.textContent = originalText;
-                    submitBtn.disabled = false;
-                    setTimeout(() => formSuccess.classList.remove('show'), 5000);
-                } else {
-                    throw new Error('fail');
-                }
-            } catch (error) {
-                formError.classList.add('show');
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
+        // The live thing: pick an incident type, see the sample record your office would get.
+        const routes = {
+            medical:   ['Medical emergency', 'the health and medical lead office'],
+            fire:      ['Fire or smoke', 'the fire and rescue lead office'],
+            flood:     ['Flood or rescue', 'the search, rescue and retrieval lead office'],
+            crime:     ['Crime in progress', 'the law and order lead office'],
+            crash:     ['Vehicle crash', 'the traffic and medical lead offices'],
+            structure: ['Structural damage', 'the engineering lead office'],
+        };
+        const recTitle = document.getElementById('recTitle');
+        const recRows = document.getElementById('recRows');
+        const chips = document.querySelectorAll('.chip');
+        const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        chips.forEach((chip) => chip.addEventListener('click', () => {
+            const [name, office] = routes[chip.dataset.type];
+            chips.forEach((c) => c.setAttribute('aria-pressed', c === chip ? 'true' : 'false'));
+            recTitle.textContent = name;
+            const rows = [
+                ['07:42', 'Reported', name + ', location attached, from a resident’s phone'],
+                ['07:43', 'Alerted', 'Text message to the operator on duty'],
+                ['07:44', 'Dispatched', 'Sent to ' + office],
+                ['07:51', 'On scene', 'Responders confirm arrival'],
+                ['08:31', 'Closed', 'Locked; only an EOC commander or system administrator can reopen it'],
+                ['08:32', 'Report', 'After-action report ready, no logbook retyping'],
+            ];
+            recRows.replaceChildren(...rows.map(([t, s, d], i) => {
+                const li = document.createElement('li');
+                if (!reduce) { li.className = 'in'; li.style.animationDelay = i * 90 + 'ms'; }
+                li.innerHTML = '<span class="data"></span><span class="st"></span><span></span>';
+                li.children[0].textContent = t; li.children[1].textContent = s; li.children[2].textContent = d;
+                return li;
+            }));
+            // On narrow screens the record sits below the chips: bring it into view.
+            if (matchMedia('(max-width: 1100px)').matches) {
+                document.getElementById('record').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' });
             }
-        });
+        }));
 
-        // Smooth scroll
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                const href = this.getAttribute('href');
-                if (href !== '#' && document.querySelector(href)) {
-                    e.preventDefault();
-                    window.scrollTo({
-                        top: document.querySelector(href).offsetTop - 72,
-                        behavior: 'smooth'
-                    });
-                }
-            });
+        // Contact form (Formspree -> contact@civicgrid.dev)
+        const form = document.getElementById('contactForm');
+        const ok = document.getElementById('formSuccess');
+        const bad = document.getElementById('formError');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!form.reportValidity()) return;
+            const btn = form.querySelector('.form-submit');
+            const label = btn.textContent;
+            btn.disabled = true; btn.textContent = 'Sending...';
+            ok.classList.remove('show'); bad.classList.remove('show');
+            try {
+                const res = await fetch('https://formspree.io/f/xrenylap', { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' } });
+                if (!res.ok) throw new Error('send failed');
+                ok.classList.add('show'); form.reset();
+            } catch (err) {
+                bad.classList.add('show');
+            } finally {
+                btn.disabled = false; btn.textContent = label;
+            }
         });
     </script>
 </body>

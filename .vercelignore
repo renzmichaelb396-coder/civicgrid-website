@@ -5,3 +5,4 @@ package.json
 playwright.config.ts
 *.pdf
 CIVICGRID-WEBSITE-DESIGN-COMPLIANCE-PHASE-A-PACKET.md
+!civicgrid-company-profile.pdf
