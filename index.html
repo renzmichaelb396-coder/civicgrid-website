@@ -53,7 +53,7 @@
             --margin: clamp(20px, 4vw, 64px);
             --radius: 4px;
             --cut: clamp(40px, 6vw, 96px);
-            --gap-section: clamp(72px, 8vw, 120px);
+            --gap-section: clamp(64px, 7vw, 104px);
             --ease: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -109,142 +109,41 @@
         .nav-links .btn { padding: 13px 18px; font-size: 13px; }
         .menu-toggle { display: none; background: none; border: 0; color: var(--ink); font: 600 13px var(--display); letter-spacing: .06em; text-transform: uppercase; padding: 12px 0 12px 12px; cursor: pointer; }
 
-        /* ============ HERO ============ */
-        .hero { position: relative; min-height: calc(100svh - 76px); padding-top: clamp(32px, 6vh, 88px); display: flex; flex-direction: column; overflow: hidden; }
-        .hero-copy { position: relative; z-index: 2; max-width: 1060px; }
-        .hero h1 { font-size: clamp(38px, 3.9vw, 66px); line-height: 1.05; letter-spacing: -0.025em; max-width: 30ch; }
-        .hero-lede { font-size: clamp(17px, 1.3vw, 19px); color: var(--ink-2); max-width: 64ch; margin-top: 18px; }
-        .hero-lede strong { color: var(--ink); font-weight: 600; }
-        .hero-actions { display: flex; flex-wrap: wrap; gap: 28px; align-items: center; margin-top: 22px; }
 
-        .stage {
-            position: relative; z-index: 1; flex: 1 0 auto; min-height: 300px;
-            margin: clamp(24px, 3vh, 40px) calc(var(--margin) * -1) 0 30%;
-            background: var(--surface); padding: clamp(28px, 3.6vw, 56px) 0 clamp(24px, 3vw, 40px) clamp(28px, 4vw, 64px);
-        }
-        .board { width: max(880px, 100%); color: var(--ink-2); }
-        .board-head { display: flex; justify-content: space-between; align-items: center; padding-right: var(--margin); font: 600 13px var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
-        .tick { display: inline-block; width: 12px; height: 12px; background: var(--amber); clip-path: polygon(35% 0, 100% 0, 100% 100%, 0 100%, 0 35%); margin-right: 10px; vertical-align: -1px; }
-        .board-m { display: none; }
-        .ruler, .lane { display: grid; grid-template-columns: 150px repeat(5, minmax(0, 1fr)); column-gap: 10px; }
-        .ruler { margin-top: 22px; font: 500 14px var(--data); color: var(--ink-3); }
-        .lane { margin-top: 12px; align-items: stretch; }
-        .lane-name { font: 600 13px var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); padding-top: 18px; }
-        .ev { padding: 16px 16px 18px; font-size: 15px; line-height: 1.4; min-height: 92px; }
-        .lane-today .ev { background: var(--elevated); color: var(--ink-2); }
-        .lane-cg .ev { background: var(--navy); color: var(--ink); }
-        .lane-cg .ev b { display: block; font: 600 14px var(--data); color: var(--amber); margin-bottom: 6px; }
-        .lane-cg .ev.done { background: var(--amber); color: var(--on-amber); }
-        .lane-cg .ev.done b { color: var(--on-amber); }
-        .board-note { margin-top: 16px; font-size: 13px; color: var(--ink-3); }
-        .now { position: absolute; top: 0; bottom: 0; width: 3px; background: var(--amber); left: 0; opacity: 0; pointer-events: none; }
-
-        /* ============ PROOF BOARD ============ */
         .section { padding-top: var(--gap-section); }
-        .section h2 { font-size: clamp(40px, 4.6vw, 76px); line-height: 1.02; max-width: 16ch; }
-        .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 56px; }
-        .tile { background: var(--surface); padding: 28px; min-height: 220px; display: flex; flex-direction: column; justify-content: space-between; gap: 18px; }
-        .tile.w2 { grid-column: span 2; }
-        .tile.lead { background: var(--elevated); }
-        .tile.lead h2 { font-size: clamp(32px, 3.2vw, 52px); }
-        .tile-k { font: 600 13px var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
-        .tile-v { font: 600 clamp(26px, 2.4vw, 38px)/1.1 var(--display); letter-spacing: -0.02em; }
-        .tile-v.data { font: 600 clamp(26px, 2.4vw, 38px)/1.1 var(--data); letter-spacing: -0.02em; color: var(--amber); }
-        .tile p { color: var(--ink-2); font-size: 16px; }
-        .tile.media { padding: 0; overflow: hidden; position: relative; }
-        .tile.media img { width: 100%; height: 100%; object-fit: cover; object-position: top; position: absolute; inset: 0; }
-        .tile.media figcaption { position: absolute; left: 0; bottom: 0; background: var(--navy); color: var(--ink-2); font-size: 14px; padding: 10px 14px; }
+        .section h2 { font-size: clamp(30px, 3vw, 46px); line-height: 1.08; max-width: 24ch; }
 
-        /* Deployment facts as one segmented record bar */
         .facts { list-style: none; display: flex; gap: 6px; margin-top: 8px; }
         .facts li { flex: 1 1 0; background: var(--surface); padding: 24px 24px 28px; display: grid; gap: 10px; align-content: start; min-height: 200px; }
         .facts li:first-child { clip-path: polygon(var(--cut) 0, 100% 0, 100% 100%, 0 100%, 0 var(--cut)); --cut: 28px; }
         .facts li.now-seg { background: var(--amber); color: var(--on-amber); }
         .fact-w { font: 600 13px var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
-        .now-seg .fact-w, .now-seg .fact-n { color: var(--on-amber); }
         .fact-v { font: 600 clamp(26px, 2.4vw, 38px)/1.1 var(--display); letter-spacing: -0.02em; }
         .fact-v.data { font-family: var(--data); color: var(--amber); }
         .fact-n { font-size: 16px; color: var(--ink-2); }
 
-        /* ============ STAGES BAR ============ */
-        .bar { display: flex; gap: 6px; margin-top: 48px; }
-        .seg { padding: 20px; display: flex; flex-direction: column; gap: 14px; flex: 1 1 0; }
-        .seg:nth-child(1) { background: var(--elevated); }
-        .seg:nth-child(2) { background: var(--step); }
-        .seg:nth-child(3) { background: var(--surface); }
-        .seg:nth-child(4) { background: var(--amber); color: var(--on-amber); }
-        .seg-t { font: 600 clamp(20px, 2vw, 30px)/1.1 var(--display); letter-spacing: -0.015em; }
-        .seg-w { font: 600 13px var(--display); letter-spacing: .06em; text-transform: uppercase; opacity: .8; }
 
-        /* ============ TRY IT ============ */
-        .try { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 88px); align-items: start; margin-top: 56px; }
-        .try-intro p { color: var(--ink-2); font-size: 18px; max-width: 40ch; margin-top: 20px; }
-        .chips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 32px; }
         .chip {
             text-align: left; background: var(--surface); color: var(--ink); border: 0; border-radius: var(--radius);
             font: 500 17px/1.3 var(--display); padding: 20px 18px; min-height: 64px; cursor: pointer;
             transition: background 150ms var(--ease), transform 250ms var(--ease);
         }
-        .chip:hover { background: var(--elevated); transform: translateY(-1px); }
-        .chip[aria-pressed="true"] { background: var(--amber); color: var(--on-amber); }
-        .record { background: var(--surface); padding: clamp(24px, 3vw, 40px); }
-        .record-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
-        .record-head h3 { font-size: clamp(22px, 2vw, 28px); }
-        .record-tag { font: 600 12px var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
-        .record ol { list-style: none; margin-top: 22px; display: grid; gap: 6px; }
-        .record li { display: grid; grid-template-columns: 76px 140px 1fr; gap: 14px; align-items: baseline; background: var(--navy); padding: 16px 18px; }
-        .record li .data { color: var(--amber); font-weight: 600; font-size: 15px; }
-        .record li .st { font: 600 12px var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
-        .record li span:last-child { font-size: 16px; }
-        .record li.in { animation: rowin 420ms var(--ease) both; }
-        @keyframes rowin { from { opacity: 0; transform: translateY(10px); } }
-        .record-note { margin-top: 18px; font-size: 14px; color: var(--ink-3); }
-        .phone-shot { margin-top: 40px; max-width: 260px; }
-        .phone-shot img { border-radius: 18px; }
-        .phone-shot figcaption, .work-cap { font-size: 14px; color: var(--ink-3); margin-top: 10px; }
-        .demo-shot { background: var(--elevated); padding: 18px 18px 0; }
-        .demo-shot img { width: 100%; height: auto; }
-        .demo-shot figcaption { font-size: 14px; color: var(--ink-3); padding: 12px 0 16px; }
 
-        /* ============ NO EXTRA WORK ============ */
-        .work { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 88px); align-items: center; }
-        .work-pic { margin-left: calc(var(--margin) * -1 - 6vw); height: min(78svh, 760px); overflow: hidden; }
-        .work-pic img { width: 100%; height: 100%; object-fit: cover; }
-        .points { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px 48px; margin-top: 56px; }
-        .point h3 { font-size: 19px; font-weight: 600; letter-spacing: -0.01em; display: flex; gap: 12px; align-items: baseline; }
-        .point h3::before { content: ""; flex: none; width: 0.72em; height: 0.72em; background: var(--amber); clip-path: polygon(35% 0, 100% 0, 100% 100%, 0 100%, 0 35%); transform: translateY(0.05em); }
-        .point p { color: var(--ink-2); font-size: 16px; margin-top: 8px; padding-left: calc(0.72em + 12px); }
 
         /* ============ ABOUT ============ */
         .about { margin: var(--gap-section) clamp(10px, 1.4vw, 20px) 0; background: var(--surface); border-radius: var(--radius); overflow: hidden; }
         .about-in { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 80px); padding: clamp(32px, 4.4vw, 72px); align-items: start; }
-        .about h2 { font-size: clamp(34px, 3.6vw, 56px); line-height: 1.04; max-width: 16ch; }
+        .about h2 { font-size: clamp(30px, 3vw, 46px); line-height: 1.08; max-width: 18ch; }
         .about h2 + .said { margin-top: 24px; }
         .film { background: var(--navy); }
         .film video { width: 100%; height: auto; aspect-ratio: 9 / 16; object-fit: cover; }
         .film figcaption { font-size: 14px; color: var(--ink-3); padding: 12px 0 0; background: var(--surface); }
         blockquote.said { font: 500 clamp(21px, 1.9vw, 28px)/1.32 var(--display); letter-spacing: -0.015em; max-width: 34ch; }
         .said-by { color: var(--ink-3); font-size: 15px; margin-top: 16px; }
-        .about-blocks { display: grid; gap: 28px; }
-        .about-blocks h3 { font-size: 22px; }
-        .about-blocks p { color: var(--ink-2); font-size: 16px; margin-top: 10px; }
-        .about-actions { display: flex; flex-wrap: wrap; gap: 28px; align-items: center; }
 
-        /* ============ PROCUREMENT ============ */
-        .proc { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 88px); align-items: start; }
-        .proc-intro p { color: var(--ink-2); max-width: 44ch; margin-top: 20px; }
-        .reg { width: 100%; border-collapse: separate; border-spacing: 0 6px; }
-        .reg th, .reg td { background: var(--surface); padding: 22px 20px; text-align: left; vertical-align: baseline; }
-        .reg th { font: 600 13px var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); width: 30%; }
-        .reg td:nth-child(2) { font: 600 clamp(20px, 1.7vw, 26px)/1.15 var(--display); letter-spacing: -0.015em; white-space: nowrap; }
-        .reg td.data { font-family: var(--data); color: var(--amber); }
-        .reg td:last-child { color: var(--ink-2); font-size: 16px; }
-        .reg tr:first-child th { clip-path: polygon(20px 0, 100% 0, 100% 100%, 0 100%, 0 20px); }
 
         /* ============ CONTACT (coupon) ============ */
-        .coupon {
-            margin-top: 64px; display: grid; grid-template-columns: 46fr 54fr; gap: 6px;
-        }
+        .coupon { display: grid; grid-template-columns: 46fr 54fr; gap: 6px; }
         .coupon-l { background: var(--elevated); padding: clamp(28px, 3.4vw, 56px); display: flex; flex-direction: column; justify-content: space-between; gap: 40px; clip-path: polygon(var(--cut) 0, 100% 0, 100% 100%, 0 100%, 0 var(--cut)); --cut: 40px; }
         .coupon form { background: var(--surface); }
         .coupon-l h2 { font-size: clamp(30px, 3vw, 48px); line-height: 1.08; max-width: 15ch; }
@@ -273,9 +172,9 @@
         .privacy { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(32px, 5vw, 80px); }
         .privacy h2 { font-size: clamp(28px, 2.6vw, 40px); }
         .privacy-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 48px; }
-        .privacy h3 { font-size: 18px; }
-        .privacy p, .privacy li { color: var(--ink-2); font-size: 16px; margin-top: 8px; }
-        .privacy ul { padding-left: 18px; }
+        .privacy-text h3 { font-size: 18px; }
+        .privacy-text p, .privacy-text li { color: var(--ink-2); font-size: 16px; margin-top: 8px; }
+        .privacy-text ul { padding-left: 18px; }
         .privacy .lede { color: var(--ink-2); margin-top: 16px; }
 
         /* ============ FOOTER ============ */
@@ -292,59 +191,22 @@
         /* ============ MOTION (content visible without script) ============ */
         .js .rise { opacity: 0; transform: translateY(24px); transition: opacity 700ms var(--ease), transform 700ms var(--ease); }
         .js .rise.in { opacity: 1; transform: none; }
-        .js .stage { clip-path: polygon(var(--cut) 0, 100% 0, 100% 100%, 0 100%, 0 var(--cut)); }
-        .js .stage.shutter { animation: shutter 1100ms var(--ease) both; }
-        @keyframes shutter { from { clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%, 100% 0); } }
-        .now.sweep { animation: sweep 2600ms 900ms var(--ease) both; }
-        @keyframes sweep { 0% { opacity: 1; left: 150px; } 92% { opacity: 1; } 100% { opacity: 0; left: 100%; } }
         @media (prefers-reduced-motion: reduce) {
             html { scroll-behavior: auto; }
             .js .rise { opacity: 1; transform: none; transition: opacity 100ms; }
-            .js .stage.shutter, .now.sweep, .record li.in { animation: none; }
-            .now { display: none; }
-            .btn, .chip { transition: background 100ms; }
-            .btn:hover, .chip:hover { transform: none; }
+            .btn { transition: background 100ms; }
+            .btn:hover { transform: none; }
         }
 
         /* ============ RESPONSIVE ============ */
         @media (max-width: 1100px) {
-            .try, .about-in, .privacy { grid-template-columns: 1fr; }
         }
         @media (max-width: 760px) {
             body { font-size: 16px; }
             .nav { height: 64px; }
-            .hero { min-height: 0; padding-top: 28px; overflow: visible; }
-            .hero h1 { font-size: 10.2vw; }
-            .stage { margin: 40px calc(var(--margin) * -1) 0; padding: 40px var(--margin) 24px; --cut: 48px; flex: none; }
-            .board, .now { display: none; }
-            .board-m { display: grid; gap: 6px; }
-            .bm-head, .bm-row { display: grid; grid-template-columns: 52px 1fr 1fr; gap: 6px; }
-            .bm-head { font: 600 12px var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); padding-bottom: 2px; }
-            .bm-row > span { padding: 12px 10px; font-size: 14px; line-height: 1.35; }
-            .bm-row > span:nth-child(1) { padding: 12px 0; color: var(--amber); font-weight: 600; font-size: 13px; }
-            .bm-row > span:nth-child(2) { background: var(--elevated); color: var(--ink-2); }
-            .bm-row > span:nth-child(3) { background: var(--navy); color: var(--ink); }
-            .bm-row.done > span:nth-child(3) { background: var(--amber); color: var(--on-amber); font-weight: 600; }
-            .tiles { grid-template-columns: repeat(2, 1fr); gap: 6px; }
-            .tile { min-height: 168px; padding: 20px; }
-            .tile.w2 { grid-column: span 2; }
-            .tile.media { min-height: 240px; }
             .facts { flex-direction: column; }
             .facts li { min-height: 0; padding: 20px; }
-            .bar { flex-direction: column; }
-            .seg { flex: none; }
-            .chips { grid-template-columns: 1fr 1fr; }
-            .record li { grid-template-columns: 60px 1fr; }
-            .record li span:last-child { grid-column: 1 / -1; }
-            .points { grid-template-columns: 1fr; gap: 28px; }
-            .about-blocks { grid-template-columns: 1fr; gap: 28px; }
             .coupon { grid-template-columns: 1fr; }
-            .proc { grid-template-columns: 1fr; }
-            .reg th, .reg td { display: block; width: auto; padding: 4px 18px; }
-            .reg th { padding-top: 18px; }
-            .reg td:last-child { padding-bottom: 18px; }
-            .reg tr { display: block; margin-bottom: 6px; }
-            .reg tr:first-child th { clip-path: none; }
             .privacy-grid { grid-template-columns: 1fr; }
             .foot { grid-template-columns: 1fr 1fr; }
             .foot > div:last-child { grid-column: 1 / -1; }
@@ -363,18 +225,12 @@
             margin-top: var(--gap-section);
             padding-block: var(--gap-section);
         }
-        .light h2 { font-size: clamp(32px, 3.4vw, 54px); line-height: 1.06; max-width: 20ch; }
+        .light h2 { font-size: clamp(30px, 3vw, 46px); line-height: 1.08; max-width: 24ch; }
         .light .reg td.data { color: var(--ink); }
         .light .link:hover { color: var(--ink-2); }
         .light :focus-visible { outline-color: var(--ink); }
         .light-last { margin-bottom: calc(var(--gap-section) * -1); }
 
-        /* No extra work: two grouped lists instead of eight loose points */
-        .groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(32px, 5vw, 88px); margin-top: 48px; }
-        .group h3 { font-size: 22px; padding-bottom: 14px; }
-        .point { padding-top: 22px; }
-        .point h4 { font: 600 18px/1.3 var(--display); letter-spacing: -0.01em; display: flex; gap: 12px; align-items: baseline; }
-        .point h4::before { content: ""; flex: none; width: 0.72em; height: 0.72em; background: var(--amber); clip-path: polygon(35% 0, 100% 0, 100% 100%, 0 100%, 0 35%); transform: translateY(0.05em); }
 
         /* Founder */
         .portrait img { width: 100%; height: auto; border-radius: var(--radius); }
@@ -382,20 +238,12 @@
         .portrait figcaption strong { display: block; font: 600 18px/1.3 var(--display); color: var(--ink); }
         .about-media { display: grid; grid-template-columns: minmax(0, 240px) minmax(0, 1fr); gap: clamp(24px, 3.4vw, 48px); margin-top: 40px; align-items: start; }
 
-        /* Sample record screens */
-        .shots { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 200px); gap: 8px; margin-top: 8px; align-items: start; }
-        .phone-shot img { height: auto; }
-        .demo-shot a { display: block; }
-        .phone-shot { margin-top: 0; max-width: none; background: var(--elevated); padding: 18px 18px 16px; }
 
         /* Contact */
         .contact { padding-top: var(--gap-section); }
         .coupon { margin-top: 0; }
         .fil { color: var(--ink) !important; font-weight: 500; }
         .direct > div > span:not(.k) { font: 500 16px/1.4 var(--display); }
-        .other-orgs { font-size: 15px; border-top: 1px solid var(--step); padding-top: 20px; max-width: none !important; margin-top: 0 !important; }
-        .other-orgs strong { color: var(--ink); font-weight: 600; }
-        .proc-pdf { margin-top: 24px !important; }
 
         /* Tap targets and anchor landings */
         [id] { scroll-margin-top: 84px; }
@@ -408,22 +256,8 @@
         .foot-last .btn { min-height: 44px; }
 
         @media (max-width: 1100px) {
-            /* The wide two-lane board can't fit: use the rows version up to here */
-            .hero { min-height: 0; overflow: visible; }
-            .stage { margin: 40px calc(var(--margin) * -1) 0; padding: 40px var(--margin) 24px; --cut: 48px; flex: none; }
-            .board, .now { display: none; }
-            .board-m { display: grid; gap: 6px; }
-            .bm-title { font: 600 13px var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); padding-bottom: 12px; }
-            .bm-head, .bm-row { display: grid; grid-template-columns: 52px 1fr 1fr; gap: 6px; }
-            .bm-head { font: 600 12px var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); padding-bottom: 2px; }
-            .bm-row > span { padding: 12px 10px; font-size: 14px; line-height: 1.35; }
-            .bm-row > span:nth-child(1) { padding: 12px 0; color: var(--amber); font-weight: 600; font-size: 13px; }
-            .bm-row > span:nth-child(2) { background: var(--elevated); color: var(--ink-2); }
-            .bm-row > span:nth-child(3) { background: var(--navy); color: var(--ink); }
-            .bm-row.done > span:nth-child(3) { background: var(--amber); color: var(--on-amber); font-weight: 600; }
             .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
             .facts li { min-height: 0; }
-            .proc { grid-template-columns: 1fr; }
             .portrait { max-width: 360px; }
             .nav-links a:not(.btn) { font-size: 14px; }
             .nav-links { gap: 16px; }
@@ -437,15 +271,204 @@
             .nav-book { display: inline-flex; padding: 12px 14px; font-size: 12px; min-height: 44px; margin-left: auto; margin-right: 8px; }
         }
         @media (max-width: 760px) {
-            .hero h1 { font-size: clamp(33px, 9vw, 44px); line-height: 1.06; }
             .facts { grid-template-columns: 1fr; }
             .facts li { flex: none; }
-            .groups, .about-media { grid-template-columns: 1fr; }
             .film { max-width: 300px; }
-            .shots { grid-template-columns: 1fr; }
-            .phone-shot { max-width: 240px; }
-            .tile.media { min-height: 260px; }
-            .tile.lead h2 { font-size: 30px; }
+        }
+
+        /* ============ FIRST SCREEN: slim band, film edge to edge ============ */
+        .ctl { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border: 0; border-radius: var(--radius); background: var(--elevated); color: var(--ink); font: 500 14px var(--display); cursor: pointer; transition: background 150ms var(--ease), transform 250ms var(--ease); }
+        .ctl:hover { background: var(--step); transform: translateY(-1px); }
+        .ctl:active { transform: translateY(1px); }
+        .ctl svg { width: 18px; height: 18px; fill: currentColor; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+        #filmSound[aria-pressed="true"] { background: var(--amber); color: var(--on-amber); }
+
+
+        /* How it works: pick a step, watch it */
+        .step-list { display: grid; gap: 6px; }
+        .step-btn { position: relative; overflow: hidden; display: grid; gap: 6px; text-align: left; border: 0; border-radius: var(--radius); background: var(--surface); color: var(--ink); padding: 18px 20px; cursor: pointer; transition: background 150ms var(--ease); }
+        .step-btn .seg-t { font: 600 19px/1.2 var(--display); letter-spacing: -0.01em; }
+        .step-btn .seg-n { font-size: 15px; line-height: 1.45; color: var(--ink-2); }
+        .step-btn:hover { background: var(--elevated); }
+        .step-btn[aria-pressed="true"] { background: var(--elevated); }
+        .step-btn[aria-pressed="true"] .seg-t { color: var(--amber); }
+        .step-bar { position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; background: var(--amber); transform: scaleX(0); transform-origin: 0 50%; }
+        .step-btn[aria-pressed="false"] .step-bar { display: none; }
+        .step-pause { justify-self: start; margin-top: 4px; }
+
+        /* Contact sits on the slow grid; panels stay opaque so text contrast is unaffected */
+        .contact { position: relative; overflow: hidden; padding-block: var(--gap-section); }
+        .contact-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.5; }
+        .contact .coupon { position: relative; background: var(--navy); padding: 0; max-width: 1392px; }
+        .contact { padding-inline: var(--margin); }
+
+        /* Sentence-case labels instead of tiny tracked capitals */
+        .fact-w, .tile-k, .seg-w, .board-head, .lane-name, .bm-head, .record-tag, .record li .st, .reg th, .direct .k, .foot .k { text-transform: none; letter-spacing: 0; font-weight: 500; font-size: 15px; }
+
+        @media (max-width: 1100px) {
+        }
+        @media (max-width: 760px) {
+        }
+        .nav { padding-inline: var(--edge); }
+        @media (min-width: 1101px) and (max-height: 1000px) {
+        }
+        @media (min-width: 1101px) and (max-height: 700px) {
+        }
+        @media (prefers-reduced-motion: reduce) {
+        }
+
+        /* ============ ROUND 3: one message per screen ============ */
+        :root { --edge: max(var(--margin), calc((100% - 1520px) / 2 + var(--margin))); }
+        .nav { padding-inline: var(--edge); }
+        .btn-lg { padding: 22px 30px; font-size: 16px; }
+        /* One amber action per screen: the top-bar button stays quiet until the first-screen button has scrolled away */
+        .js .nav:not(.past) .nav-links .btn, .js .nav:not(.past) .nav-book { background: var(--elevated); color: var(--ink); }
+        .js .nav:not(.past) .nav-links .btn:hover, .js .nav:not(.past) .nav-book:hover { background: var(--step); }
+
+        /* First screen: promise on the left, the one action on the right, the film below */
+        .hero { display: flex; flex-direction: column; min-height: calc(100svh - 76px); }
+        .hero-band { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px clamp(24px, 4vw, 64px); align-items: center; padding: clamp(10px, 2vh, 24px) var(--edge) clamp(14px, 2.4vh, 26px); }
+        .hero h1 { font-size: clamp(34px, 3.5vw, 58px); line-height: 1.05; letter-spacing: -0.025em; }
+        .hero-sub { font-size: clamp(16px, 1.2vw, 18px); line-height: 1.45; color: var(--ink-2); margin-top: 8px; max-width: 62ch; text-wrap: balance; }
+        .hero-go { display: grid; gap: 8px; justify-items: start; }
+        .hero-note { font-size: 14px; line-height: 1.4; color: var(--ink-2); }
+        .hero-alt { font-size: 15px; padding-block: 2px; }
+        .film-frame { position: relative; --cut: clamp(28px, 3.4vw, 56px); flex: 1 1 auto; min-height: calc(100vw / 2.4); background: var(--surface); }
+        .film-frame video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+        .film-ctl { position: absolute; z-index: 2; top: 14px; left: calc(var(--cut) + 14px); display: flex; gap: 6px; }
+        .film-ctl .ctl { background: var(--navy); }
+        .film-ctl .ctl:hover { background: var(--elevated); }
+
+        /* Proof */
+                .proof-in p { color: var(--ink-2); margin-top: 14px; max-width: 58ch; }
+        .facts { list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 28px; }
+        .facts li { min-height: 0; background: var(--surface); padding: 18px 20px; display: grid; gap: 4px; align-content: start; flex: none; clip-path: none; }
+        .facts li:first-child { clip-path: none; }
+        .fact-v { font: 600 clamp(20px, 1.7vw, 26px)/1.15 var(--display); letter-spacing: -0.015em; }
+        .fact-v.data { font-family: var(--data); letter-spacing: -0.02em; color: var(--ink); }
+        .fact-n { font-size: 15px; line-height: 1.4; }
+
+        /* The problem */
+        .pain { display: grid; gap: 6px; margin-top: 36px; list-style: none; }
+        .pain-head, .pain-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+        .pain-head span { font: 600 16px var(--display); color: var(--ink-2); padding: 0 24px 4px; }
+        .pain-row > div { padding: 22px 24px; font-size: 17px; line-height: 1.45; }
+        .pain-today { background: var(--surface); color: var(--ink); font-weight: 500; }
+        .pain-with { background: var(--navy); color: oklch(95% 0.005 255); }
+        .pain-k { display: none; font: 600 14px var(--display); margin-bottom: 6px; }
+        .pain-ask { margin-top: 28px; font: 500 clamp(19px, 1.6vw, 24px)/1.35 var(--display); letter-spacing: -0.01em; max-width: 44ch; text-wrap: balance; }
+        .pain-ask + p { margin-top: 6px; }
+
+        /* How your team uses it */
+        .steps { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, min(38vw, 520px)); gap: clamp(20px, 3vw, 48px); margin-top: 36px; align-items: start; }
+        .step-film { background: var(--surface); aspect-ratio: 4 / 5; }
+        .step-film video { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Getting started: the offer */
+        .start { background: var(--surface); margin-top: var(--gap-section); padding-block: var(--gap-section); }
+        .start h2 { font-size: clamp(30px, 3vw, 46px); line-height: 1.08; max-width: 24ch; }
+        .start-steps { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 36px; }
+        .start-steps li { background: var(--navy); padding: clamp(22px, 2.2vw, 32px); display: grid; gap: 10px; align-content: start; }
+        .start-n { font: 500 15px var(--data); color: var(--ink-3); }
+        .start-steps h3 { font-size: clamp(20px, 1.7vw, 25px); line-height: 1.18; letter-spacing: -0.015em; }
+        .start-steps p { color: var(--ink-2); font-size: 16px; line-height: 1.5; }
+        .start-go { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 28px; margin-top: 32px; }
+        .start-go p { font: 500 17px/1.4 var(--display); max-width: 42ch; }
+
+        /* Custom systems: its own loud field, so a company can't miss it */
+        .custom { --ink: var(--on-amber); background: var(--amber); color: var(--on-amber); padding-block: var(--gap-section); }
+        .custom-in { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: clamp(28px, 5vw, 80px); align-items: start; }
+        .custom h2 { font-size: clamp(30px, 3vw, 46px); line-height: 1.08; max-width: 18ch; }
+        .custom-in > div > p { margin-top: 16px; font-size: 18px; line-height: 1.5; max-width: 48ch; }
+        .custom .btn { background: var(--navy); color: oklch(95% 0.005 255); margin-top: 26px; }
+        .custom .btn:hover { background: var(--elevated); }
+        .custom :focus-visible { outline-color: var(--on-amber); }
+        .custom-list { list-style: none; display: grid; gap: 6px; }
+        .custom-list li { background: oklch(84% 0.13 78); padding: 20px 22px; }
+        .custom-list h3 { font-size: 20px; line-height: 1.2; letter-spacing: -0.01em; }
+        .custom-list p { font-size: 16px; line-height: 1.45; margin-top: 4px; }
+
+        /* Founder */
+        .about { margin: var(--gap-section) 0 0; border-radius: 0; }
+        .about-in { max-width: 1520px; margin-inline: auto; padding: var(--gap-section) var(--margin); grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); }
+        .about-say { color: var(--ink-2); font-size: 17px; line-height: 1.55; max-width: 52ch; }
+        .about-say + .btn { margin-top: 22px; }
+        .about-media { grid-template-columns: minmax(0, 210px) minmax(0, 1fr); margin-top: 28px; }
+        blockquote.said { font-size: clamp(19px, 1.6vw, 24px); max-width: 44ch; }
+
+        .custom + .about { margin-top: 0; }
+        .about + .light { margin-top: 0; }
+
+        /* Questions */
+        .faq-in { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(24px, 5vw, 80px); align-items: start; }
+        .faq { display: grid; gap: 6px; }
+        .faq details { background: var(--surface); border-radius: var(--radius); scroll-margin-top: 90px; }
+        .faq summary { display: flex; justify-content: space-between; align-items: center; gap: 20px; min-height: 60px; padding: 16px 22px; font: 600 18px/1.3 var(--display); letter-spacing: -0.01em; cursor: pointer; list-style: none; }
+        .faq summary::-webkit-details-marker { display: none; }
+        .faq summary svg { flex: none; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; transition: transform 200ms var(--ease); }
+        .faq details[open] summary svg { transform: rotate(45deg); }
+        .faq-a { padding: 0 22px 20px; color: var(--ink-2); max-width: 68ch; }
+        .faq-a p + p, .faq-a p + ul { margin-top: 10px; }
+        .faq-a ul { padding-left: 18px; }
+        .faq-a .link { padding-block: 8px; }
+
+        /* Contact form: LGU or organization */
+        .who { border: 0; display: grid; gap: 6px; margin-bottom: 8px; }
+        .who legend { font: 500 14px var(--display); color: var(--ink-2); margin-bottom: 6px; }
+        .who-opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+        .who label { display: flex; align-items: center; justify-content: center; text-align: center; min-height: 52px; padding: 10px 12px; background: var(--navy); border-radius: var(--radius); font: 500 15px/1.25 var(--display); color: var(--ink-2); cursor: pointer; transition: background 150ms var(--ease), color 150ms var(--ease); }
+        .who input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+        .who input:checked + label { background: var(--step); color: var(--ink); outline: 2px solid var(--amber); outline-offset: -2px; }
+        .who input:focus-visible + label { outline: 2px solid var(--amber); outline-offset: 3px; }
+
+        /* Privacy: complete, but out of the way */
+        .privacy-box { padding: 28px var(--edge) 0; }
+        .privacy-box summary { display: inline-flex; align-items: center; min-height: 44px; font: 500 16px var(--display); color: var(--ink-2); cursor: pointer; text-decoration: underline; text-decoration-color: var(--amber); text-underline-offset: 6px; }
+        .privacy-body { padding-top: 16px; max-width: 1100px; }
+        .privacy-body .lede { color: var(--ink-2); max-width: 70ch; }
+        .privacy-grid { margin-top: 24px; }
+        footer { margin-top: var(--gap-section); }
+
+        @media (max-width: 1100px) {
+            .hero { min-height: 0; }
+            .film-frame { flex: none; aspect-ratio: 2400 / 1100; min-height: 0; }
+            .custom-in, .faq-in { grid-template-columns: 1fr; }
+            .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .steps { grid-template-columns: 1fr; }
+            .step-film { order: -1; width: 100%; max-width: 480px; }
+            .about-in { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 760px) {
+            .hero-band { grid-template-columns: 1fr; padding-top: 18px; }
+            .hero h1 { font-size: clamp(32px, 9.4vw, 42px); }
+            .hero-go .btn { width: 100%; justify-content: center; }
+            .film-frame { clip-path: none; aspect-ratio: auto; min-height: 0; flex: none; }
+            .film-frame video { position: static; height: auto; aspect-ratio: 4 / 5; }
+            .film-ctl { position: static; padding: 10px var(--edge); background: var(--navy); }
+            .film-ctl .ctl { background: var(--elevated); }
+            .facts { grid-template-columns: 1fr; }
+            .pain-head { display: none; }
+            .pain-row { grid-template-columns: 1fr; }
+            .pain-row + .pain-row { margin-top: 18px; }
+            .foot-last .btn { display: none; }
+            .pain-k { display: block; }
+            .pain-row > div { padding: 18px 20px; font-size: 16px; }
+            .start-steps { grid-template-columns: 1fr; }
+            .start-go .btn, .custom .btn, .about-say + .btn { width: 100%; justify-content: center; }
+            .about-media { grid-template-columns: 1fr; }
+            .faq summary { font-size: 17px; padding: 14px 18px; }
+            .faq-a { padding: 0 18px 18px; }
+        }
+        @media (min-width: 1101px) and (max-height: 760px) {
+            .hero-band { padding-block: 4px 10px; }
+            .hero h1 { font-size: clamp(30px, 3vw, 42px); }
+            .hero-sub { margin-top: 4px; max-width: none; text-wrap: wrap; font-size: 16px; }
+            .hero-go { gap: 5px; }
+            .hero-go .btn-lg { padding: 14px 22px; font-size: 14px; }
+            .film-frame video { object-position: 50% 70%; }
+        }
+        @media (min-width: 1101px) and (max-height: 700px) {
+            .hero-alt { display: none; }
         }
     </style>
 </head>
@@ -458,80 +481,119 @@
         <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="navLinks">Menu</button>
         <nav class="nav-links" id="navLinks" aria-label="Main">
             <a href="#how">How it works</a>
+            <a href="#start">How to start</a>
+            <a href="#custom">Custom systems</a>
             <a href="#about">The founder</a>
-            <a href="#try">Sample record</a>
-            <a href="#procurement">Procurement</a>
-            <a href="#contact" class="btn">Book a walkthrough</a>
+            <a href="#questions">Questions</a>
+            <a href="#contact" class="btn">Book a free walkthrough</a>
         </nav>
     </header>
 
     <main>
-        <!-- HERO: the proof first, then one emergency two ways on one clock -->
-        <section class="hero wrap" aria-labelledby="hero-title">
-            <div class="hero-copy">
-                <h1 id="hero-title" class="rise">Emergency operations software, in daily use at Mandaluyong City since July 2026.</h1>
-                <p class="hero-lede rise">Built for Philippine LGUs. Residents report from any phone, your emergency operations center (EOC) dispatches, and every step lands in one record for COA and the Mayor. Your team keeps its process.</p>
-                <div class="hero-actions rise">
-                    <a href="#contact" class="btn">Book a 20-minute walkthrough</a>
-                    <a href="#about" class="link">Watch the 83-second story</a>
+        <!-- FIRST SCREEN: the promise, one action, the real system -->
+        <section class="hero" aria-labelledby="hero-title">
+            <div class="hero-band">
+                <div class="rise">
+                    <h1 id="hero-title">Know who responded, and when.</h1>
+                    <p class="hero-sub">Emergency operations software for Philippine LGUs, in daily use at Mandaluyong City since July 2026.</p>
+                </div>
+                <div class="hero-go rise">
+                    <a href="#contact" class="btn btn-lg" data-mode="lgu">Book a free walkthrough</a>
+                    <p class="hero-note">Free. Nothing to install. Renz, the founder, replies within one working day.</p>
+                    <a href="#custom" class="link hero-alt">Not an LGU? Custom systems</a>
                 </div>
             </div>
-
-            <div class="stage" id="stage" aria-label="One incident, today and with CivicGrid">
-                <div class="board" data-ui>
-                    <div class="board-head"><span><i class="tick" aria-hidden="true"></i>Same emergency. One record.</span><span>Example times</span></div>
-                    <div class="ruler" aria-hidden="true"><span></span><span>07:42</span><span>07:44</span><span>07:51</span><span>08:31</span><span>Later</span></div>
-                    <div class="lane lane-today">
-                        <span class="lane-name">Today</span>
-                        <span class="ev">Hotline call, written in the logbook</span>
-                        <span class="ev">Radio call to the cluster</span>
-                        <span class="ev">Updates in the group chat</span>
-                        <span class="ev">"Done" sent by text</span>
-                        <span class="ev">Report typed up from notes</span>
-                    </div>
-                    <div class="lane lane-cg">
-                        <span class="lane-name">With CivicGrid</span>
-                        <span class="ev"><b>07:42</b>Resident reports from a phone</span>
-                        <span class="ev"><b>07:44</b>EOC sends it to the lead office</span>
-                        <span class="ev"><b>07:51</b>Team on scene, logged</span>
-                        <span class="ev"><b>08:31</b>Closed and locked</span>
-                        <span class="ev done"><b>08:32</b>After-action report ready</span>
-                    </div>
-                    <p class="board-note">Illustration with example times, not real incident data.</p>
+            <figure class="film-frame cut" aria-label="Short film of the CivicGrid demo system with sample data: a report from a phone, dispatch to a lead office, response, approval, and the audit trail">
+                <video id="heroFilm" muted playsinline loop preload="none" poster="video/hero-poster.webp" width="2400" height="1100"></video>
+                <div class="film-ctl">
+                    <button type="button" class="ctl" id="filmSound" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7" fill="none"/></svg><span>Play with sound</span></button>
+                    <button type="button" class="ctl" id="filmPause" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5h3v14H8zM13 5h3v14h-3z"/></svg><span>Pause</span></button>
                 </div>
-                <!-- Narrow version of the same board: one row per time, both ways side by side -->
-                <div class="board-m" data-ui>
-                    <p class="bm-title"><i class="tick" aria-hidden="true"></i>Same emergency. One record.</p>
-                    <div class="bm-head"><span></span><span>Today</span><span>With CivicGrid</span></div>
-                    <div class="bm-row"><span class="data">07:42</span><span>Hotline call, written in the logbook</span><span>Resident reports from a phone</span></div>
-                    <div class="bm-row"><span class="data">07:44</span><span>Radio call to the cluster</span><span>EOC sends it to the lead office</span></div>
-                    <div class="bm-row"><span class="data">07:51</span><span>Updates in the group chat</span><span>Team on scene, logged</span></div>
-                    <div class="bm-row"><span class="data">08:31</span><span>"Done" sent by text</span><span>Closed and locked</span></div>
-                    <div class="bm-row done"><span class="data">08:32</span><span>Report typed up later, from notes</span><span>After-action report ready</span></div>
-                    <p class="board-note">Example times, not real incident data.</p>
-                </div>
-                <div class="now" id="now" aria-hidden="true"></div>
-            </div>
+            </figure>
         </section>
 
         <!-- PROOF -->
         <section class="section wrap" id="proof" aria-labelledby="proof-title">
-            <div class="tiles">
-                <div class="tile lead w2 rise"><h2 id="proof-title">Tested by the city's own team. Running every day.</h2><p>Mandaluyong City's disaster risk reduction and management department uses it every day to support its emergency operations.</p></div>
-                <figure class="tile media w2 rise">
-                    <img src="img/eoc-room.webp" width="688" height="430" loading="lazy" alt="The City of Mandaluyong Emergency Operations Center sign above its main wall screen">
-                    <figcaption>Mandaluyong City Emergency Operations Center</figcaption>
-                </figure>
+            <div class="proof-in">
+                <div>
+                    <h2 id="proof-title" class="rise">Tested by the city's own team. Running every day.</h2>
+                    <p class="rise">Mandaluyong City's disaster risk reduction and management department uses it every day to support its emergency operations.</p>
+                    <ol class="facts rise" aria-label="The Mandaluyong deployment, in order">
+                        <li><span class="fact-w">Accepted</span><span class="fact-v data">June 29, 2026</span><span class="fact-n">After a 55-point test by the city's own team</span></li>
+                        <li><span class="fact-w">Live</span><span class="fact-v data">July 1, 2026</span><span class="fact-n">In daily use by the city's disaster office</span></li>
+                        <li><span class="fact-w">Coordinates</span><span class="fact-v">15 clusters</span><span class="fact-n">All 15 official response clusters</span></li>
+                        <li><span class="fact-w">Today</span><span class="fact-v">Still running</span><span class="fact-n">Every day since go-live</span></li>
+                    </ol>
+                </div>
             </div>
-            <ol class="facts rise" aria-label="The Mandaluyong deployment, in order">
-                <li><span class="fact-w">Accepted</span><span class="fact-v data">June 29, 2026</span><span class="fact-n">After the city's own team tested it against a 55-point checklist</span></li>
-                <li><span class="fact-w">Live</span><span class="fact-v data">July 1, 2026</span><span class="fact-n">In daily use by the city's disaster office since this date</span></li>
-                <li><span class="fact-w">Coordinates</span><span class="fact-v">15 clusters</span><span class="fact-n">Dispatch across all 15 official response clusters</span></li>
-                <li class="now-seg"><span class="fact-w">Today</span><span class="fact-v">Still running</span><span class="fact-n">Every day since go-live</span></li>
-            </ol>
         </section>
 
-        <!-- ABOUT RENZ -->
+        <!-- THE PROBLEM -->
+        <div class="light">
+            <section class="wrap" id="problem" aria-labelledby="problem-title">
+                <h2 id="problem-title" class="rise">Where does a report get lost in your office?</h2>
+                <div class="pain">
+                    <div class="pain-head" aria-hidden="true"><span>What happens today</span><span>With CivicGrid</span></div>
+                    <div class="pain-row rise"><div class="pain-today"><span class="pain-k">Today</span>Reports come in by hotline, radio and group chat, and end up in different places.</div><div class="pain-with"><span class="pain-k">With CivicGrid</span>Every report sits in one live list, whether a resident sent it or your dispatcher logged the call.</div></div>
+                    <div class="pain-row rise"><div class="pain-today"><span class="pain-k">Today</span>The caller can't say exactly where they are.</div><div class="pain-with"><span class="pain-k">With CivicGrid</span>A report from a resident's phone comes with its approximate location.</div></div>
+                    <div class="pain-row rise"><div class="pain-today"><span class="pain-k">Today</span>After dispatch, nobody can say who received it or who has arrived.</div><div class="pain-with"><span class="pain-k">With CivicGrid</span>The lead office acknowledges it and logs each update. Every step shows a name and a time.</div></div>
+                    <div class="pain-row rise"><div class="pain-today"><span class="pain-k">Today</span>The report for COA and the Mayor gets retyped from notes and chats.</div><div class="pain-with"><span class="pain-k">With CivicGrid</span>The after-action report comes from the same record, with no retyping.</div></div>
+                </div>
+                <p class="pain-ask rise">How long did your last big incident report take to put together?</p>
+                <p class="rise"><a href="#contact" class="link" data-mode="lgu">Tell me in a walkthrough</a></p>
+            </section>
+        </div>
+
+        <!-- HOW IT WORKS: each step plays its real clip -->
+        <section class="section wrap" id="how" aria-labelledby="how-title">
+            <h2 id="how-title" class="rise">How your team uses it.</h2>
+            <div class="steps">
+                <div class="step-list rise" role="group" aria-label="Choose a step">
+                    <button type="button" class="step-btn" data-step="report" aria-pressed="true"><span class="seg-t">A resident reports</span><span class="seg-n">They open a link on any phone and pick what is happening. No app, no login.</span><i class="step-bar" aria-hidden="true"></i></button>
+                    <button type="button" class="step-btn" data-step="dispatch" aria-pressed="false"><span class="seg-t">Your EOC dispatches</span><span class="seg-n">Operators at your emergency operations center (EOC) confirm it and send it to the right lead office, with a text message.</span><i class="step-bar" aria-hidden="true"></i></button>
+                    <button type="button" class="step-btn" data-step="respond" aria-pressed="false"><span class="seg-t">The lead office responds</span><span class="seg-n">They acknowledge it and log each update as it happens.</span><i class="step-bar" aria-hidden="true"></i></button>
+                    <button type="button" class="step-btn" data-step="close" aria-pressed="false"><span class="seg-t">The commander closes it</span><span class="seg-n">They approve and lock the record. The after-action report and export are ready.</span><i class="step-bar" aria-hidden="true"></i></button>
+                    <button type="button" class="ctl step-pause" id="stepPause"><span>Pause clips</span></button>
+                </div>
+                <figure class="step-film cut cut-sm rise">
+                    <video id="stepFilm" muted playsinline preload="none" poster="video/step-report-phone.webp" width="1080" height="1350" aria-label="The selected step, shown in the demo system with sample data"></video>
+                </figure>
+            </div>
+        </section>
+
+        <!-- GET STARTED: the offer -->
+        <section class="start" id="start" aria-labelledby="start-title">
+            <div class="wrap">
+                <h2 id="start-title" class="rise">See it first. Decide after.</h2>
+                <ol class="start-steps"><!-- taste-skill-ignore: these numbers are a real order the buyer follows -->
+                    <li class="rise"><span class="start-n">Step 1</span><!-- taste-skill-ignore: real sequence --><h3>A free 20-minute walkthrough</h3><p>At your office or online. I ask how your office handles reports today, then run one incident from report to closed record.</p></li>
+                    <li class="rise"><span class="start-n">Step 2</span><!-- taste-skill-ignore: real sequence --><h3>A one-page note within two working days</h3><p>Where your current process has gaps, and what would fit. It's yours to keep, whatever you decide.</p></li>
+                    <li class="rise"><span class="start-n">Step 3</span><!-- taste-skill-ignore: real sequence --><h3>Your team tests it before you accept it</h3><p>I set it up around your forms, clusters and steps. Your team tests it, the way Mandaluyong's did against a 55-point checklist.</p></li>
+                </ol>
+                <div class="start-go rise">
+                    <a href="#contact" class="btn btn-lg" data-mode="lgu">Book a free walkthrough</a>
+                    <p>The price comes in writing, only after you've seen it.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CUSTOM SYSTEMS -->
+        <section class="custom" id="custom" aria-labelledby="custom-title">
+            <div class="wrap custom-in">
+                <div>
+                    <h2 id="custom-title" class="rise">Not an LGU? I also build custom systems.</h2>
+                    <p class="rise">For companies and organizations that run on logbooks, spreadsheets and group chats. I learn your process first, then build the software that puts it online: the same method behind Mandaluyong's system.</p>
+                    <a href="#contact" class="btn btn-lg rise" data-mode="org">Tell me what you need</a>
+                </div>
+                <ul class="custom-list">
+                    <li class="rise"><h3>Requests and approvals</h3><p>Who asked, who signed, and when, without paper or chat threads.</p></li>
+                    <li class="rise"><h3>Field work</h3><p>Assign the job, follow each update, and close it.</p></li>
+                    <li class="rise"><h3>One closed record</h3><p>Every step logged, with reports that need no retyping.</p></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- THE FOUNDER -->
         <section class="about" id="about" aria-labelledby="about-title">
             <div class="about-in">
                 <figure class="portrait rise">
@@ -548,123 +610,39 @@
                             </video>
                             <figcaption>How Mandaluyong's system came to be, in 83 seconds. Captions are built in.</figcaption>
                         </figure>
-                        <div class="about-blocks">
-                            <div class="rise"><h3>Who you'd work with</h3><p>The person who learns your process is the person who builds your system. With Mandaluyong I didn't change the way their team works: I learned their process first, then put it online. I was cabin crew before I taught myself to build software.</p></div>
-                            <div class="rise"><h3>How it would start</h3><p>A 20-minute walkthrough, at your office or online. I'll ask how your office handles reports today, show you the system, and answer your questions. No price talk until you've seen it.</p></div>
-                            <div class="about-actions rise">
-                                <a href="#contact" class="btn">Book a walkthrough</a>
-                            </div>
+                        <div class="rise">
+                            <p class="about-say">The person who learns your process is the person who builds your system. With Mandaluyong I didn't change the way their team works: I learned their process first, then put it online. I was cabin crew before I taught myself to build software.</p>
+                            <a href="#contact" class="btn" data-mode="lgu">Book a free walkthrough</a>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- HOW IT WORKS: the record bar, enlarged -->
-        <section class="section wrap" id="how" aria-labelledby="how-title">
-            <h2 id="how-title" class="rise">From a phone to a closed record.</h2>
-            <div class="bar rise" data-ui>
-                <div class="seg"><span class="seg-w">Report</span><span class="seg-t">A resident taps</span><span class="seg-n">They pick what is happening; the location comes with it. No app, no login.</span></div>
-                <div class="seg"><span class="seg-w">Dispatch</span><span class="seg-t">Your EOC sends it</span><span class="seg-n">Operators confirm and send it to the right lead office, with a text message.</span></div>
-                <div class="seg"><span class="seg-w">Respond</span><span class="seg-t">The team works the incident</span><span class="seg-n">Arrival and updates are logged as they happen, on the big screen and the phone.</span></div>
-                <div class="seg"><span class="seg-w">Close</span><span class="seg-t">Locked and documented</span><span class="seg-n">The after-action report and export are ready for COA and the Mayor.</span></div>
-            </div>
-        </section>
-
-        <!-- NO EXTRA WORK (light reading section) -->
+        <!-- QUESTIONS -->
         <div class="light">
-            <section class="wrap" id="office" aria-labelledby="office-title">
-                <h2 id="office-title" class="rise">No extra work for your staff.</h2>
-                <div class="groups">
-                    <div class="group rise">
-                        <h3>Your team's day</h3>
-                        <div class="point"><h4>Your process, put online</h4><p>I learn your forms, clusters and steps first, then build around them.</p></div>
-                        <div class="point"><h4>Nothing for residents to install</h4><p>A link on any phone. No download, no account.</p></div>
-                        <div class="point"><h4>Text-message updates</h4><p>Your team gets updates by text as an incident moves.</p></div>
-                        <div class="point"><h4>Built for the operations room</h4><p>A command dashboard made for your large EOC screens.</p></div>
-                    </div>
-                    <div class="group rise">
-                        <h3>Your office's record</h3>
-                        <div class="point"><h4>Every step on record</h4><p>Who did what and when, logged as it happens.</p></div>
-                        <div class="point"><h4>Closed means closed</h4><p>Only an EOC commander or system administrator can reopen an incident.</p></div>
-                        <div class="point"><h4>Ready for COA and the Mayor</h4><p>After-action reports and data exports come from the same record.</p></div>
-                        <div class="point"><h4>Your data stays yours</h4><p>Export your records whenever you need them.</p></div>
-                    </div>
-                </div>
-            </section>
-        </div>
-
-        <!-- SAMPLE RECORD: the one live thing -->
-        <section class="section wrap" id="try" aria-labelledby="try-title">
-            <div class="try">
-                <div class="try-intro">
-                    <h2 id="try-title" class="rise">See the record one report creates.</h2>
-                    <p class="rise">"What's happening?" is the first question a resident sees on their phone. Pick an answer to see the sample record your office would get.</p>
-                    <div class="chips rise" role="group" aria-label="Choose an incident type">
-                        <button class="chip" data-type="medical" aria-pressed="true">Medical emergency</button>
-                        <button class="chip" data-type="fire" aria-pressed="false">Fire or smoke</button>
-                        <button class="chip" data-type="flood" aria-pressed="false">Flood or rescue</button>
-                        <button class="chip" data-type="crime" aria-pressed="false">Crime in progress</button>
-                        <button class="chip" data-type="crash" aria-pressed="false">Vehicle crash</button>
-                        <button class="chip" data-type="structure" aria-pressed="false">Structural damage</button>
-                    </div>
-                </div>
-                <div>
-                    <div class="record cut cut-sm rise" id="record" data-ui aria-live="polite">
-                        <div class="record-head"><h3 id="recTitle">Medical emergency</h3><span class="record-tag">Sample record</span></div>
-                        <ol id="recRows">
-                            <li><span class="data">07:42</span><span class="st">Reported</span><span>Medical emergency, location attached, from a resident's phone</span></li>
-                            <li><span class="data">07:43</span><span class="st">Alerted</span><span>Text message to the operator on duty</span></li>
-                            <li><span class="data">07:44</span><span class="st">Dispatched</span><span>Sent to the health and medical lead office</span></li>
-                            <li><span class="data">07:51</span><span class="st">On scene</span><span>Responders confirm arrival</span></li>
-                            <li><span class="data">08:31</span><span class="st">Closed</span><span>Locked; only an EOC commander or system administrator can reopen it</span></li>
-                            <li><span class="data">08:32</span><span class="st">Report</span><span>After-action report ready, no logbook retyping</span></li>
-                        </ol>
-                        <p class="record-note">Example routing and times. Your office sets its own clusters and steps.</p>
-                    </div>
-                    <div class="shots">
-                        <figure class="demo-shot rise">
-                            <a href="img/demo-dispatch.webp" target="_blank" rel="noopener" aria-label="Open the dispatcher screen at full size"><img src="img/demo-dispatch.webp" width="1400" height="739" loading="lazy" alt="Dispatcher screen in the CivicGrid demo system: a case information sheet with caller details, and today's dispatch log beside it"></a>
-                            <figcaption>The dispatcher's screen, from the demo system with sample data. Tap to enlarge.</figcaption>
-                        </figure>
-                        <figure class="phone-shot rise">
-                            <img src="img/citizen-screen.webp" width="530" height="1118" loading="lazy" alt="The citizen report screen: residents choose an incident type, or call the emergency hotline directly">
-                            <figcaption>The citizen report screen. It opens from a link: no app, no login.</figcaption>
-                        </figure>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- PROCUREMENT (light reading section) -->
-        <div class="light">
-            <section class="wrap" id="procurement" aria-labelledby="proc-title">
-                <div class="proc">
-                    <div class="proc-intro">
-                        <h2 id="proc-title" class="rise">Registration details for your procurement office.</h2>
-                        <p class="rise">CivicGrid is a registered Philippine business. DTI, BIR and PhilGEPS certificates are available to your procurement office on request.</p>
-                        <p class="proc-pdf rise"><a class="link" href="civicgrid-company-profile.pdf" download>Download the one-page company profile (PDF)</a></p>
-                    </div>
-                    <table class="reg rise">
-                        <caption class="sr-only">CivicGrid registrations</caption>
-                        <tbody>
-                            <tr><th scope="row">DTI business name</th><td class="data">7980659</td><td>CivicGrid Software Development Services</td></tr>
-                            <tr><th scope="row">PhilGEPS supplier</th><td class="data">476941</td><td>Registered supplier since June 2026</td></tr>
-                            <tr><th scope="row">BIR</th><td>Registered</td><td>Certificate available on request</td></tr>
-                            <tr><th scope="row">Located in</th><td>City of Manila</td><td>Full address on your procurement documents</td></tr>
-                        </tbody>
-                    </table>
+            <section class="wrap faq-in" id="questions" aria-labelledby="questions-title">
+                <h2 id="questions-title" class="rise">What offices ask first.</h2>
+                <div class="faq rise">
+                    <details open><summary>Will this add work for my staff?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>I learn your forms, clusters and steps first, then build around them. Residents install nothing: it's a link on any phone. Your team gets updates by text as an incident moves, and the command dashboard is made for your large EOC screens.</p></div></details>
+                    <details><summary>Does it work without internet?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>No. It needs an internet connection, so keep your hotline and radio in place.</p></div></details>
+                    <details><summary>Who can change a closed record?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>Only an EOC commander or system administrator can reopen an incident. Every step shows who did what, and when.</p></div></details>
+                    <details><summary>Who owns the data?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>Your records stay yours. You can export them whenever you need them.</p></div></details>
+                    <details><summary>How much does it cost?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>It depends on your users and what you need. The walkthrough is free, and the exact price comes in writing after you've seen the system.</p></div></details>
+                    <details><summary>We have no budget yet. Should we still talk?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>Yes. Tell me when next year's budget is decided. A walkthrough now commits you to nothing.</p></div></details>
+                    <details id="procurement"><summary>What can you give our procurement office?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>CivicGrid Software Development Services is a registered Philippine business in the City of Manila.</p><ul><li>DTI business name: <span class="data">7980659</span></li><li>PhilGEPS supplier: <span class="data">476941</span>, registered since June 2026</li><li>BIR: registered, certificate on request</li></ul><p>DTI, BIR and PhilGEPS certificates are available on request. The full address appears on your procurement documents.</p><p><a class="link" href="civicgrid-company-profile.pdf" download>Download the one-page company profile (PDF)</a></p></div></details>
                 </div>
             </section>
         </div>
 
         <!-- CONTACT -->
-        <section class="wrap contact" id="contact" aria-labelledby="contact-title">
+        <section class="contact" id="contact" aria-labelledby="contact-title">
+            <video id="gridLoop" class="contact-bg" muted playsinline loop preload="none" poster="video/grid.webp" aria-hidden="true" tabindex="-1"></video>
             <div class="coupon rise">
                 <div class="coupon-l">
                     <div>
-                        <h2 id="contact-title">Book a 20&#8209;minute walkthrough.</h2>
-                        <p>Tell me your office and how you'd like to meet. I reply within one working day.</p>
+                        <h2 id="contact-title">Book a free walkthrough.</h2>
+                        <p id="contactLede">Tell me your office and how you'd like to meet. I reply within one working day.</p>
                         <p class="fil" lang="fil">Puwede po tayong mag-usap sa Filipino.</p>
                     </div>
                     <div class="direct">
@@ -672,16 +650,22 @@
                         <div><span class="k">LinkedIn</span><a class="link" href="https://www.linkedin.com/in/renz-michael-bautista-926724232/" target="_blank" rel="noopener">Renz Michael Bautista</a></div>
                         <div><span class="k">Location</span><span>City of Manila, Philippines</span></div>
                     </div>
-                    <p class="other-orgs"><strong>Not an LGU?</strong> I also build custom systems for organizations that run on logbooks, spreadsheets and group chats. Tell me what you need.</p>
                 </div>
                 <form id="contactForm" novalidate>
                     <p class="form-msg form-ok" id="formSuccess" role="status">Thank you. Renz will reply within one working day.</p>
+                    <fieldset class="who">
+                        <legend>Who is this for?</legend>
+                        <div class="who-opts">
+                            <input type="radio" name="inquiry" id="modeLgu" value="LGU or government office" checked><label for="modeLgu">LGU or government office</label>
+                            <input type="radio" name="inquiry" id="modeOrg" value="Company or organization"><label for="modeOrg">Company or organization</label>
+                        </div>
+                    </fieldset>
                     <div class="field"><label for="fullName">Your name</label><input id="fullName" name="fullName" autocomplete="name" placeholder="Juan dela Cruz" required></div>
-                    <div class="field"><label for="agency">Office, LGU or organization</label><input id="agency" name="agency" autocomplete="organization" placeholder="City DRRM Office, Barangay ..." required></div>
+                    <div class="field"><label for="agency" id="agencyLabel">Office or LGU</label><input id="agency" name="agency" autocomplete="organization" placeholder="City DRRM Office, Barangay ..." required></div>
                     <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required></div>
                     <div class="field"><label for="phone">Viber or mobile number (optional)</label><input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="09XX XXX XXXX"></div>
-                    <div class="field"><label for="challenge">How does your office handle reports today? (optional)</label><textarea id="challenge" name="challenge" placeholder="For example: hotline calls logged on paper, dispatch over radio and group chat"></textarea></div>
-                    <button type="submit" class="btn form-submit">Request a walkthrough</button>
+                    <div class="field"><label for="challenge" id="challengeLabel">How does your office handle reports today? (optional)</label><textarea id="challenge" name="challenge" placeholder="For example: hotline calls logged on paper, dispatch over radio and group chat"></textarea></div>
+                    <button type="submit" class="btn form-submit">Book my free walkthrough</button>
                     <p class="form-msg form-bad" id="formError" role="alert">That didn't send. Please email <a href="mailto:contact@civicgrid.dev">contact@civicgrid.dev</a> instead.</p>
                     <p class="form-note">Fields are required unless marked optional. No sales pressure, just a straight conversation.</p>
                 </form>
@@ -689,34 +673,30 @@
         </section>
 
         <!-- PRIVACY (RA 10173) -->
-        <div class="light light-last">
-            <section class="wrap" id="privacy" aria-labelledby="privacy-title">
-                <div class="privacy">
-                    <div>
-                        <h2 id="privacy-title">How your data is handled</h2>
-                        <p class="lede">What is collected on this site and through the citizen report page, why, and your rights under the Data Privacy Act of 2012 (RA 10173).</p>
-                    </div>
-                    <div class="privacy-grid">
+        <details class="privacy-box" id="privacy">
+            <summary id="privacy-title">How your data is handled</summary>
+            <div class="privacy-body privacy-text">
+                <p class="lede">What is collected on this site and through the citizen report page, why, and your rights under the Data Privacy Act of 2012 (RA 10173).</p>
+                <div class="privacy-grid">
                         <div><h3>What is collected</h3><ul><li><strong>Citizen report page:</strong> your approximate location, a description of the incident, and an optional photo. No account or login is needed.</li><li><strong>This site's form:</strong> your name, office, email, any number you choose to give, and anything you write in the message.</li></ul></div>
                         <div><h3>Why</h3><p>Citizen reports are routed to the right response cluster and kept as an auditable incident record for the LGU you're reporting to. Form data is used only to reply to your inquiry, and reaches us through the form service Formspree.</p></div>
                         <div><h3>Retention</h3><p>Incident reports are kept as part of the LGU's official incident record, in line with government recordkeeping practice. Form messages are kept only as long as needed to reply, in Formspree and in email.</p></div>
                         <div><h3>Your rights</h3><p>You can ask to see or correct your personal data, and to delete what you sent through this form. Incident reports follow the LGU's records rules, so the LGU decides those requests. Write to Renz Michael Bautista at <a class="link" href="mailto:contact@civicgrid.dev">contact@civicgrid.dev</a>.</p></div>
                     </div>
-                </div>
-            </section>
-        </div>
+            </div>
+        </details>
     </main>
 
     <footer>
         <a class="foot-brand" href="#top"><img src="logo.svg" alt="" width="34" height="34">CivicGrid</a>
         <div class="foot">
-            <div><p class="k">The system</p><a href="#how">How it works</a><a href="#try">Sample record</a><a href="#proof">Mandaluyong</a></div>
-            <div><p class="k">About</p><a href="#about">The founder</a><a href="#procurement">Procurement</a><a href="#privacy">Privacy</a></div>
+            <div><p class="k">The system</p><a href="#how">How it works</a><a href="#start">How to start</a><a href="#proof">Mandaluyong</a><a href="#custom">Custom systems</a></div>
+            <div><p class="k">About</p><a href="#about">The founder</a><a href="#questions">Questions</a><a href="#procurement">Procurement</a><a href="#privacy">Privacy</a></div>
             <div><p class="k">Contact</p><a href="mailto:contact@civicgrid.dev">Email</a><a href="https://www.linkedin.com/in/renz-michael-bautista-926724232/" target="_blank" rel="noopener">LinkedIn</a></div>
             <div><p class="k">Registered</p><p class="data">DTI 7980659</p><p class="data">PhilGEPS 476941</p></div>
-            <div><p class="k">CivicGrid Software Development Services</p><p>Emergency operations software for Philippine LGUs. City of Manila, Philippines.</p></div>
+            <div><p class="k">CivicGrid Software Development Services</p><p>Emergency operations software for Philippine LGUs, and custom systems for organizations. City of Manila, Philippines.</p></div>
         </div>
-        <div class="foot-last"><span>&copy; 2026 CivicGrid Software Development Services</span><a href="#contact" class="btn">Book a walkthrough</a></div>
+        <div class="foot-last"><span>&copy; 2026 CivicGrid Software Development Services</span><a href="#contact" class="btn" data-mode="lgu">Book a free walkthrough</a></div>
     </footer>
 
     <script>
@@ -740,9 +720,107 @@
         document.addEventListener('visibilitychange', revealOnShow);
         window.addEventListener('pageshow', revealOnShow);
 
-        // Signature move: the record stage opens, then the amber "now" marker sweeps the timeline once.
-        document.getElementById('stage').classList.add('shutter');
-        document.getElementById('now').classList.add('sweep');
+        // Top-bar button turns amber once the first-screen button is out of view.
+        const navBar = document.getElementById('top');
+        new IntersectionObserver((entries) => navBar.classList.toggle('past', !entries[0].isIntersecting)).observe(document.querySelector('.hero-go .btn'));
+
+        // Films: nothing moves for reduced-motion or data-saver visitors until they ask.
+        const calm = matchMedia('(prefers-reduced-motion: reduce)').matches || (navigator.connection && navigator.connection.saveData);
+        const whenSeen = (el, on, off) => new IntersectionObserver((entries) => {
+            entries[0].isIntersecting ? on() : off();
+        }, { threshold: 0.25 }).observe(el);
+
+        // Hero film: muted on arrival (browsers block sound until a visitor asks for it).
+        const hero = document.getElementById('heroFilm');
+        const smallQ = matchMedia('(max-width: 760px)');
+        const heroSource = () => {
+            hero.poster = smallQ.matches ? 'video/hero-phone-poster.webp' : 'video/hero-poster.webp';
+            hero.src = smallQ.matches ? 'video/hero-phone.mp4' : 'video/hero.mp4';
+        };
+        heroSource();
+        smallQ.addEventListener('change', () => {
+            const at = hero.currentTime;
+            const playing = !hero.paused;
+            heroSource();
+            hero.addEventListener('loadedmetadata', () => { hero.currentTime = at; }, { once: true });
+            if (playing) hero.play().catch(() => {});
+        });
+        const pauseBtn = document.getElementById('filmPause');
+        const soundBtn = document.getElementById('filmSound');
+        let userPaused = !!calm;
+        const setPause = () => {
+            const paused = hero.paused;
+            pauseBtn.querySelector('span').textContent = paused ? 'Play' : 'Pause';
+            pauseBtn.querySelector('svg').innerHTML = paused ? '<path d="M8 5l11 7-11 7z"/>' : '<path d="M8 5h3v14H8zM13 5h3v14h-3z"/>';
+            pauseBtn.setAttribute('aria-pressed', paused ? 'true' : 'false');
+        };
+        const setSound = () => {
+            soundBtn.querySelector('span').textContent = hero.muted ? 'Play with sound' : 'Mute';
+            soundBtn.setAttribute('aria-pressed', hero.muted ? 'false' : 'true');
+        };
+        hero.addEventListener('play', setPause);
+        hero.addEventListener('pause', setPause);
+        setPause();
+        pauseBtn.addEventListener('click', () => {
+            userPaused = !hero.paused;
+            hero.paused ? hero.play().catch(() => {}) : hero.pause();
+        });
+        soundBtn.addEventListener('click', () => {
+            if (hero.muted) { hero.currentTime = 0; hero.muted = false; hero.loop = false; userPaused = false; hero.play().catch(() => {}); }
+            else { hero.muted = true; hero.loop = true; }
+            setSound();
+        });
+        hero.addEventListener('ended', () => { hero.muted = true; hero.loop = true; hero.currentTime = 0; setSound(); hero.play().catch(() => {}); });
+        whenSeen(hero, () => { if (!userPaused) hero.play().catch(() => {}); }, () => hero.pause());
+        const founder = document.querySelector('.film video');
+        founder.addEventListener('play', () => { userPaused = true; hero.pause(); });
+        hero.addEventListener('play', () => { if (!hero.muted) founder.pause(); });
+
+        // How it works: one clip per step; each runs on to the next while in view.
+        const stepFilm = document.getElementById('stepFilm');
+        const stepBtns = [...document.querySelectorAll('.step-btn')];
+        const stepPause = document.getElementById('stepPause');
+        let stepVisible = false;
+        let stepHeld = !!calm;
+        let stepStopped = !!calm;
+        const stepLabel = () => { stepPause.querySelector('span').textContent = stepStopped ? 'Play clips' : 'Pause clips'; };
+        stepLabel();
+        const showStep = (btn, play) => {
+            stepBtns.forEach((b) => b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'));
+            stepFilm.poster = 'video/step-' + btn.dataset.step + '-phone.webp';
+            stepFilm.src = 'video/step-' + btn.dataset.step + '-phone.mp4';
+            if (play) stepFilm.play().catch(() => {});
+        };
+        stepBtns.forEach((b) => b.addEventListener('click', () => { stepHeld = true; stepStopped = false; stepLabel(); showStep(b, true); }));
+        stepPause.addEventListener('click', () => {
+            stepStopped = !stepStopped;
+            stepLabel();
+            if (stepStopped) stepFilm.pause();
+            else { stepHeld = false; if (!stepFilm.src) showStep(stepBtns[0], false); stepFilm.play().catch(() => {}); }
+        });
+        stepFilm.addEventListener('timeupdate', () => {
+            const bar = document.querySelector('.step-btn[aria-pressed="true"] .step-bar');
+            if (bar && stepFilm.duration) bar.style.transform = 'scaleX(' + stepFilm.currentTime / stepFilm.duration + ')';
+        });
+        stepFilm.addEventListener('ended', () => {
+            if (stepHeld && !stepStopped) { stepStopped = true; stepLabel(); }
+            if (!stepVisible || stepHeld || stepStopped) return;
+            const i = stepBtns.findIndex((b) => b.getAttribute('aria-pressed') === 'true');
+            showStep(stepBtns[(i + 1) % stepBtns.length], true);
+        });
+        whenSeen(stepFilm, () => {
+            stepVisible = true;
+            if (stepStopped) return;
+            if (!stepFilm.src) showStep(stepBtns[0], false);
+            stepFilm.play().catch(() => {});
+        }, () => { stepVisible = false; stepFilm.pause(); });
+
+        // Contact background: a quiet loop, only while on screen.
+        const grid = document.getElementById('gridLoop');
+        if (!calm) whenSeen(grid, () => {
+            if (!grid.src) grid.src = 'video/grid.mp4';
+            grid.play().catch(() => {});
+        }, () => grid.pause());
 
         // Mobile menu
         const toggle = document.getElementById('menuToggle');
@@ -756,43 +834,37 @@
         links.querySelectorAll('a').forEach((a) => a.addEventListener('click', closeMenu));
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && links.classList.contains('open')) { closeMenu(); toggle.focus(); } });
 
-        // The live thing: pick an incident type, see the sample record your office would get.
-        const routes = {
-            medical:   ['Medical emergency', 'the health and medical lead office'],
-            fire:      ['Fire or smoke', 'the fire and rescue lead office'],
-            flood:     ['Flood or rescue', 'the search, rescue and retrieval lead office'],
-            crime:     ['Crime in progress', 'the law and order lead office'],
-            crash:     ['Vehicle crash', 'the traffic and medical lead offices'],
-            structure: ['Structural damage', 'the engineering lead office'],
+        // Privacy and procurement live in closed panels: open them when linked to.
+        const openFromHash = () => {
+            const el = location.hash ? document.getElementById(location.hash.slice(1)) : null;
+            if (el && el.tagName === 'DETAILS') { el.open = true; el.scrollIntoView({ block: 'start' }); }
         };
-        const recTitle = document.getElementById('recTitle');
-        const recRows = document.getElementById('recRows');
-        const chips = document.querySelectorAll('.chip');
-        const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-        chips.forEach((chip) => chip.addEventListener('click', () => {
-            const [name, office] = routes[chip.dataset.type];
-            chips.forEach((c) => c.setAttribute('aria-pressed', c === chip ? 'true' : 'false'));
-            recTitle.textContent = name;
-            const rows = [
-                ['07:42', 'Reported', name + ', location attached, from a resident’s phone'],
-                ['07:43', 'Alerted', 'Text message to the operator on duty'],
-                ['07:44', 'Dispatched', 'Sent to ' + office],
-                ['07:51', 'On scene', 'Responders confirm arrival'],
-                ['08:31', 'Closed', 'Locked; only an EOC commander or system administrator can reopen it'],
-                ['08:32', 'Report', 'After-action report ready, no logbook retyping'],
-            ];
-            recRows.replaceChildren(...rows.map(([t, s, d], i) => {
-                const li = document.createElement('li');
-                if (!reduce) { li.className = 'in'; li.style.animationDelay = i * 90 + 'ms'; }
-                li.innerHTML = '<span class="data"></span><span class="st"></span><span></span>';
-                li.children[0].textContent = t; li.children[1].textContent = s; li.children[2].textContent = d;
-                return li;
-            }));
-            // On narrow screens the record sits below the chips: bring it into view.
-            if (matchMedia('(max-width: 1100px)').matches) {
-                document.getElementById('record').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' });
-            }
+        window.addEventListener('hashchange', openFromHash);
+        openFromHash();
+        document.querySelectorAll('a[href="#privacy"], a[href="#procurement"]').forEach((a) => a.addEventListener('click', () => {
+            const el = document.getElementById(a.getAttribute('href').slice(1));
+            if (el) el.open = true;
         }));
+
+        // Contact form wording follows who is asking.
+        const modes = {
+            lgu: { title: 'Book a free walkthrough.', lede: "Tell me your office and how you'd like to meet. I reply within one working day.", who: 'Office or LGU', whoHint: 'City DRRM Office, Barangay ...', ask: 'How does your office handle reports today? (optional)', askHint: 'For example: hotline calls logged on paper, dispatch over radio and group chat', send: 'Book my free walkthrough' },
+            org: { title: 'Tell me what you need.', lede: "Tell me what your team runs on today and what keeps going wrong. I reply within one working day.", who: 'Company or organization', whoHint: 'Your company or organization', ask: 'What do you need? (optional)', askHint: 'For example: approvals on paper, jobs tracked in a spreadsheet and group chat', send: 'Send my request' },
+        };
+        const setMode = (name) => {
+            const m = modes[name];
+            document.getElementById(name === 'org' ? 'modeOrg' : 'modeLgu').checked = true;
+            document.getElementById('contact-title').textContent = m.title;
+            document.getElementById('contactLede').textContent = m.lede;
+            document.getElementById('agencyLabel').textContent = m.who;
+            document.getElementById('agency').placeholder = m.whoHint;
+            document.getElementById('challengeLabel').textContent = m.ask;
+            document.getElementById('challenge').placeholder = m.askHint;
+            document.querySelector('.form-submit').textContent = m.send;
+        };
+        document.getElementById('modeLgu').addEventListener('change', () => setMode('lgu'));
+        document.getElementById('modeOrg').addEventListener('change', () => setMode('org'));
+        document.querySelectorAll('[data-mode]').forEach((a) => a.addEventListener('click', () => setMode(a.dataset.mode)));
 
         // Contact form (Formspree -> contact@civicgrid.dev)
         const form = document.getElementById('contactForm');
@@ -808,11 +880,11 @@
             try {
                 const res = await fetch('https://formspree.io/f/xrenylap', { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' } });
                 if (!res.ok) throw new Error('send failed');
-                ok.classList.add('show'); form.reset();
+                ok.classList.add('show'); form.reset(); setMode('lgu');
             } catch (err) {
                 bad.classList.add('show');
             } finally {
-                btn.disabled = false; btn.textContent = label;
+                btn.disabled = false; btn.textContent = ok.classList.contains('show') ? modes.lgu.send : label;
             }
         });
     </script>
