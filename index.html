@@ -95,7 +95,7 @@ body { background: var(--color-paper); }
 .btn:disabled, .btn[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; transform: none; }
 .btn[aria-busy="true"] { cursor: progress; }
 .btn-lg { min-height: 52px; padding: 0 var(--space-xl); }
-.btn--quiet { background: transparent; color: var(--color-ink); border-color: var(--color-rule-strong); }
+.btn--quiet { background: transparent; color: var(--color-ink); border-color: var(--color-muted); }
 .btn--quiet:hover { background: var(--color-paper-3); border-color: var(--color-muted); }
 .link { color: var(--color-ink); text-decoration: underline; text-decoration-color: var(--color-link-line); text-decoration-thickness: 1px; text-underline-offset: 0.22em; transition: color var(--dur-short) var(--ease-out); }
 .link:hover { color: var(--color-accent); }
@@ -114,7 +114,7 @@ body { background: var(--color-paper); }
 .nav-side a:not(.btn):hover { color: var(--color-ink); }
 .nav-side a:not(.btn):focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; border-radius: 2px; }
 .nav .btn { min-height: 44px; padding: 0 var(--space-md); font-size: var(--text-sm); }
-.nav:not(.past) .btn { background: transparent; color: var(--color-ink); border-color: var(--color-rule-strong); }
+.nav:not(.past) .btn { background: transparent; color: var(--color-ink); border-color: var(--color-muted); }
 .nav:not(.past) .btn:hover { background: var(--color-paper-3); }
 .nav-compact { display: none; align-items: center; gap: var(--space-sm); justify-self: end; }
 .menu-toggle { min-height: 44px; padding: 0 var(--space-md); background: transparent; color: var(--color-ink); border: 1px solid var(--color-rule-strong); border-radius: var(--radius-btn); font: 600 var(--text-sm)/1 var(--font-body); cursor: pointer; transition: background-color var(--dur-short) var(--ease-out); }
@@ -835,7 +835,7 @@ footer { border-top-color: var(--color-blue-deep); }
                 <div><p class="k">About</p><a href="#about">The founder</a><a href="#questions">Questions</a><a href="#procurement">Procurement</a><a href="#privacy">Privacy</a></div>
                 <div><p class="k">Contact</p><a href="mailto:contact@civicgrid.dev">Email</a><a href="https://www.linkedin.com/in/renz-michael-bautista-926724232/" target="_blank" rel="noopener">LinkedIn</a></div>
             </div>
-            <div class="foot-last"><span>&copy; 2026 CivicGrid Software Development Services</span><a href="#contact" class="btn btn--quiet" data-mode="lgu">Book a free walkthrough</a></div>
+            <div class="foot-last"><span>&copy; 2026 CivicGrid Software Development Services</span><a href="#contact" class="btn" data-mode="lgu">Book a free walkthrough</a></div>
         </div>
     </footer>
 
@@ -844,10 +844,13 @@ footer { border-top-color: var(--color-blue-deep); }
 
         // Top-bar button turns amber once the first-screen button is out of view.
         const navBar = document.getElementById('top');
-        const navState = { heroOut: false, formIn: false };
-        const navSync = () => navBar.classList.toggle('past', navState.heroOut && !navState.formIn);
-        new IntersectionObserver((entries) => { navState.heroOut = !entries[0].isIntersecting; navSync(); }).observe(document.querySelector('.hero-go .btn'));
-        new IntersectionObserver((entries) => { navState.formIn = entries[0].isIntersecting; navSync(); }, { threshold: 0.1 }).observe(document.getElementById('contactForm'));
+        const goldSeen = new Set();
+        const navSync = () => navBar.classList.toggle('past', goldSeen.size === 0);
+        const goldIO = new IntersectionObserver((entries) => {
+            entries.forEach((e) => (e.isIntersecting ? goldSeen.add(e.target) : goldSeen.delete(e.target)));
+            navSync();
+        }, { rootMargin: '-76px 0px 0px 0px' });
+        [document.querySelector('.hero-go .btn'), document.getElementById('filmSound'), document.querySelector('.form-submit'), document.querySelector('.foot-last .btn')].forEach((el) => el && goldIO.observe(el));
 
         // Films: nothing moves for reduced-motion or data-saver visitors until they ask.
         const calm = matchMedia('(prefers-reduced-motion: reduce)').matches || (navigator.connection && navigator.connection.saveData);
