@@ -31,700 +31,613 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet"><!-- taste-skill-ignore: brand faces (DESIGN.md); Plex Mono is for data only -->
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@600&family=IBM+Plex+Mono:wght@400&family=Plus+Jakarta+Sans:wght@400;600&display=swap" rel="stylesheet"><!-- taste-skill-ignore: brand faces (DESIGN.md); Plex Mono is for data only -->
 
 
     <style>
-        /* CivicGrid operations palette (DESIGN.md). Amber is the one signal. */
-        :root {
-            --navy: oklch(15% 0.035 255);
-            --surface: oklch(20% 0.03 255);
-            --elevated: oklch(25% 0.025 255);
-            --step: oklch(30% 0.02 255);
-            --amber: oklch(78% 0.16 75);
-            --amber-deep: oklch(68% 0.16 75);
-            --ink: oklch(95% 0.005 255);
-            --ink-2: oklch(76% 0.008 255);
-            --ink-3: oklch(68% 0.008 255);
-            --on-amber: oklch(14% 0.01 255);
+/* Hallmark · shape: Split Studio · genre: modern-minimal · theme: brand · redesign: full · job: hire · draw: 184fb6
+ * paper: oklch(15% 0.035 255) · accent: oklch(78% 0.16 75) · display: IBM Plex Sans · body: Plus Jakarta Sans · hero: Stage · nav: masthead · footer: colophon block · signature: the record, one sample incident shown as its own audit trail
+ * axes: dark/grotesk-sans/warm · posture: Restrained · contrast: pass · fold: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H4 E4 S5 R4 V4 · weakest: P, the page argued nothing a buyer could disagree with; the record now says the system keeps names and times, the one thing a template cannot show */
+/* Hallmark · swapped hero Corridor for Stage · the product record is the strongest material and needs the right half */
+/* Hallmark · dismissed 49 · the four step buttons each carry a title and a one-line description by design, so they wrap inside a full-width control */
+/* Hallmark · dropped gridLoop · the moving grid behind the form was decoration and left the empty band under the form Renz flagged */
+/* Hallmark · copy: verbatim · every line is Renz-approved wording carried over from the live page */
+@import url("./tokens.css");
+@import url("./base.css");
 
-            --display: 'IBM Plex Sans', system-ui, sans-serif;
-            --text: 'Plus Jakarta Sans', system-ui, sans-serif;
-            --data: 'IBM Plex Mono', ui-monospace, monospace; /* taste-skill-ignore: brand Mono-Is-Data rule */
+:root {
+    --color-placeholder: oklch(56% 0.016 255);
+    --nav-h: 76px;
+    --radius-btn: 6px;
+}
 
-            --margin: clamp(20px, 4vw, 64px);
-            --radius: 4px;
-            --cut: clamp(40px, 6vw, 96px);
-            --gap-section: clamp(64px, 7vw, 104px);
-            --ease: cubic-bezier(0.16, 1, 0.3, 1);
-        }
+body { background: var(--color-paper); }
+:root { --text-sm: 0.9375rem; }
+@media (max-width: 40rem) { :root { --text-sm: 1rem; } }
+.data { font-family: var(--font-outlier); font-variant-numeric: tabular-nums; letter-spacing: 0; }
+.lead { color: var(--color-ink-2); }
+.muted { color: var(--color-muted); }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
-        body {
-            background: var(--navy);
-            color: var(--ink);
-            font: 400 17px/1.6 var(--text);
-            overflow-x: hidden;
-        }
-        img, video { display: block; max-width: 100%; }
-        a { color: inherit; }
-        ::selection { background: var(--amber); color: var(--on-amber); }
-        :focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; border-radius: 2px; }
+/* Controls: one filled primary per screen; everything else quiet or typographic */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-xs); min-height: 48px; padding: 0 var(--space-lg); border: 1px solid var(--color-accent); border-radius: var(--radius-btn); background: var(--color-accent); color: var(--color-accent-ink); font: 600 var(--text-md)/1 var(--font-body); white-space: nowrap; text-decoration: none; cursor: pointer; transition: background-color var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out), transform var(--dur-micro) var(--ease-out); }
+.btn:hover { background: var(--color-accent-hover); border-color: var(--color-accent-hover); }
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.btn:disabled, .btn[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; transform: none; }
+.btn[aria-busy="true"] { cursor: progress; }
+.btn-lg { min-height: 52px; padding: 0 var(--space-xl); }
+.btn--quiet { background: transparent; color: var(--color-ink); border-color: var(--color-rule-strong); }
+.btn--quiet:hover { background: var(--color-paper-3); border-color: var(--color-muted); }
+.link { color: var(--color-ink); text-decoration: underline; text-decoration-color: var(--color-accent); text-decoration-thickness: 1px; text-underline-offset: 0.22em; transition: color var(--dur-short) var(--ease-out); }
+.link:hover { color: var(--color-accent); }
+.link:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; border-radius: 2px; }
+@media (prefers-reduced-motion: reduce) { .btn, .link { transition: none; } }
 
-        h1, h2, h3 { font-family: var(--display); font-weight: 600; letter-spacing: -0.02em; text-wrap: balance; }
-        .data { font-family: var(--data); font-variant-numeric: tabular-nums; }
-        .wrap { padding: 0 var(--margin); max-width: 1520px; margin: 0 auto; }
-        .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+/* Masthead: the wordmark centred like a letterhead, links either side, one rule under */
+.nav { position: sticky; top: 0; z-index: var(--z-sticky-nav); background: var(--color-paper); border-bottom: 1px solid var(--color-rule); }
+.nav-in { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; height: var(--nav-h); gap: var(--space-xl); }
+.brand { display: inline-flex; align-items: center; gap: var(--space-sm); color: var(--color-ink); text-decoration: none; font: 600 var(--text-xl)/1 var(--font-display); letter-spacing: -0.02em; }
+.brand img { width: 34px; height: 34px; flex-shrink: 0; }
+.brand:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 4px; border-radius: 4px; }
+.nav-side { display: flex; align-items: center; gap: var(--space-lg); min-width: 0; }
+.nav-side--end { justify-content: flex-end; }
+.nav-side a:not(.btn) { color: var(--color-ink-2); text-decoration: none; font: 400 var(--text-sm)/1 var(--font-body); white-space: nowrap; padding-block: var(--space-sm); transition: color var(--dur-short) var(--ease-out); }
+.nav-side a:not(.btn):hover { color: var(--color-ink); }
+.nav-side a:not(.btn):focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; border-radius: 2px; }
+.nav .btn { min-height: 44px; padding: 0 var(--space-md); font-size: var(--text-sm); }
+.nav:not(.past) .btn { background: transparent; color: var(--color-ink); border-color: var(--color-rule-strong); }
+.nav:not(.past) .btn:hover { background: var(--color-paper-3); }
+.nav-compact { display: none; align-items: center; gap: var(--space-sm); justify-self: end; }
+.menu-toggle { min-height: 44px; padding: 0 var(--space-md); background: transparent; color: var(--color-ink); border: 1px solid var(--color-rule-strong); border-radius: var(--radius-btn); font: 600 var(--text-sm)/1 var(--font-body); cursor: pointer; transition: background-color var(--dur-short) var(--ease-out); }
+.menu-toggle:hover { background: var(--color-paper-3); }
+.menu-toggle:active { transform: translateY(1px); }
+.menu-toggle:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.menu-toggle:disabled { opacity: 0.55; cursor: not-allowed; }
+.nav-drawer { display: none; }
 
-        /* The motif: a block with one chamfered corner, from the record bar */
-        .cut { clip-path: polygon(var(--cut) 0, 100% 0, 100% 100%, 0 100%, 0 var(--cut)); }
-        .cut-sm { --cut: 14px; }
+/* Sections */
+.section { padding-block: var(--section-gap); }
+.section--s { padding-block: var(--section-gap-s); }
+#start { padding-bottom: var(--section-gap-s); }
+.band { background: var(--color-paper-2); color: var(--color-ink); }
+.split { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--space-2xl) var(--gap-columns); align-items: center; }
+.split > .text { grid-column: 1 / span 5; display: grid; gap: var(--space-lg); align-content: center; min-width: 0; }
+.split > .proof { grid-column: 7 / -1; min-width: 0; }
+.split--4-8 > .text { grid-column: 1 / span 4; }
+.split--4-8 > .proof { grid-column: 6 / -1; }
+.split--6-6 > .text { grid-column: 1 / span 6; }
+.split--6-6 > .proof { grid-column: 8 / -1; }
+.split--top { align-items: start; }
+.text > p:not([class]) { color: var(--color-ink-2); }
 
-        /* Buttons: flat amber, square-ish, one shape */
-        .btn {
-            display: inline-flex; align-items: center; gap: 10px;
-            background: var(--amber); color: var(--on-amber);
-            font: 600 15px/1 var(--display); letter-spacing: 0.04em; text-transform: uppercase;
-            text-decoration: none; padding: 18px 24px; border: 0; border-radius: var(--radius);
-            cursor: pointer; transition: background 150ms var(--ease), transform 250ms var(--ease);
-        }
-        .btn:hover { background: var(--amber-deep); transform: translateY(-1px); }
-        .btn:active { transform: translateY(1px); }
-        .link {
-            font: 500 16px/1.4 var(--display); text-decoration: underline;
-            text-decoration-color: var(--amber); text-decoration-thickness: 2px; text-underline-offset: 6px;
-            transition: color 150ms var(--ease);
-        }
-        .link:hover { color: var(--amber); }
+/* Hero: Stage, the head on five columns, the record on seven */
+.hero { min-height: calc(100svh - var(--nav-h)); display: grid; align-items: center; padding-block: var(--space-2xl); }
+.hero .split { align-items: center; }
+.hero h1 { max-width: 12ch; }
+.hero-sub { font-size: var(--text-lead); line-height: 1.45; color: var(--color-ink-2); max-width: 36ch; }
+.hero-go { display: grid; gap: var(--space-md); justify-items: start; margin-top: var(--space-md); }
+.hero-note { font-size: var(--text-sm); color: var(--color-muted); max-width: 40ch; }
 
-        /* ============ NAV ============ */
-        .nav {
-            position: sticky; top: 0; z-index: 20; background: var(--navy);
-            display: flex; align-items: center; justify-content: space-between;
-            height: 76px; padding: 0 var(--margin);
-        }
-        .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; font: 600 21px var(--display); letter-spacing: -0.01em; }
-        .nav-links { display: flex; align-items: center; gap: clamp(20px, 2.6vw, 40px); }
-        .nav-links a:not(.btn) { font: 500 15px var(--display); text-decoration: none; color: var(--ink-2); transition: color 150ms var(--ease); }
-        .nav-links a:not(.btn):hover { color: var(--ink); }
-        .nav-links .btn { padding: 13px 18px; font-size: 13px; }
-        .menu-toggle { display: none; background: none; border: 0; color: var(--ink); font: 600 13px var(--display); letter-spacing: .06em; text-transform: uppercase; padding: 12px 0 12px 12px; cursor: pointer; }
+/* The record: one sample incident's audit trail, the page's signature */
+.record { margin: 0; border: 1px solid var(--color-rule-strong); border-radius: var(--radius-card); background: var(--color-paper-2); overflow: hidden; }
+.record-head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-md); padding: var(--space-lg) var(--space-xl); border-bottom: 1px solid var(--color-rule); }
+.record-title { display: grid; gap: var(--space-2xs); font: 600 var(--text-title)/1.2 var(--font-display); letter-spacing: -0.01em; }
+.record-title small { font: 400 var(--text-sm)/1.45 var(--font-body); letter-spacing: 0; color: var(--color-muted); }
+.record-state { display: inline-flex; align-items: center; gap: var(--space-xs); font: 600 var(--text-sm)/1 var(--font-body); color: var(--color-accent); white-space: nowrap; }
+.record-state svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.4; flex-shrink: 0; }
+.record-list { list-style: none; margin: 0; padding: var(--space-xs) var(--space-xl) var(--space-lg); }
+.record-list li { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr); gap: var(--space-lg); padding-block: var(--space-sm); border-bottom: 1px solid var(--color-rule); position: relative; }
+.record-list li:last-child { border-bottom: 0; }
+.record-list time { font-family: var(--font-outlier); font-size: var(--text-sm); color: var(--color-muted); padding-top: var(--space-3xs); font-variant-numeric: tabular-nums; }
+.record-step { display: grid; gap: var(--space-2xs); }
+.record-step strong { font: 600 var(--text-md)/1.3 var(--font-display); color: var(--color-ink); }
+.record-step span { font-size: var(--text-sm); color: var(--color-ink-2); line-height: 1.5; }
+.record-step em { font-style: normal; font-size: var(--text-sm); color: var(--color-muted); }
+.record-list li.is-final strong { color: var(--color-accent); }
+.record figcaption { padding: var(--space-md) var(--space-xl); border-top: 1px solid var(--color-rule); font-size: var(--text-sm); color: var(--color-muted); background: var(--color-paper); }
+.js .record-list li { opacity: 0; transform: translateY(8px); transition: opacity var(--dur-long) var(--ease-out), transform var(--dur-long) var(--ease-out); transition-delay: calc(var(--i, 0) * 80ms + 80ms); }
+.js .record.is-in .record-list li { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .js .record-list li { opacity: 1; transform: none; transition: none; } }
 
+/* The Mandaluyong case: the facts beside the film */
+.facts { margin: var(--space-xl) 0 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--gap-columns); }
+.facts > div { display: grid; align-content: start; gap: var(--space-xs); padding-top: var(--space-md); border-top: 1px solid var(--color-rule-strong); }
+.facts dt { font-size: var(--text-sm); color: var(--color-muted); padding-top: var(--space-3xs); }
+.facts dd { margin: 0; display: grid; gap: var(--space-3xs); }
+.facts dd b { font: 600 var(--text-lg)/1.2 var(--font-display); color: var(--color-ink); }
+.facts dd b.data { font-family: var(--font-outlier); font-weight: 400; }
+.facts dd span { font-size: var(--text-sm); color: var(--color-ink-2); }
+.film-frame { position: relative; margin: 0; border-radius: var(--radius-card); overflow: hidden; border: 1px solid var(--color-rule); background: var(--color-paper-2); aspect-ratio: 2400 / 1100; }
+.film-frame video { width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; }
+.film-ctl { position: absolute; left: var(--space-md); bottom: var(--space-md); display: flex; gap: var(--space-xs); z-index: var(--z-raised); }
+.ctl { display: inline-flex; align-items: center; gap: var(--space-xs); min-height: 44px; padding: 0 var(--space-md); border: 1px solid var(--color-rule-strong); border-radius: var(--radius-btn); background: color-mix(in oklab, var(--color-paper) 88%, transparent); color: var(--color-ink); font: 600 var(--text-sm)/1 var(--font-body); cursor: pointer; white-space: nowrap; transition: background-color var(--dur-short) var(--ease-out); }
+.ctl svg { width: 16px; height: 16px; fill: currentColor; stroke: currentColor; stroke-width: 1.5; flex-shrink: 0; }
+.ctl:hover { background: var(--color-paper-3); }
+.ctl:active { transform: translateY(1px); }
+.ctl:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.ctl:disabled { opacity: 0.55; cursor: not-allowed; }
+.film-note { margin-top: var(--space-sm); font-size: var(--text-sm); color: var(--color-muted); }
+.room { margin-top: var(--space-lg); aspect-ratio: 16 / 10; border-radius: var(--radius-card); }
 
-        .section { padding-top: var(--gap-section); }
-        .section h2 { font-size: clamp(30px, 3vw, 46px); line-height: 1.08; max-width: 24ch; }
+/* Where reports get lost: a two-column table */
+.pain { width: 100%; border-collapse: collapse; }
+.pain th { text-align: left; font: 400 var(--text-sm)/1.3 var(--font-body); color: var(--color-muted); padding: 0 0 var(--space-md); white-space: nowrap; }
+.pain td { vertical-align: top; padding: var(--space-lg) var(--space-lg) var(--space-lg) 0; border-top: 1px solid var(--color-rule); color: var(--color-ink-2); line-height: 1.5; width: 50%; }
+.pain td + td { color: var(--color-ink); padding-left: var(--space-lg); border-left: 1px solid var(--color-rule); padding-right: 0; }
+.pain-ask { font: 600 var(--text-title)/1.3 var(--font-display); letter-spacing: -0.01em; color: var(--color-ink); max-width: 24ch; }
 
-        .facts { list-style: none; display: flex; gap: 6px; margin-top: 8px; }
-        .facts li { flex: 1 1 0; background: var(--surface); padding: 24px 24px 28px; display: grid; gap: 10px; align-content: start; min-height: 200px; }
-        .facts li:first-child { clip-path: polygon(var(--cut) 0, 100% 0, 100% 100%, 0 100%, 0 var(--cut)); --cut: 28px; }
-        .facts li.now-seg { background: var(--amber); color: var(--on-amber); }
-        .fact-w { font: 600 13px var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
-        .fact-v { font: 600 clamp(26px, 2.4vw, 38px)/1.1 var(--display); letter-spacing: -0.02em; }
-        .fact-v.data { font-family: var(--data); color: var(--amber); }
-        .fact-n { font-size: 16px; color: var(--ink-2); }
+/* How your team uses it: steps beside their clip */
+.step-list { display: grid; gap: var(--space-xs); }
+.step-btn { position: relative; display: grid; gap: var(--space-2xs); width: 100%; text-align: left; padding: var(--space-md) var(--space-lg); background: transparent; color: var(--color-ink-2); border: 1px solid var(--color-rule); border-radius: var(--radius-btn); cursor: pointer; overflow: hidden; transition: background-color var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out); }
+.step-btn:hover { background: var(--color-paper-2); }
+.step-btn:active { transform: translateY(1px); }
+.step-btn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.step-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.step-btn[aria-pressed="true"] { background: var(--color-paper-2); border-color: var(--color-rule-strong); color: var(--color-ink); }
+.seg-t { font: 600 var(--text-md)/1.3 var(--font-display); color: var(--color-ink); }
+.step-btn[aria-pressed="true"] .seg-t { color: var(--color-ink); }
+.seg-n { font-size: var(--text-sm); line-height: 1.5; }
+.step-bar { position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: var(--color-accent); transform: scaleX(0); transform-origin: left; }
+.step-btn[aria-pressed="false"] .step-bar { opacity: 0; }
+.step-pause { justify-self: start; margin-top: var(--space-xs); }
+.step-film { margin: 0 auto; width: min(100%, 360px); aspect-ratio: 9 / 16; border-radius: var(--radius-card); overflow: hidden; border: 1px solid var(--color-rule); background: var(--color-paper-2); }
+.step-film video { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; transform: scale(1.18); transform-origin: 50% 30%; }
+.step-cap { margin-top: var(--space-sm); text-align: center; font-size: var(--text-sm); color: var(--color-muted); }
 
+/* Custom systems */
+.custom-list { list-style: none; margin: 0; padding: 0; display: grid; }
+.custom-list li { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: var(--space-lg); padding-block: var(--space-lg); border-top: 1px solid var(--color-rule); }
+.custom-list li:last-child { border-bottom: 1px solid var(--color-rule); }
+.custom-list h3 { font-size: var(--text-lg); }
+.custom-list p { color: var(--color-ink-2); }
 
-        .chip {
-            text-align: left; background: var(--surface); color: var(--ink); border: 0; border-radius: var(--radius);
-            font: 500 17px/1.3 var(--display); padding: 20px 18px; min-height: 64px; cursor: pointer;
-            transition: background 150ms var(--ease), transform 250ms var(--ease);
-        }
+/* The founder */
+.said { margin: 0; font: 600 var(--text-title)/1.35 var(--font-display); letter-spacing: -0.01em; color: var(--color-ink); text-indent: -0.4em; max-width: 34ch; }
+.about-say { color: var(--color-ink-2); max-width: 52ch; }
+.about-media { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 3fr); gap: var(--gap-columns); align-items: end; }
+.portrait, .film { margin: 0; }
+.portrait img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: var(--radius-card); outline: 1px solid var(--color-rule); outline-offset: -1px; }
+.portrait figcaption { margin-top: var(--space-sm); font-size: var(--text-sm); color: var(--color-ink-2); display: grid; gap: var(--space-3xs); }
+.portrait figcaption strong { font: 600 var(--text-md)/1.3 var(--font-display); color: var(--color-ink); }
+.film video { width: 100%; aspect-ratio: 9 / 16; object-fit: cover; border-radius: var(--radius-card); background: var(--color-paper-2); }
+.film figcaption { margin-top: var(--space-sm); font-size: var(--text-sm); color: var(--color-muted); }
 
+/* Questions */
+.faq { display: grid; }
+.faq details { border-top: 1px solid var(--color-rule); }
+.faq details:last-child { border-bottom: 1px solid var(--color-rule); }
+.faq summary { display: flex; justify-content: space-between; align-items: center; gap: var(--space-lg); min-height: 64px; padding-block: var(--space-md); cursor: pointer; list-style: none; font: 600 var(--text-lg)/1.3 var(--font-display); color: var(--color-ink); }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary:hover { color: var(--color-ink-2); }
+.faq summary:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; border-radius: 2px; }
+.faq summary svg { width: 20px; height: 20px; flex-shrink: 0; stroke: currentColor; stroke-width: 2; fill: none; transition: transform var(--dur-short) var(--ease-in-out); }
+.faq details[open] summary svg { transform: rotate(45deg); }
+.faq-a { padding-bottom: var(--space-lg); display: grid; gap: var(--space-sm); color: var(--color-ink-2); max-width: 65ch; }
+.faq-a ul { margin: 0; padding-left: 1.2em; display: grid; gap: var(--space-2xs); }
+@media (prefers-reduced-motion: reduce) { .faq summary svg { transition: none; } }
 
-        /* ============ ABOUT ============ */
-        .about { margin: var(--gap-section) clamp(10px, 1.4vw, 20px) 0; background: var(--surface); border-radius: var(--radius); overflow: hidden; }
-        .about-in { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 80px); padding: clamp(32px, 4.4vw, 72px); align-items: start; }
-        .about h2 { font-size: clamp(30px, 3vw, 46px); line-height: 1.08; max-width: 18ch; }
-        .about h2 + .said { margin-top: 24px; }
-        .film { background: var(--navy); }
-        .film video { width: 100%; height: auto; aspect-ratio: 9 / 16; object-fit: cover; }
-        .film figcaption { font-size: 14px; color: var(--ink-3); padding: 12px 0 0; background: var(--surface); }
-        blockquote.said { font: 500 clamp(21px, 1.9vw, 28px)/1.32 var(--display); letter-spacing: -0.015em; max-width: 34ch; }
-        .said-by { color: var(--ink-3); font-size: 15px; margin-top: 16px; }
+/* The close: the offer beside the form */
+.offer { list-style: none; margin: 0; padding: 0; counter-reset: offer; display: grid; }
+.offer li { counter-increment: offer; display: grid; grid-template-columns: 2.5rem minmax(0, 1fr); gap: var(--space-md); padding-block: var(--space-md); border-top: 1px solid var(--color-rule); }
+.offer li:last-child { border-bottom: 1px solid var(--color-rule); }
+.offer li::before { content: counter(offer); font: 400 var(--text-lg)/1.3 var(--font-outlier); color: var(--color-muted); }
+.offer h3 { font-size: var(--text-md); line-height: 1.35; }
+.offer p { font-size: var(--text-sm); color: var(--color-ink-2); margin-top: var(--space-2xs); }
+.price-line { font-size: var(--text-md); color: var(--color-ink); }
+.direct { display: grid; gap: var(--space-sm); padding-top: var(--space-md); }
+.direct > div { display: grid; grid-template-columns: 6rem minmax(0, 1fr); gap: var(--space-md); font-size: var(--text-sm); }
+.direct .k { color: var(--color-muted); }
+.fil { color: var(--color-ink-2); }
 
+.form-card { border: 1px solid var(--color-rule-strong); border-radius: var(--radius-card); background: var(--color-paper-2); color: var(--color-ink); padding: var(--space-xl); display: grid; gap: var(--space-lg); }
+.form-card h2 { font-size: var(--text-2xl); max-width: 22ch; }
+.form-card #contactLede { color: var(--color-ink-2); }
+#contactForm { display: grid; gap: var(--space-md); }
+.who { border: 0; margin: 0; padding: 0; display: grid; gap: var(--space-xs); }
+.who legend { font-size: var(--text-sm); color: var(--color-ink-2); padding: 0; margin-bottom: var(--space-xs); }
+.who-opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-xs); }
+.who-opts input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.who-opts label { display: flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 var(--space-md); border: 1px solid var(--color-rule-strong); border-radius: var(--radius-input); color: var(--color-ink-2); font-size: var(--text-sm); text-align: center; cursor: pointer; transition: background-color var(--dur-short) var(--ease-out), color var(--dur-short) var(--ease-out); }
+.who-opts label:hover { background: var(--color-paper-3); }
+.who-opts input:checked + label { border-color: var(--color-accent); color: var(--color-ink); background: var(--color-paper-3); }
+.who-opts input:focus-visible + label { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.field { display: grid; gap: var(--space-xs); }
+.field label { font-size: var(--text-sm); color: var(--color-ink-2); }
+.field input, .field textarea { width: 100%; min-height: 48px; padding: var(--space-sm) var(--space-md); border: 1px solid var(--color-muted); border-radius: var(--radius-input); background: var(--color-paper); color: var(--color-ink); font-size: var(--text-md); transition: border-color var(--dur-short) var(--ease-out); }
+.field textarea { min-height: 112px; resize: vertical; }
+.field input::placeholder, .field textarea::placeholder { color: var(--color-placeholder); }
+.field input:hover, .field textarea:hover { border-color: var(--color-ink-2); }
+.field input:focus-visible, .field textarea:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 0; }
+.field input:disabled, .field textarea:disabled { opacity: 0.55; cursor: not-allowed; }
+.form-submit { width: 100%; }
+.form-msg { display: none; padding: var(--space-md); border-radius: var(--radius-input); font-size: var(--text-sm); }
+.form-msg.show { display: block; }
+.form-ok { background: var(--color-paper-3); color: var(--color-ink); border: 1px solid var(--color-success); }
+.form-bad { background: var(--color-paper-3); color: var(--color-ink); border: 1px solid var(--color-error); }
+.form-bad a { color: var(--color-ink); }
+.form-note { font-size: var(--text-sm); color: var(--color-muted); }
 
-        /* ============ CONTACT (coupon) ============ */
-        .coupon { display: grid; grid-template-columns: 46fr 54fr; gap: 6px; }
-        .coupon-l { background: var(--elevated); padding: clamp(28px, 3.4vw, 56px); display: flex; flex-direction: column; justify-content: space-between; gap: 40px; clip-path: polygon(var(--cut) 0, 100% 0, 100% 100%, 0 100%, 0 var(--cut)); --cut: 40px; }
-        .coupon form { background: var(--surface); }
-        .coupon-l h2 { font-size: clamp(30px, 3vw, 48px); line-height: 1.08; max-width: 15ch; }
-        .coupon-l p { color: var(--ink-2); max-width: 36ch; margin-top: 18px; }
-        .direct { display: grid; gap: 14px; }
-        .direct .k { font: 600 12px var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); display: block; margin-bottom: 4px; }
-        .coupon form { padding: clamp(28px, 3.4vw, 56px); display: grid; gap: 10px; align-content: start; }
-        .field input, .field textarea {
-            width: 100%; background: var(--navy); color: var(--ink); border: 1px solid transparent; border-radius: var(--radius);
-            font: 400 16px/1.4 var(--text); padding: 15px 16px; min-height: 54px;
-            transition: border-color 150ms var(--ease);
-        }
-        .field textarea { min-height: 120px; resize: vertical; }
-        .field input::placeholder, .field textarea::placeholder { color: var(--ink-3); }
-        .field input:focus, .field textarea:focus { outline: none; border-color: var(--amber); box-shadow: 0 0 0 3px oklch(78% 0.16 75 / 0.18); } /* taste-skill-ignore: brand focus ring, state only */
-        .field label { display: block; font: 500 14px var(--display); color: var(--ink-2); margin-bottom: 6px; }
-        .coupon .btn { justify-content: center; width: 100%; padding: 20px; margin-top: 6px; }
-        .coupon .btn:disabled { opacity: .6; cursor: wait; }
-        .form-note { font-size: 14px; color: var(--ink-3); }
-        .form-msg { display: none; padding: 14px 16px; border-radius: var(--radius); font-size: 15px; }
-        .form-msg.show { display: block; }
-        .form-ok { background: oklch(65% 0.13 180 / 0.14); color: oklch(85% 0.08 180); }
-        .form-bad { background: oklch(60% 0.22 25 / 0.14); color: oklch(84% 0.08 25); }
+/* Privacy, directly under the form */
+.privacy-box { margin-top: var(--space-xl); border-top: 1px solid var(--color-rule); }
+.privacy-box summary { display: inline-flex; align-items: center; min-height: 44px; margin-top: var(--space-md); cursor: pointer; color: var(--color-ink); text-decoration: underline; text-decoration-color: var(--color-accent); text-underline-offset: 0.22em; font-size: var(--text-sm); list-style: none; }
+.privacy-box summary::-webkit-details-marker { display: none; }
+.privacy-box summary:hover { color: var(--color-accent); }
+.privacy-box summary:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.privacy-body { display: grid; gap: var(--space-lg); padding-block: var(--space-lg); }
+.privacy-body .lede { color: var(--color-ink-2); max-width: 65ch; }
+.privacy-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap-columns); }
+.privacy-grid h3 { font-size: var(--text-md); margin-bottom: var(--space-xs); }
+.privacy-grid p, .privacy-grid li { font-size: var(--text-sm); color: var(--color-ink-2); line-height: 1.55; }
+.privacy-grid ul { margin: 0; padding-left: 1.1em; display: grid; gap: var(--space-xs); }
 
-        /* ============ PRIVACY ============ */
-        .privacy { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(32px, 5vw, 80px); }
-        .privacy h2 { font-size: clamp(28px, 2.6vw, 40px); }
-        .privacy-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 48px; }
-        .privacy-text h3 { font-size: 18px; }
-        .privacy-text p, .privacy-text li { color: var(--ink-2); font-size: 16px; margin-top: 8px; }
-        .privacy-text ul { padding-left: 18px; }
-        .privacy .lede { color: var(--ink-2); margin-top: 16px; }
+/* Footer: a colophon block */
+footer { border-top: 1px solid var(--color-rule); padding-block: var(--space-3xl) var(--space-xl); }
+.colophon { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--space-2xl) var(--gap-columns); }
+.colophon-text { grid-column: 1 / span 6; display: grid; gap: var(--space-lg); align-content: start; }
+.colophon-text p { color: var(--color-ink-2); max-width: 56ch; }
+.foot { grid-column: 8 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap-columns); }
+.foot .k { font-size: var(--text-sm); color: var(--color-muted); margin-bottom: var(--space-sm); }
+.foot div { display: grid; align-content: start; gap: var(--space-xs); }
+.foot a { color: var(--color-ink-2); text-decoration: none; font-size: var(--text-sm); padding-block: var(--space-2xs); transition: color var(--dur-short) var(--ease-out); }
+.foot a:hover { color: var(--color-ink); }
+.foot a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; border-radius: 2px; }
+.foot-last { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; gap: var(--space-lg); padding-top: var(--space-lg); border-top: 1px solid var(--color-rule); font-size: var(--text-sm); color: var(--color-muted); }
 
-        /* ============ FOOTER ============ */
-        footer { margin-top: var(--gap-section); background: var(--surface); padding: clamp(32px, 4vw, 64px) var(--margin) 28px; }
-        .foot-brand { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; font: 600 21px var(--display); letter-spacing: -0.01em; text-decoration: none; }
-        .foot { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(0, 2fr); gap: 24px; margin-top: 32px; }
-        .foot a { display: block; text-decoration: none; color: var(--ink-2); font-size: 15px; padding: 4px 0; transition: color 150ms var(--ease); }
-        .foot a:hover { color: var(--ink); }
-        .foot .k { font: 600 12px var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; }
-        .foot p { color: var(--ink-2); font-size: 15px; }
-        .foot-last { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 48px; color: var(--ink-3); font-size: 14px; }
-        .foot-last .btn { padding: 12px 16px; font-size: 12px; }
+/* Under 60rem: one column, the head first */
+@media (max-width: 60rem) {
+    :root { --nav-h: 64px; }
+    .nav-in { grid-template-columns: minmax(0, 1fr) auto; }
+    .nav-side { display: none; }
+    .nav-compact { display: flex; }
+    .nav-drawer.open { display: grid; gap: var(--space-2xs); padding: var(--space-sm) var(--gutter) var(--space-lg); border-top: 1px solid var(--color-rule); }
+    .nav-drawer a:not(.btn) { color: var(--color-ink); text-decoration: none; padding-block: var(--space-sm); font-size: var(--text-md); }
+    .nav-drawer .btn { margin-top: var(--space-sm); justify-self: start; }
+    .split > .text, .split > .proof, .split--4-8 > .text, .split--4-8 > .proof, .split--6-6 > .text, .split--6-6 > .proof { grid-column: 1 / -1; }
+    .split { grid-template-columns: minmax(0, 1fr); gap: var(--space-xl) 0; }
+    .hero { min-height: 0; padding-block: var(--space-2xl); }
+    .record-head, .record-list, .record figcaption { padding-inline: var(--space-lg); }
+    .about-media { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .privacy-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .colophon-text, .foot { grid-column: 1 / -1; }
+}
+@media (max-width: 40rem) {
+    .brand { font-size: var(--text-lg); }
+    .nav-compact .btn { padding: 0 var(--space-sm); }
+    .record-list li { grid-template-columns: 3.5rem minmax(0, 1fr); gap: var(--space-md); }
+    .record-head { flex-direction: column; gap: var(--space-sm); }
+    .pain thead { display: none; }
+    .pain, .pain tbody, .pain tr, .pain td { display: block; width: 100%; }
+    .pain tr { border-top: 1px solid var(--color-rule); padding-block: var(--space-md); }
+    .pain td { border: 0; padding: var(--space-2xs) 0; }
+    .pain td + td { border: 0; padding: var(--space-xs) 0 0; }
+    .pain td:first-child::before { content: "Today: "; color: var(--color-muted); }
+    .pain td + td::before { content: "With CivicGrid: "; color: var(--color-muted); }
+    .custom-list li { grid-template-columns: minmax(0, 1fr); gap: var(--space-xs); }
+    .about-media { grid-template-columns: minmax(0, 1fr); }
+    .film { max-width: 320px; }
+    .who-opts { grid-template-columns: minmax(0, 1fr); }
+    .form-card { padding: var(--space-lg); }
+    .privacy-grid, .foot { grid-template-columns: minmax(0, 1fr); }
+    .foot-last { flex-direction: column; align-items: flex-start; }
+}
 
-        /* ============ MOTION (content visible without script) ============ */
-        .js .rise { opacity: 0; transform: translateY(24px); transition: opacity 700ms var(--ease), transform 700ms var(--ease); }
-        .js .rise.in { opacity: 1; transform: none; }
-        @media (prefers-reduced-motion: reduce) {
-            html { scroll-behavior: auto; }
-            .js .rise { opacity: 1; transform: none; transition: opacity 100ms; }
-            .btn { transition: background 100ms; }
-            .btn:hover { transform: none; }
-        }
+/* Case: the facts sit above the film on the proof side */
+.case .proof { display: grid; gap: var(--space-lg); }
+.case .facts { margin: 0; order: 0; }
+.case .film-frame { order: 1; }
+.case .film-note { order: 2; margin-top: calc(var(--space-sm) - var(--space-lg)); }
+.case .room { order: 3; margin: 0; }
+@media (max-width: 60rem) { .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
-        /* ============ RESPONSIVE ============ */
-        @media (max-width: 1100px) {
-        }
-        @media (max-width: 760px) {
-            body { font-size: 16px; }
-            .nav { height: 64px; }
-            .facts { flex-direction: column; }
-            .facts li { min-height: 0; padding: 20px; }
-            .coupon { grid-template-columns: 1fr; }
-            .privacy-grid { grid-template-columns: 1fr; }
-            .foot { grid-template-columns: 1fr 1fr; }
-            .foot > div:last-child { grid-column: 1 / -1; }
-        }
-        .seg-n { display: block; font-size: 16px; line-height: 1.45; }
+/* Questions: the head and the registration stay in view while the answers scroll */
+.faq-side { position: sticky; top: calc(var(--nav-h) + var(--space-xl)); display: grid; gap: var(--space-xl); }
+.reg { margin: 0; display: grid; }
+.reg > div { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: var(--space-md); padding-block: var(--space-sm); border-top: 1px solid var(--color-rule); font-size: var(--text-sm); }
+.reg > div:last-of-type { border-bottom: 1px solid var(--color-rule); }
+.reg dt { color: var(--color-muted); }
+.reg dd { margin: 0; color: var(--color-ink); }
+.reg-note { margin-top: var(--space-md); font-size: var(--text-sm); color: var(--color-ink-2); }
+@media (max-width: 60rem) { .faq-side { position: static; } }
 
-        /* ============ LIGHT READING SECTIONS: same brand, tokens re-pointed for a paper ground ============ */
-        .light {
-            --ink: oklch(22% 0.03 255);
-            --ink-2: oklch(38% 0.02 255);
-            --ink-3: oklch(46% 0.015 255);
-            --surface: oklch(100% 0 0);
-            --elevated: oklch(93% 0.006 255);
-            background: oklch(97% 0.005 255);
-            color: var(--ink);
-            margin-top: var(--gap-section);
-            padding-block: var(--gap-section);
-        }
-        .light h2 { font-size: clamp(30px, 3vw, 46px); line-height: 1.08; max-width: 24ch; }
-        .light .reg td.data { color: var(--ink); }
-        .light .link:hover { color: var(--ink-2); }
-        .light :focus-visible { outline-color: var(--ink); }
-        .light-last { margin-bottom: calc(var(--gap-section) * -1); }
+/* Phones: the film keeps its own shape and its controls sit under it */
+@media (max-width: 47.5rem) { .film-frame { aspect-ratio: auto; } .film-frame video { height: auto; } .film-ctl { position: static; padding: var(--space-sm); border-top: 1px solid var(--color-rule); } .ctl { background: var(--color-paper-2); } }
 
-
-        /* Founder */
-        .portrait img { width: 100%; height: auto; border-radius: var(--radius); }
-        .portrait figcaption { margin-top: 14px; font-size: 15px; color: var(--ink-2); }
-        .portrait figcaption strong { display: block; font: 600 18px/1.3 var(--display); color: var(--ink); }
-        .about-media { display: grid; grid-template-columns: minmax(0, 240px) minmax(0, 1fr); gap: clamp(24px, 3.4vw, 48px); margin-top: 40px; align-items: start; }
-
-
-        /* Contact */
-        .contact { padding-top: var(--gap-section); }
-        .coupon { margin-top: 0; }
-        .fil { color: var(--ink) !important; font-weight: 500; }
-        .direct > div > span:not(.k) { font: 500 16px/1.4 var(--display); }
-
-        /* Tap targets and anchor landings */
-        [id] { scroll-margin-top: 84px; }
-        .brand { min-height: 44px; }
-        .link { display: inline-block; padding-block: 11px; }
-        .foot a { padding: 10px 0; }
-        .nav-book { display: none; }
-        .nav-links a:not(.btn) { display: inline-flex; align-items: center; min-height: 44px; }
-        .nav-links .btn { min-height: 44px; }
-        .foot-last .btn { min-height: 44px; }
-
-        @media (max-width: 1100px) {
-            .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-            .facts li { min-height: 0; }
-            .portrait { max-width: 360px; }
-            .nav-links a:not(.btn) { font-size: 14px; }
-            .nav-links { gap: 16px; }
-        }
-        @media (max-width: 900px) {
-            .menu-toggle { display: block; min-height: 44px; }
-            .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--navy); flex-direction: column; align-items: stretch; gap: 0; padding: 8px var(--margin) 24px; }
-            .nav-links.open { display: flex; }
-            .nav-links a:not(.btn) { display: flex; padding: 14px 0; font-size: 17px; }
-            .nav-links .btn { margin-top: 10px; justify-content: center; min-height: 48px; }
-            .nav-book { display: inline-flex; padding: 12px 14px; font-size: 12px; min-height: 44px; margin-left: auto; margin-right: 8px; }
-        }
-        @media (max-width: 760px) {
-            .facts { grid-template-columns: 1fr; }
-            .facts li { flex: none; }
-            .film { max-width: 300px; }
-        }
-
-        /* ============ FIRST SCREEN: slim band, film edge to edge ============ */
-        .ctl { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border: 0; border-radius: var(--radius); background: var(--elevated); color: var(--ink); font: 500 14px var(--display); cursor: pointer; transition: background 150ms var(--ease), transform 250ms var(--ease); }
-        .ctl:hover { background: var(--step); transform: translateY(-1px); }
-        .ctl:active { transform: translateY(1px); }
-        .ctl svg { width: 18px; height: 18px; fill: currentColor; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
-        #filmSound[aria-pressed="true"] { background: var(--amber); color: var(--on-amber); }
-
-
-        /* How it works: pick a step, watch it */
-        .step-list { display: grid; gap: 6px; }
-        .step-btn { position: relative; overflow: hidden; display: grid; gap: 6px; text-align: left; border: 0; border-radius: var(--radius); background: var(--surface); color: var(--ink); padding: 18px 20px; cursor: pointer; transition: background 150ms var(--ease); }
-        .step-btn .seg-t { font: 600 19px/1.2 var(--display); letter-spacing: -0.01em; }
-        .step-btn .seg-n { font-size: 15px; line-height: 1.45; color: var(--ink-2); }
-        .step-btn:hover { background: var(--elevated); }
-        .step-btn[aria-pressed="true"] { background: var(--elevated); }
-        .step-btn[aria-pressed="true"] .seg-t { color: var(--amber); }
-        .step-bar { position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; background: var(--amber); transform: scaleX(0); transform-origin: 0 50%; }
-        .step-btn[aria-pressed="false"] .step-bar { display: none; }
-        .step-pause { justify-self: start; margin-top: 4px; }
-
-        /* Contact sits on the slow grid; panels stay opaque so text contrast is unaffected */
-        .contact { position: relative; overflow: hidden; padding-block: var(--gap-section); }
-        .contact-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.5; }
-        .contact .coupon { position: relative; background: var(--navy); padding: 0; max-width: 1392px; }
-        .contact { padding-inline: var(--margin); }
-
-        /* Sentence-case labels instead of tiny tracked capitals */
-        .fact-w, .tile-k, .seg-w, .board-head, .lane-name, .bm-head, .record-tag, .record li .st, .reg th, .direct .k, .foot .k { text-transform: none; letter-spacing: 0; font-weight: 500; font-size: 15px; }
-
-        @media (max-width: 1100px) {
-        }
-        @media (max-width: 760px) {
-        }
-        .nav { padding-inline: var(--edge); }
-        @media (min-width: 1101px) and (max-height: 1000px) {
-        }
-        @media (min-width: 1101px) and (max-height: 700px) {
-        }
-        @media (prefers-reduced-motion: reduce) {
-        }
-
-        /* ============ ROUND 3: one message per screen ============ */
-        :root { --edge: max(var(--margin), calc((100% - 1520px) / 2 + var(--margin))); }
-        .nav { padding-inline: var(--edge); }
-        .btn-lg { padding: 22px 30px; font-size: 16px; }
-        /* One amber action per screen: the top-bar button stays quiet until the first-screen button has scrolled away */
-        .js .nav:not(.past) .nav-links .btn, .js .nav:not(.past) .nav-book { background: var(--elevated); color: var(--ink); }
-        .js .nav:not(.past) .nav-links .btn:hover, .js .nav:not(.past) .nav-book:hover { background: var(--step); }
-
-        /* First screen: promise on the left, the one action on the right, the film below */
-        .hero { display: flex; flex-direction: column; min-height: calc(100svh - 76px); }
-        .hero-band { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px clamp(24px, 4vw, 64px); align-items: center; padding: clamp(10px, 2vh, 24px) var(--edge) clamp(14px, 2.4vh, 26px); }
-        .hero h1 { font-size: clamp(34px, 3.5vw, 58px); line-height: 1.05; letter-spacing: -0.025em; }
-        .hero-sub { font-size: clamp(16px, 1.2vw, 18px); line-height: 1.45; color: var(--ink-2); margin-top: 8px; max-width: 62ch; text-wrap: balance; }
-        .hero-go { display: grid; gap: 8px; justify-items: start; }
-        .hero-note { font-size: 14px; line-height: 1.4; color: var(--ink-2); }
-        .hero-alt { font-size: 15px; padding-block: 2px; }
-        .film-frame { position: relative; --cut: clamp(28px, 3.4vw, 56px); flex: 1 1 auto; min-height: calc(100vw / 2.4); background: var(--surface); }
-        .film-frame video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-        .film-ctl { position: absolute; z-index: 2; top: 14px; left: calc(var(--cut) + 14px); display: flex; gap: 6px; }
-        .film-ctl .ctl { background: var(--navy); }
-        .film-ctl .ctl:hover { background: var(--elevated); }
-
-        /* Proof */
-                .proof-in p { color: var(--ink-2); margin-top: 14px; max-width: 58ch; }
-        .facts { list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 28px; }
-        .facts li { min-height: 0; background: var(--surface); padding: 18px 20px; display: grid; gap: 4px; align-content: start; flex: none; clip-path: none; }
-        .facts li:first-child { clip-path: none; }
-        .fact-v { font: 600 clamp(20px, 1.7vw, 26px)/1.15 var(--display); letter-spacing: -0.015em; }
-        .fact-v.data { font-family: var(--data); letter-spacing: -0.02em; color: var(--ink); }
-        .fact-n { font-size: 15px; line-height: 1.4; }
-
-        /* The problem */
-        .pain { display: grid; gap: 6px; margin-top: 36px; list-style: none; }
-        .pain-head, .pain-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
-        .pain-head span { font: 600 16px var(--display); color: var(--ink-2); padding: 0 24px 4px; }
-        .pain-row > div { padding: 22px 24px; font-size: 17px; line-height: 1.45; }
-        .pain-today { background: var(--surface); color: var(--ink); font-weight: 500; }
-        .pain-with { background: var(--navy); color: oklch(95% 0.005 255); }
-        .pain-k { display: none; font: 600 14px var(--display); margin-bottom: 6px; }
-        .pain-ask { margin-top: 28px; font: 500 clamp(19px, 1.6vw, 24px)/1.35 var(--display); letter-spacing: -0.01em; max-width: 44ch; text-wrap: balance; }
-        .pain-ask + p { margin-top: 6px; }
-
-        /* How your team uses it */
-        .steps { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, min(38vw, 520px)); gap: clamp(20px, 3vw, 48px); margin-top: 36px; align-items: start; }
-        .step-film { background: var(--surface); aspect-ratio: 4 / 5; }
-        .step-film video { width: 100%; height: 100%; object-fit: cover; }
-
-        /* Getting started: the offer */
-        .start { background: var(--surface); margin-top: var(--gap-section); padding-block: var(--gap-section); }
-        .start h2 { font-size: clamp(30px, 3vw, 46px); line-height: 1.08; max-width: 24ch; }
-        .start-steps { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 36px; }
-        .start-steps li { background: var(--navy); padding: clamp(22px, 2.2vw, 32px); display: grid; gap: 10px; align-content: start; }
-        .start-n { font: 500 15px var(--data); color: var(--ink-3); }
-        .start-steps h3 { font-size: clamp(20px, 1.7vw, 25px); line-height: 1.18; letter-spacing: -0.015em; }
-        .start-steps p { color: var(--ink-2); font-size: 16px; line-height: 1.5; }
-        .start-go { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 28px; margin-top: 32px; }
-        .start-go p { font: 500 17px/1.4 var(--display); max-width: 42ch; }
-
-        /* Custom systems: its own loud field, so a company can't miss it */
-        .custom { --ink: var(--on-amber); background: var(--amber); color: var(--on-amber); padding-block: var(--gap-section); }
-        .custom-in { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: clamp(28px, 5vw, 80px); align-items: start; }
-        .custom h2 { font-size: clamp(30px, 3vw, 46px); line-height: 1.08; max-width: 18ch; }
-        .custom-in > div > p { margin-top: 16px; font-size: 18px; line-height: 1.5; max-width: 48ch; }
-        .custom .btn { background: var(--navy); color: oklch(95% 0.005 255); margin-top: 26px; }
-        .custom .btn:hover { background: var(--elevated); }
-        .custom :focus-visible { outline-color: var(--on-amber); }
-        .custom-list { list-style: none; display: grid; gap: 6px; }
-        .custom-list li { background: oklch(84% 0.13 78); padding: 20px 22px; }
-        .custom-list h3 { font-size: 20px; line-height: 1.2; letter-spacing: -0.01em; }
-        .custom-list p { font-size: 16px; line-height: 1.45; margin-top: 4px; }
-
-        /* Founder */
-        .about { margin: var(--gap-section) 0 0; border-radius: 0; }
-        .about-in { max-width: 1520px; margin-inline: auto; padding: var(--gap-section) var(--margin); grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); }
-        .about-say { color: var(--ink-2); font-size: 17px; line-height: 1.55; max-width: 52ch; }
-        .about-say + .btn { margin-top: 22px; }
-        .about-media { grid-template-columns: minmax(0, 210px) minmax(0, 1fr); margin-top: 28px; }
-        blockquote.said { font-size: clamp(19px, 1.6vw, 24px); max-width: 44ch; }
-
-        .custom + .about { margin-top: 0; }
-        .about + .light { margin-top: 0; }
-
-        /* Questions */
-        .faq-in { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(24px, 5vw, 80px); align-items: start; }
-        .faq { display: grid; gap: 6px; }
-        .faq details { background: var(--surface); border-radius: var(--radius); scroll-margin-top: 90px; }
-        .faq summary { display: flex; justify-content: space-between; align-items: center; gap: 20px; min-height: 60px; padding: 16px 22px; font: 600 18px/1.3 var(--display); letter-spacing: -0.01em; cursor: pointer; list-style: none; }
-        .faq summary::-webkit-details-marker { display: none; }
-        .faq summary svg { flex: none; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; transition: transform 200ms var(--ease); }
-        .faq details[open] summary svg { transform: rotate(45deg); }
-        .faq-a { padding: 0 22px 20px; color: var(--ink-2); max-width: 68ch; }
-        .faq-a p + p, .faq-a p + ul { margin-top: 10px; }
-        .faq-a ul { padding-left: 18px; }
-        .faq-a .link { padding-block: 8px; }
-
-        /* Contact form: LGU or organization */
-        .who { border: 0; display: grid; gap: 6px; margin-bottom: 8px; }
-        .who legend { font: 500 14px var(--display); color: var(--ink-2); margin-bottom: 6px; }
-        .who-opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
-        .who label { display: flex; align-items: center; justify-content: center; text-align: center; min-height: 52px; padding: 10px 12px; background: var(--navy); border-radius: var(--radius); font: 500 15px/1.25 var(--display); color: var(--ink-2); cursor: pointer; transition: background 150ms var(--ease), color 150ms var(--ease); }
-        .who input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-        .who input:checked + label { background: var(--step); color: var(--ink); outline: 2px solid var(--amber); outline-offset: -2px; }
-        .who input:focus-visible + label { outline: 2px solid var(--amber); outline-offset: 3px; }
-
-        /* Privacy: complete, but out of the way */
-        .privacy-box { padding: 28px var(--edge) 0; }
-        .privacy-box summary { display: inline-flex; align-items: center; min-height: 44px; font: 500 16px var(--display); color: var(--ink-2); cursor: pointer; text-decoration: underline; text-decoration-color: var(--amber); text-underline-offset: 6px; }
-        .privacy-body { padding-top: 16px; max-width: 1100px; }
-        .privacy-body .lede { color: var(--ink-2); max-width: 70ch; }
-        .privacy-grid { margin-top: 24px; }
-        footer { margin-top: var(--gap-section); }
-
-        @media (max-width: 1100px) {
-            .hero { min-height: 0; }
-            .film-frame { flex: none; aspect-ratio: 2400 / 1100; min-height: 0; }
-            .custom-in, .faq-in { grid-template-columns: 1fr; }
-            .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-            .steps { grid-template-columns: 1fr; }
-            .step-film { order: -1; width: 100%; max-width: 480px; }
-            .about-in { grid-template-columns: 1fr; }
-        }
-        @media (max-width: 760px) {
-            .hero-band { grid-template-columns: 1fr; padding-top: 18px; }
-            .hero h1 { font-size: clamp(32px, 9.4vw, 42px); }
-            .hero-go .btn { width: 100%; justify-content: center; }
-            .film-frame { clip-path: none; aspect-ratio: auto; min-height: 0; flex: none; }
-            .film-frame video { position: static; height: auto; aspect-ratio: 4 / 5; }
-            .film-ctl { position: static; padding: 10px var(--edge); background: var(--navy); }
-            .film-ctl .ctl { background: var(--elevated); }
-            .facts { grid-template-columns: 1fr; }
-            .pain-head { display: none; }
-            .pain-row { grid-template-columns: 1fr; }
-            .pain-row + .pain-row { margin-top: 18px; }
-            .foot-last .btn { display: none; }
-            .pain-k { display: block; }
-            .pain-row > div { padding: 18px 20px; font-size: 16px; }
-            .start-steps { grid-template-columns: 1fr; }
-            .start-go .btn, .custom .btn, .about-say + .btn { width: 100%; justify-content: center; }
-            .about-media { grid-template-columns: 1fr; }
-            .faq summary { font-size: 17px; padding: 14px 18px; }
-            .faq-a { padding: 0 18px 18px; }
-        }
-        @media (min-width: 1101px) and (max-height: 760px) {
-            .hero-band { padding-block: 4px 10px; }
-            .hero h1 { font-size: clamp(30px, 3vw, 42px); }
-            .hero-sub { margin-top: 4px; max-width: none; text-wrap: wrap; font-size: 16px; }
-            .hero-go { gap: 5px; }
-            .hero-go .btn-lg { padding: 14px 22px; font-size: 14px; }
-            .film-frame video { object-position: 50% 70%; }
-        }
-        @media (min-width: 1101px) and (max-height: 700px) {
-            .hero-alt { display: none; }
-        }
+/* Problem: a full-width table under a split head, a break from the split rhythm */
+.wide { display: grid; gap: var(--space-2xl); }
+.wide-head { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--space-lg) var(--gap-columns); align-items: end; }
+.wide-head h2 { grid-column: 1 / span 6; }
+.wide-head .pain-ask, .wide-head > p:last-child { grid-column: 8 / -1; }
+@media (max-width: 60rem) { .wide-head { grid-template-columns: minmax(0, 1fr); } .wide-head h2, .wide-head .pain-ask, .wide-head > p:last-child { grid-column: 1 / -1; } }
     </style>
 </head>
 <body>
     <script>document.documentElement.classList.add('js');</script>
 
     <header class="nav" id="top">
-        <a class="brand" href="#top"><img src="logo.svg" alt="" width="34" height="34">CivicGrid</a>
-        <a href="#contact" class="btn nav-book">Book</a>
-        <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="navLinks">Menu</button>
-        <nav class="nav-links" id="navLinks" aria-label="Main">
+        <div class="container nav-in">
+            <nav class="nav-side" aria-label="Main">
+                <a href="#how">How it works</a>
+                <a href="#start">How to start</a>
+                <a href="#custom">Custom systems</a>
+            </nav>
+            <a class="brand" href="#top" aria-label="CivicGrid, back to top"><img src="logo.svg" alt="" width="34" height="34">CivicGrid</a>
+            <div class="nav-side nav-side--end">
+                <a href="#about">The founder</a>
+                <a href="#questions">Questions</a>
+                <a href="#contact" class="btn" data-mode="lgu">Book a free walkthrough</a>
+            </div>
+            <div class="nav-compact">
+                <a href="#contact" class="btn nav-book" data-mode="lgu">Book</a>
+                <button type="button" class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="navLinks">Menu</button>
+            </div>
+        </div>
+        <nav class="nav-drawer" id="navLinks" aria-label="Main, small screens">
             <a href="#how">How it works</a>
             <a href="#start">How to start</a>
             <a href="#custom">Custom systems</a>
             <a href="#about">The founder</a>
             <a href="#questions">Questions</a>
-            <a href="#contact" class="btn">Book a free walkthrough</a>
+            <a href="#contact" class="btn" data-mode="lgu">Book a free walkthrough</a>
         </nav>
     </header>
 
     <main>
-        <!-- FIRST SCREEN: the promise, one action, the real system -->
+        <!-- FIRST SCREEN: the promise beside the record it keeps -->
         <section class="hero" aria-labelledby="hero-title">
-            <div class="hero-band">
-                <div class="rise">
+            <div class="container split">
+                <div class="text">
                     <h1 id="hero-title">Know who responded, and when.</h1>
                     <p class="hero-sub">Emergency operations software for Philippine LGUs, in daily use at Mandaluyong City since July 2026.</p>
+                    <div class="hero-go">
+                        <a href="#contact" class="btn btn-lg" data-mode="lgu">Book a free walkthrough</a>
+                        <p class="hero-note">Free. Nothing to install. Renz, the founder, replies within one working day.</p>
+                        <a href="#custom" class="link hero-alt">Not an LGU? Custom systems</a>
+                    </div>
                 </div>
-                <div class="hero-go rise">
-                    <a href="#contact" class="btn btn-lg" data-mode="lgu">Book a free walkthrough</a>
-                    <p class="hero-note">Free. Nothing to install. Renz, the founder, replies within one working day.</p>
-                    <a href="#custom" class="link hero-alt">Not an LGU? Custom systems</a>
-                </div>
-            </div>
-            <figure class="film-frame cut" aria-label="Short film of the CivicGrid demo system with sample data: a report from a phone, dispatch to a lead office, response, approval, and the audit trail">
-                <video id="heroFilm" muted playsinline loop preload="none" poster="video/hero-poster.webp" width="2400" height="1100"></video>
-                <div class="film-ctl">
-                    <button type="button" class="ctl" id="filmSound" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7" fill="none"/></svg><span>Play with sound</span></button>
-                    <button type="button" class="ctl" id="filmPause" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5h3v14H8zM13 5h3v14h-3z"/></svg><span>Pause</span></button>
-                </div>
-            </figure>
-        </section>
-
-        <!-- PROOF -->
-        <section class="section wrap" id="proof" aria-labelledby="proof-title">
-            <div class="proof-in">
-                <div>
-                    <h2 id="proof-title" class="rise">Tested by the city's own team. Running every day.</h2>
-                    <p class="rise">Mandaluyong City's disaster risk reduction and management department uses it every day to support its emergency operations.</p>
-                    <ol class="facts rise" aria-label="The Mandaluyong deployment, in order">
-                        <li><span class="fact-w">Accepted</span><span class="fact-v data">June 29, 2026</span><span class="fact-n">After a 55-point test by the city's own team</span></li>
-                        <li><span class="fact-w">Live</span><span class="fact-v data">July 1, 2026</span><span class="fact-n">In daily use by the city's disaster office</span></li>
-                        <li><span class="fact-w">Coordinates</span><span class="fact-v">15 clusters</span><span class="fact-n">All 15 official response clusters</span></li>
-                        <li><span class="fact-w">Today</span><span class="fact-v">Still running</span><span class="fact-n">Every day since go-live</span></li>
+                <figure class="proof record" data-slot="record" data-kind="product" aria-label="Diagram of how the CivicGrid system records one incident, shown with sample data">
+                    <div class="record-head" data-keep>
+                        <span class="record-title">Flooded street<small>Sample incident from the demo system. Every step keeps a role and a time.</small></span>
+                        <span class="record-state"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Closed and locked</span>
+                    </div>
+                    <ol class="record-list" data-keep>
+                        <li style="--i: 0"><time datetime="14:02">14:02</time><span class="record-step"><strong>Reported</strong><span>A resident’s phone report, with its approximate location.</span><em>Resident</em></span></li>
+                        <li style="--i: 1"><time datetime="14:04">14:04</time><span class="record-step"><strong>Dispatched</strong><span>Confirmed and sent to the right lead office, with a text message.</span><em>EOC operator</em></span></li>
+                        <li style="--i: 2"><time datetime="14:06">14:06</time><span class="record-step"><strong>Acknowledged</strong><span>The lead office confirms it has the report.</span><em>Lead office</em></span></li>
+                        <li style="--i: 3"><time datetime="14:19">14:19</time><span class="record-step"><strong>Responding</strong><span>Each update is logged as it happens.</span><em>Lead office</em></span></li>
+                        <li style="--i: 4" class="is-final"><time datetime="15:40">15:40</time><span class="record-step"><strong>Closed and locked</strong><span>Approved and locked. The after-action report is ready.</span><em>Commander</em></span></li>
                     </ol>
-                </div>
-            </div>
-        </section>
-
-        <!-- THE PROBLEM -->
-        <div class="light">
-            <section class="wrap" id="problem" aria-labelledby="problem-title">
-                <h2 id="problem-title" class="rise">Where does a report get lost in your office?</h2>
-                <div class="pain">
-                    <div class="pain-head" aria-hidden="true"><span>What happens today</span><span>With CivicGrid</span></div>
-                    <div class="pain-row rise"><div class="pain-today"><span class="pain-k">Today</span>Reports come in by hotline, radio and group chat, and end up in different places.</div><div class="pain-with"><span class="pain-k">With CivicGrid</span>Every report sits in one live list, whether a resident sent it or your dispatcher logged the call.</div></div>
-                    <div class="pain-row rise"><div class="pain-today"><span class="pain-k">Today</span>The caller can't say exactly where they are.</div><div class="pain-with"><span class="pain-k">With CivicGrid</span>A report from a resident's phone comes with its approximate location.</div></div>
-                    <div class="pain-row rise"><div class="pain-today"><span class="pain-k">Today</span>After dispatch, nobody can say who received it or who has arrived.</div><div class="pain-with"><span class="pain-k">With CivicGrid</span>The lead office acknowledges it and logs each update. Every step shows a name and a time.</div></div>
-                    <div class="pain-row rise"><div class="pain-today"><span class="pain-k">Today</span>The report for COA and the Mayor gets retyped from notes and chats.</div><div class="pain-with"><span class="pain-k">With CivicGrid</span>The after-action report comes from the same record, with no retyping.</div></div>
-                </div>
-                <p class="pain-ask rise">How long did your last big incident report take to put together?</p>
-                <p class="rise"><a href="#contact" class="link" data-mode="lgu">Tell me in a walkthrough</a></p>
-            </section>
-        </div>
-
-        <!-- HOW IT WORKS: each step plays its real clip -->
-        <section class="section wrap" id="how" aria-labelledby="how-title">
-            <h2 id="how-title" class="rise">How your team uses it.</h2>
-            <div class="steps">
-                <div class="step-list rise" role="group" aria-label="Choose a step">
-                    <button type="button" class="step-btn" data-step="report" aria-pressed="true"><span class="seg-t">A resident reports</span><span class="seg-n">They open a link on any phone and pick what is happening. No app, no login.</span><i class="step-bar" aria-hidden="true"></i></button>
-                    <button type="button" class="step-btn" data-step="dispatch" aria-pressed="false"><span class="seg-t">Your EOC dispatches</span><span class="seg-n">Operators at your emergency operations center (EOC) confirm it and send it to the right lead office, with a text message.</span><i class="step-bar" aria-hidden="true"></i></button>
-                    <button type="button" class="step-btn" data-step="respond" aria-pressed="false"><span class="seg-t">The lead office responds</span><span class="seg-n">They acknowledge it and log each update as it happens.</span><i class="step-bar" aria-hidden="true"></i></button>
-                    <button type="button" class="step-btn" data-step="close" aria-pressed="false"><span class="seg-t">The commander closes it</span><span class="seg-n">They approve and lock the record. The after-action report and export are ready.</span><i class="step-bar" aria-hidden="true"></i></button>
-                    <button type="button" class="ctl step-pause" id="stepPause"><span>Pause clips</span></button>
-                </div>
-                <figure class="step-film cut cut-sm rise">
-                    <video id="stepFilm" muted playsinline preload="none" poster="video/step-report-phone.webp" width="1080" height="1350" aria-label="The selected step, shown in the demo system with sample data"></video>
                 </figure>
             </div>
         </section>
 
-        <!-- GET STARTED: the offer -->
-        <section class="start" id="start" aria-labelledby="start-title">
-            <div class="wrap">
-                <h2 id="start-title" class="rise">See it first. Decide after.</h2>
-                <ol class="start-steps"><!-- taste-skill-ignore: these numbers are a real order the buyer follows -->
-                    <li class="rise"><span class="start-n">Step 1</span><!-- taste-skill-ignore: real sequence --><h3>A free 20-minute walkthrough</h3><p>At your office or online. I ask how your office handles reports today, then run one incident from report to closed record.</p></li>
-                    <li class="rise"><span class="start-n">Step 2</span><!-- taste-skill-ignore: real sequence --><h3>A one-page note within two working days</h3><p>Where your current process has gaps, and what would fit. It's yours to keep, whatever you decide.</p></li>
-                    <li class="rise"><span class="start-n">Step 3</span><!-- taste-skill-ignore: real sequence --><h3>Your team tests it before you accept it</h3><p>I set it up around your forms, clusters and steps. Your team tests it, the way Mandaluyong's did against a 55-point checklist.</p></li>
-                </ol>
-                <div class="start-go rise">
-                    <a href="#contact" class="btn btn-lg" data-mode="lgu">Book a free walkthrough</a>
-                    <p>The price comes in writing, only after you've seen it.</p>
+        <!-- THE MANDALUYONG CASE: the facts beside the system at work -->
+        <section class="section band" id="proof" aria-labelledby="proof-title">
+            <div class="container split split--4-8 split--top case">
+                <div class="text">
+                    <h2 id="proof-title">Tested by the city’s own team. Running every day.</h2>
+                    <p>Mandaluyong City’s disaster risk reduction and management department uses it every day to support its emergency operations.</p>
+                </div>
+                <div class="proof">
+                    <dl class="facts" aria-label="The Mandaluyong deployment, in order">
+                        <div><dt>Accepted</dt><dd><b class="data">June 29, 2026</b><span>After a 55-point test by the city’s own team</span></dd></div>
+                        <div><dt>Live</dt><dd><b class="data">July 1, 2026</b><span>In daily use by the city’s disaster office</span></dd></div>
+                        <div><dt>Coordinates</dt><dd><b>15 clusters</b><span>All 15 official response clusters</span></dd></div>
+                        <div><dt>Today</dt><dd><b>Still running</b><span>Every day since go-live</span></dd></div>
+                    </dl>
+                    <figure class="film-frame" aria-label="Short film of the CivicGrid demo system with sample data: a report from a phone, dispatch to a lead office, response, approval, and the audit trail">
+                        <video id="heroFilm" muted playsinline loop preload="none" poster="video/case-poster.jpg" width="2400" height="1100"></video>
+                        <div class="film-ctl">
+                            <button type="button" class="ctl" id="filmSound" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7" fill="none"/></svg><span>Play with sound</span></button>
+                            <button type="button" class="ctl" id="filmPause" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5h3v14H8zM13 5h3v14h-3z"/></svg><span>Pause</span></button>
+                        </div>
+                    </figure>
+                    <p class="film-note">The demo system with sample data, never Mandaluyong’s live screens.</p>
+                    <!-- Photo slot: EOC room (approved by the CDRRMD head, no incident details, no staff names). Landscape, 2000px wide or more. Remove "hidden" when the file is in img/. -->
+                    <figure class="room" data-slot="eoc-room" data-alt="The emergency operations center room" hidden></figure>
+                </div>
+            </div>
+        </section>
+
+        <!-- WHERE REPORTS GET LOST -->
+        <section class="section" id="problem" aria-labelledby="problem-title">
+            <div class="container wide">
+                <div class="wide-head">
+                    <h2 id="problem-title">Where does a report get lost in your office?</h2>
+                    <p class="pain-ask">How long did your last big incident report take to put together?</p>
+                    <p><a href="#contact" class="link" data-mode="lgu">Tell me in a walkthrough</a></p>
+                </div>
+                <div>
+                    <table class="pain">
+                        <thead><tr><th scope="col">What happens today</th><th scope="col">With CivicGrid</th></tr></thead>
+                        <tbody>
+                            <tr><td>Reports come in by hotline, radio and group chat, and end up in different places.</td><td>Every report sits in one live list, whether a resident sent it or your dispatcher logged the call.</td></tr>
+                            <tr><td>The caller can’t say exactly where they are.</td><td>A report from a resident’s phone comes with its approximate location.</td></tr>
+                            <tr><td>After dispatch, nobody can say who received it or who has arrived.</td><td>The lead office acknowledges it and logs each update. Every step shows a name and a time.</td></tr>
+                            <tr><td>The report for COA and the Mayor gets retyped from notes and chats.</td><td>The after-action report comes from the same record, with no retyping.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- HOW IT WORKS: each step plays its real clip -->
+        <section class="section band" id="how" aria-labelledby="how-title">
+            <div class="container split split--top">
+                <div class="text">
+                    <h2 id="how-title">How your team uses it.</h2>
+                    <div class="step-list" role="group" aria-label="Choose a step">
+                        <button type="button" class="step-btn" data-step="report" aria-pressed="true"><span class="seg-t">A resident reports</span><span class="seg-n">They open a link on any phone and pick what is happening. No app, no login.</span><i class="step-bar" aria-hidden="true"></i></button>
+                        <button type="button" class="step-btn" data-step="dispatch" aria-pressed="false"><span class="seg-t">Your EOC dispatches</span><span class="seg-n">Operators at your emergency operations center (EOC) confirm it and send it to the right lead office, with a text message.</span><i class="step-bar" aria-hidden="true"></i></button>
+                        <button type="button" class="step-btn" data-step="respond" aria-pressed="false"><span class="seg-t">The lead office responds</span><span class="seg-n">They acknowledge it and log each update as it happens.</span><i class="step-bar" aria-hidden="true"></i></button>
+                        <button type="button" class="step-btn" data-step="close" aria-pressed="false"><span class="seg-t">The commander closes it</span><span class="seg-n">They approve and lock the record. The after-action report and export are ready.</span><i class="step-bar" aria-hidden="true"></i></button>
+                        <button type="button" class="btn btn--quiet step-pause" id="stepPause"><span>Pause clips</span></button>
+                    </div>
+                </div>
+                <div class="proof">
+                <figure class="step-film">
+                    <video id="stepFilm" muted playsinline preload="none" poster="video/step-report-phone.webp" width="1080" height="1350" aria-label="The selected step, shown in the demo system with sample data"></video>
+                </figure>
+                <p class="step-cap">Demo system, sample data.</p>
                 </div>
             </div>
         </section>
 
         <!-- CUSTOM SYSTEMS -->
-        <section class="custom" id="custom" aria-labelledby="custom-title">
-            <div class="wrap custom-in">
-                <div>
-                    <h2 id="custom-title" class="rise">Not an LGU? I also build custom systems.</h2>
-                    <p class="rise">For companies and organizations that run on logbooks, spreadsheets and group chats. I learn your process first, then build the software that puts it online: the same method behind Mandaluyong's system.</p>
-                    <a href="#contact" class="btn btn-lg rise" data-mode="org">Tell me what you need</a>
+        <section class="section" id="custom" aria-labelledby="custom-title">
+            <div class="container split split--6-6">
+                <div class="text">
+                    <h2 id="custom-title">Not an LGU? I also build custom systems.</h2>
+                    <p>For companies and organizations that run on logbooks, spreadsheets and group chats. I learn your process first, then build the software that puts it online: the same method behind Mandaluyong’s system.</p>
+                    <p><a href="#contact" class="btn btn--quiet btn-lg" data-mode="org">Tell me what you need</a></p>
                 </div>
-                <ul class="custom-list">
-                    <li class="rise"><h3>Requests and approvals</h3><p>Who asked, who signed, and when, without paper or chat threads.</p></li>
-                    <li class="rise"><h3>Field work</h3><p>Assign the job, follow each update, and close it.</p></li>
-                    <li class="rise"><h3>One closed record</h3><p>Every step logged, with reports that need no retyping.</p></li>
+                <ul class="proof custom-list">
+                    <li><h3>Requests and approvals</h3><p>Who asked, who signed, and when, without paper or chat threads.</p></li>
+                    <li><h3>Field work</h3><p>Assign the job, follow each update, and close it.</p></li>
+                    <li><h3>One closed record</h3><p>Every step logged, with reports that need no retyping.</p></li>
                 </ul>
             </div>
         </section>
 
         <!-- THE FOUNDER -->
-        <section class="about" id="about" aria-labelledby="about-title">
-            <div class="about-in">
-                <figure class="portrait rise">
-                    <img src="img/renz-portrait.webp" width="1000" height="1000" loading="lazy" alt="Portrait of Renz Michael Bautista, founder of CivicGrid">
-                    <figcaption><strong>Renz Michael Bautista</strong>Founder, CivicGrid Software Development Services</figcaption>
-                </figure>
-                <div>
-                    <h2 id="about-title" class="rise">Work directly with the founder.</h2>
-                    <blockquote class="said rise">"The head of Mandaluyong's disaster office asked me to develop a customized digital tool to support Mandaluyong City's existing emergency operations."</blockquote>
-                    <div class="about-media">
-                        <figure class="film rise">
-                            <video controls playsinline preload="none" poster="img/founder-video-poster.webp" width="720" height="1280" aria-label="Founder story video, 1 minute 23 seconds, captions built in">
-                                <source src="founder-video.mp4" type="video/mp4">
-                            </video>
-                            <figcaption>How Mandaluyong's system came to be, in 83 seconds. Captions are built in.</figcaption>
-                        </figure>
-                        <div class="rise">
-                            <p class="about-say">The person who learns your process is the person who builds your system. With Mandaluyong I didn't change the way their team works: I learned their process first, then put it online. I was cabin crew before I taught myself to build software.</p>
-                            <a href="#contact" class="btn" data-mode="lgu">Book a free walkthrough</a>
-                        </div>
-                    </div>
+        <section class="section band" id="about" aria-labelledby="about-title">
+            <div class="container split split--4-8">
+                <div class="text">
+                    <h2 id="about-title">Work directly with the founder.</h2>
+                    <blockquote class="said">“The head of Mandaluyong’s disaster office asked me to develop a customized digital tool to support Mandaluyong City’s existing emergency operations.”</blockquote>
+                    <p class="about-say">The person who learns your process is the person who builds your system. With Mandaluyong I didn’t change the way their team works: I learned their process first, then put it online. I was cabin crew before I taught myself to build software.</p>
+                    <p><a href="#contact" class="btn btn--quiet" data-mode="lgu">Book a free walkthrough</a></p>
+                </div>
+                <div class="proof about-media">
+                    <figure class="portrait">
+                        <img src="img/renz-portrait.webp" width="1000" height="1000" loading="lazy" alt="Portrait of Renz Michael Bautista, founder of CivicGrid">
+                        <figcaption><strong>Renz Michael Bautista</strong>Founder, CivicGrid Software Development Services</figcaption>
+                    </figure>
+                    <figure class="film">
+                        <video controls playsinline preload="none" poster="img/founder-video-poster.webp" width="720" height="1280" aria-label="Founder story video, 1 minute 23 seconds, captions built in">
+                            <source src="founder-video.mp4" type="video/mp4">
+                        </video>
+                        <figcaption>How Mandaluyong’s system came to be, in 83 seconds. Captions are built in.</figcaption>
+                    </figure>
                 </div>
             </div>
         </section>
 
         <!-- QUESTIONS -->
-        <div class="light">
-            <section class="wrap faq-in" id="questions" aria-labelledby="questions-title">
-                <h2 id="questions-title" class="rise">What offices ask first.</h2>
-                <div class="faq rise">
-                    <details open><summary>Will this add work for my staff?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>I learn your forms, clusters and steps first, then build around them. Residents install nothing: it's a link on any phone. Your team gets updates by text as an incident moves, and the command dashboard is made for your large EOC screens.</p></div></details>
+        <section class="section" id="questions" aria-labelledby="questions-title">
+            <div class="container split split--4-8 split--top">
+                <div class="text faq-side">
+                    <h2 id="questions-title">What offices ask first.</h2>
+                    <div>
+                        <dl class="reg" aria-label="Registered Philippine business">
+                            <div><dt>Registered in</dt><dd>City of Manila, Philippines</dd></div>
+                            <div><dt>DTI business name</dt><dd class="data">7980659</dd></div>
+                            <div><dt>PhilGEPS supplier</dt><dd class="data">476941</dd></div>
+                            <div><dt>BIR</dt><dd>Registered, certificate on request</dd></div>
+                        </dl>
+                        <p class="reg-note"><a class="link" href="civicgrid-company-profile.pdf" download>Download the one-page company profile (PDF)</a></p>
+                    </div>
+                </div>
+                <div class="proof faq">
+                    <details open><summary>Will this add work for my staff?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>I learn your forms, clusters and steps first, then build around them. Residents install nothing: it’s a link on any phone. Your team gets updates by text as an incident moves, and the command dashboard is made for your large EOC screens.</p></div></details>
                     <details><summary>Does it work without internet?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>No. It needs an internet connection, so keep your hotline and radio in place.</p></div></details>
                     <details><summary>Who can change a closed record?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>Only an EOC commander or system administrator can reopen an incident. Every step shows who did what, and when.</p></div></details>
                     <details><summary>Who owns the data?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>Your records stay yours. You can export them whenever you need them.</p></div></details>
-                    <details><summary>How much does it cost?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>It depends on your users and what you need. The walkthrough is free, and the exact price comes in writing after you've seen the system.</p></div></details>
-                    <details><summary>We have no budget yet. Should we still talk?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>Yes. Tell me when next year's budget is decided. A walkthrough now commits you to nothing.</p></div></details>
+                    <details><summary>How much does it cost?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>It depends on your users and what you need. The walkthrough is free, and the exact price comes in writing after you’ve seen the system.</p></div></details>
+                    <details><summary>We have no budget yet. Should we still talk?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>Yes. Tell me when next year’s budget is decided. A walkthrough now commits you to nothing.</p></div></details>
                     <details id="procurement"><summary>What can you give our procurement office?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>CivicGrid Software Development Services is a registered Philippine business in the City of Manila.</p><ul><li>DTI business name: <span class="data">7980659</span></li><li>PhilGEPS supplier: <span class="data">476941</span>, registered since June 2026</li><li>BIR: registered, certificate on request</li></ul><p>DTI, BIR and PhilGEPS certificates are available on request. The full address appears on your procurement documents.</p><p><a class="link" href="civicgrid-company-profile.pdf" download>Download the one-page company profile (PDF)</a></p></div></details>
                 </div>
-            </section>
-        </div>
+            </div>
+        </section>
 
-        <!-- CONTACT -->
-        <section class="contact" id="contact" aria-labelledby="contact-title">
-            <video id="gridLoop" class="contact-bg" muted playsinline loop preload="none" poster="video/grid.webp" aria-hidden="true" tabindex="-1"></video>
-            <div class="coupon rise">
-                <div class="coupon-l">
-                    <div>
-                        <h2 id="contact-title">Book a free walkthrough.</h2>
-                        <p id="contactLede">Tell me your office and how you'd like to meet. I reply within one working day.</p>
-                        <p class="fil" lang="fil">Puwede po tayong mag-usap sa Filipino.</p>
-                    </div>
+        <!-- THE CLOSE: the offer beside the form -->
+        <section class="section band" id="start" aria-labelledby="start-title">
+            <div class="container split split--top">
+                <div class="text">
+                    <h2 id="start-title">See it first. Decide after.</h2>
+                    <ol class="offer">
+                        <li><div><h3>A free 20-minute walkthrough</h3><p>At your office or online. I ask how your office handles reports today, then run one incident from report to closed record.</p></div></li>
+                        <li><div><h3>A one-page note within two working days</h3><p>Where your current process has gaps, and what would fit. It’s yours to keep, whatever you decide.</p></div></li>
+                        <li><div><h3>Your team tests it before you accept it</h3><p>I set it up around your forms, clusters and steps. Your team tests it, the way Mandaluyong’s did against a 55-point checklist.</p></div></li>
+                    </ol>
+                    <p class="price-line">The price comes in writing, only after you’ve seen it.</p>
                     <div class="direct">
                         <div><span class="k">Email</span><a class="link" href="mailto:contact@civicgrid.dev">contact@civicgrid.dev</a></div>
                         <div><span class="k">LinkedIn</span><a class="link" href="https://www.linkedin.com/in/renz-michael-bautista-926724232/" target="_blank" rel="noopener">Renz Michael Bautista</a></div>
                         <div><span class="k">Location</span><span>City of Manila, Philippines</span></div>
                     </div>
+                    <p class="fil" lang="fil">Puwede po tayong mag-usap sa Filipino.</p>
                 </div>
-                <form id="contactForm" novalidate>
-                    <p class="form-msg form-ok" id="formSuccess" role="status">Thank you. Renz will reply within one working day.</p>
-                    <fieldset class="who">
-                        <legend>Who is this for?</legend>
-                        <div class="who-opts">
-                            <input type="radio" name="inquiry" id="modeLgu" value="LGU or government office" checked><label for="modeLgu">LGU or government office</label>
-                            <input type="radio" name="inquiry" id="modeOrg" value="Company or organization"><label for="modeOrg">Company or organization</label>
+                <div class="proof" id="contact">
+                    <div class="form-card">
+                        <div>
+                            <h2 id="contact-title">Book a free walkthrough.</h2>
+                            <p id="contactLede">Tell me your office and how you’d like to meet. I reply within one working day.</p>
                         </div>
-                    </fieldset>
-                    <div class="field"><label for="fullName">Your name</label><input id="fullName" name="fullName" autocomplete="name" placeholder="Juan dela Cruz" required></div>
-                    <div class="field"><label for="agency" id="agencyLabel">Office or LGU</label><input id="agency" name="agency" autocomplete="organization" placeholder="City DRRM Office, Barangay ..." required></div>
-                    <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required></div>
-                    <div class="field"><label for="phone">Viber or mobile number (optional)</label><input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="09XX XXX XXXX"></div>
-                    <div class="field"><label for="challenge" id="challengeLabel">How does your office handle reports today? (optional)</label><textarea id="challenge" name="challenge" placeholder="For example: hotline calls logged on paper, dispatch over radio and group chat"></textarea></div>
-                    <button type="submit" class="btn form-submit">Book my free walkthrough</button>
-                    <p class="form-msg form-bad" id="formError" role="alert">That didn't send. Please email <a href="mailto:contact@civicgrid.dev">contact@civicgrid.dev</a> instead.</p>
-                    <p class="form-note">Fields are required unless marked optional. No sales pressure, just a straight conversation.</p>
-                </form>
+                        <form id="contactForm" novalidate>
+                            <p class="form-msg form-ok" id="formSuccess" role="status">Thank you. Renz will reply within one working day.</p>
+                            <fieldset class="who">
+                                <legend>Who is this for?</legend>
+                                <div class="who-opts">
+                                    <input type="radio" name="inquiry" id="modeLgu" value="LGU or government office" checked><label for="modeLgu">LGU or government office</label>
+                                    <input type="radio" name="inquiry" id="modeOrg" value="Company or organization"><label for="modeOrg">Company or organization</label>
+                                </div>
+                            </fieldset>
+                            <div class="field"><label for="fullName">Your name</label><input id="fullName" name="fullName" autocomplete="name" placeholder="Juan dela Cruz" required></div>
+                            <div class="field"><label for="agency" id="agencyLabel">Office or LGU</label><input id="agency" name="agency" autocomplete="organization" placeholder="City DRRM Office, Barangay …" required></div>
+                            <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required></div>
+                            <div class="field"><label for="phone">Viber or mobile number (optional)</label><input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="09XX XXX XXXX"></div>
+                            <div class="field"><label for="challenge" id="challengeLabel">How does your office handle reports today? (optional)</label><textarea id="challenge" name="challenge" placeholder="For example: hotline calls logged on paper, dispatch over radio and group chat"></textarea></div>
+                            <button type="submit" class="btn btn-lg form-submit">Book my free walkthrough</button>
+                            <p class="form-msg form-bad" id="formError" role="alert">That didn’t send. Please email <a href="mailto:contact@civicgrid.dev">contact@civicgrid.dev</a> instead.</p>
+                            <p class="form-note">Fields are required unless marked optional. No sales pressure, just a straight conversation.</p>
+                        </form>
+                    </div>
+
+                    <!-- PRIVACY (RA 10173), right under the form -->
+                    <details class="privacy-box" id="privacy">
+                        <summary id="privacy-title">How your data is handled</summary>
+                        <div class="privacy-body privacy-text">
+                            <p class="lede">What is collected on this site and through the citizen report page, why, and your rights under the Data Privacy Act of 2012 (RA 10173).</p>
+                            <div class="privacy-grid">
+                                <div><h3>What is collected</h3><ul><li><strong>Citizen report page:</strong> your approximate location, a description of the incident, and an optional photo. No account or login is needed.</li><li><strong>This site’s form:</strong> your name, office, email, any number you choose to give, and anything you write in the message.</li></ul></div>
+                                <div><h3>Why</h3><p>Citizen reports are routed to the right response cluster and kept as an auditable incident record for the LGU you’re reporting to. Form data is used only to reply to your inquiry, and reaches us through the form service Formspree.</p></div>
+                                <div><h3>Retention</h3><p>Incident reports are kept as part of the LGU’s official incident record, in line with government recordkeeping practice. Form messages are kept only as long as needed to reply, in Formspree and in email.</p></div>
+                                <div><h3>Your rights</h3><p>You can ask to see or correct your personal data, and to delete what you sent through this form. Incident reports follow the LGU’s records rules, so the LGU decides those requests. Write to Renz Michael Bautista at <a class="link" href="mailto:contact@civicgrid.dev">contact@civicgrid.dev</a>.</p></div>
+                            </div>
+                        </div>
+                    </details>
+                </div>
             </div>
         </section>
-
-        <!-- PRIVACY (RA 10173) -->
-        <details class="privacy-box" id="privacy">
-            <summary id="privacy-title">How your data is handled</summary>
-            <div class="privacy-body privacy-text">
-                <p class="lede">What is collected on this site and through the citizen report page, why, and your rights under the Data Privacy Act of 2012 (RA 10173).</p>
-                <div class="privacy-grid">
-                        <div><h3>What is collected</h3><ul><li><strong>Citizen report page:</strong> your approximate location, a description of the incident, and an optional photo. No account or login is needed.</li><li><strong>This site's form:</strong> your name, office, email, any number you choose to give, and anything you write in the message.</li></ul></div>
-                        <div><h3>Why</h3><p>Citizen reports are routed to the right response cluster and kept as an auditable incident record for the LGU you're reporting to. Form data is used only to reply to your inquiry, and reaches us through the form service Formspree.</p></div>
-                        <div><h3>Retention</h3><p>Incident reports are kept as part of the LGU's official incident record, in line with government recordkeeping practice. Form messages are kept only as long as needed to reply, in Formspree and in email.</p></div>
-                        <div><h3>Your rights</h3><p>You can ask to see or correct your personal data, and to delete what you sent through this form. Incident reports follow the LGU's records rules, so the LGU decides those requests. Write to Renz Michael Bautista at <a class="link" href="mailto:contact@civicgrid.dev">contact@civicgrid.dev</a>.</p></div>
-                    </div>
-            </div>
-        </details>
     </main>
 
     <footer>
-        <a class="foot-brand" href="#top"><img src="logo.svg" alt="" width="34" height="34">CivicGrid</a>
-        <div class="foot">
-            <div><p class="k">The system</p><a href="#how">How it works</a><a href="#start">How to start</a><a href="#proof">Mandaluyong</a><a href="#custom">Custom systems</a></div>
-            <div><p class="k">About</p><a href="#about">The founder</a><a href="#questions">Questions</a><a href="#procurement">Procurement</a><a href="#privacy">Privacy</a></div>
-            <div><p class="k">Contact</p><a href="mailto:contact@civicgrid.dev">Email</a><a href="https://www.linkedin.com/in/renz-michael-bautista-926724232/" target="_blank" rel="noopener">LinkedIn</a></div>
-            <div><p class="k">Registered</p><p class="data">DTI 7980659</p><p class="data">PhilGEPS 476941</p></div>
-            <div><p class="k">CivicGrid Software Development Services</p><p>Emergency operations software for Philippine LGUs, and custom systems for organizations. City of Manila, Philippines.</p></div>
+        <div class="container colophon">
+            <div class="colophon-text">
+                <a class="brand foot-brand" href="#top" aria-label="CivicGrid, back to top"><img src="logo.svg" alt="" width="34" height="34">CivicGrid</a>
+                <p>CivicGrid Software Development Services builds emergency operations software for Philippine LGUs, and custom systems for organizations. A registered Philippine business in the City of Manila: DTI business name <span class="data">7980659</span>, PhilGEPS supplier <span class="data">476941</span>, BIR-registered.</p>
+            </div>
+            <div class="foot">
+                <div><p class="k">The system</p><a href="#how">How it works</a><a href="#start">How to start</a><a href="#proof">Mandaluyong</a><a href="#custom">Custom systems</a></div>
+                <div><p class="k">About</p><a href="#about">The founder</a><a href="#questions">Questions</a><a href="#procurement">Procurement</a><a href="#privacy">Privacy</a></div>
+                <div><p class="k">Contact</p><a href="mailto:contact@civicgrid.dev">Email</a><a href="https://www.linkedin.com/in/renz-michael-bautista-926724232/" target="_blank" rel="noopener">LinkedIn</a></div>
+            </div>
+            <div class="foot-last"><span>&copy; 2026 CivicGrid Software Development Services</span><a href="#contact" class="btn btn--quiet" data-mode="lgu">Book a free walkthrough</a></div>
         </div>
-        <div class="foot-last"><span>&copy; 2026 CivicGrid Software Development Services</span><a href="#contact" class="btn" data-mode="lgu">Book a free walkthrough</a></div>
     </footer>
 
     <script>
-        // Entrances: each part rises once as it enters; content stays visible without this script.
-        const risers = document.querySelectorAll('.rise');
-        const io = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (!entry.isIntersecting) return;
-                const siblings = [...entry.target.parentElement.children].filter((el) => el.classList.contains('rise'));
-                entry.target.style.transitionDelay = Math.min(siblings.indexOf(entry.target), 6) * 75 + 'ms';
-                entry.target.classList.add('in');
-                io.unobserve(entry.target);
-            });
-        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-        risers.forEach((el) => io.observe(el));
-        // Background-tab fallback: reveal anything already on screen when the tab becomes visible.
-        function revealOnShow() {
-            if (document.visibilityState !== 'visible') return;
-            risers.forEach((el) => { const r = el.getBoundingClientRect(); if (r.top < innerHeight && r.bottom > 0) el.classList.add('in'); });
-        }
-        document.addEventListener('visibilitychange', revealOnShow);
-        window.addEventListener('pageshow', revealOnShow);
+        // The record writes itself once, the first time it is seen; it is fully visible without this script.
+        const record = document.querySelector('.record');
+        requestAnimationFrame(() => requestAnimationFrame(() => record.classList.add('is-in')));
 
         // Top-bar button turns amber once the first-screen button is out of view.
         const navBar = document.getElementById('top');
-        new IntersectionObserver((entries) => navBar.classList.toggle('past', !entries[0].isIntersecting)).observe(document.querySelector('.hero-go .btn'));
+        const navState = { heroOut: false, formIn: false };
+        const navSync = () => navBar.classList.toggle('past', navState.heroOut && !navState.formIn);
+        new IntersectionObserver((entries) => { navState.heroOut = !entries[0].isIntersecting; navSync(); }).observe(document.querySelector('.hero-go .btn'));
+        new IntersectionObserver((entries) => { navState.formIn = entries[0].isIntersecting; navSync(); }, { threshold: 0.1 }).observe(document.getElementById('contactForm'));
 
         // Films: nothing moves for reduced-motion or data-saver visitors until they ask.
         const calm = matchMedia('(prefers-reduced-motion: reduce)').matches || (navigator.connection && navigator.connection.saveData);
@@ -732,14 +645,17 @@
             entries[0].isIntersecting ? on() : off();
         }, { threshold: 0.25 }).observe(el);
 
-        // Hero film: muted on arrival (browsers block sound until a visitor asks for it).
+        // Case film: muted on arrival (browsers block sound until a visitor asks for it).
         const hero = document.getElementById('heroFilm');
         const smallQ = matchMedia('(max-width: 760px)');
         const heroSource = () => {
-            hero.poster = smallQ.matches ? 'video/hero-phone-poster.webp' : 'video/hero-poster.webp';
+            hero.poster = smallQ.matches ? 'video/hero-phone-poster.webp' : 'video/case-poster.jpg';
             hero.src = smallQ.matches ? 'video/hero-phone.mp4' : 'video/hero.mp4';
         };
         heroSource();
+        // The muted loop opens on the product, past the film's title card; Play with sound still starts at 0.
+        let skippedTitle = false;
+        hero.addEventListener('playing', () => { if (!skippedTitle && hero.muted && hero.currentTime < 1) { skippedTitle = true; hero.currentTime = 10; } });
         smallQ.addEventListener('change', () => {
             const at = hero.currentTime;
             const playing = !hero.paused;
@@ -817,13 +733,6 @@
             stepFilm.play().catch(() => {});
         }, () => { stepVisible = false; stepFilm.pause(); });
 
-        // Contact background: a quiet loop, only while on screen.
-        const grid = document.getElementById('gridLoop');
-        if (!calm) whenSeen(grid, () => {
-            if (!grid.src) grid.src = 'video/grid.mp4';
-            grid.play().catch(() => {});
-        }, () => grid.pause());
-
         // Mobile menu
         const toggle = document.getElementById('menuToggle');
         const links = document.getElementById('navLinks');
@@ -850,8 +759,8 @@
 
         // Contact form wording follows who is asking.
         const modes = {
-            lgu: { title: 'Book a free walkthrough.', lede: "Tell me your office and how you'd like to meet. I reply within one working day.", who: 'Office or LGU', whoHint: 'City DRRM Office, Barangay ...', ask: 'How does your office handle reports today? (optional)', askHint: 'For example: hotline calls logged on paper, dispatch over radio and group chat', send: 'Book my free walkthrough' },
-            org: { title: 'Tell me what you need.', lede: "Tell me what your team runs on today and what keeps going wrong. I reply within one working day.", who: 'Company or organization', whoHint: 'Your company or organization', ask: 'What do you need? (optional)', askHint: 'For example: approvals on paper, jobs tracked in a spreadsheet and group chat', send: 'Send my request' },
+            lgu: { title: 'Book a free walkthrough.', lede: 'Tell me your office and how you’d like to meet. I reply within one working day.', who: 'Office or LGU', whoHint: 'City DRRM Office, Barangay …', ask: 'How does your office handle reports today? (optional)', askHint: 'For example: hotline calls logged on paper, dispatch over radio and group chat', send: 'Book my free walkthrough' },
+            org: { title: 'Tell me what you need.', lede: 'Tell me what your team runs on today and what keeps going wrong. I reply within one working day.', who: 'Company or organization', whoHint: 'Your company or organization', ask: 'What do you need? (optional)', askHint: 'For example: approvals on paper, jobs tracked in a spreadsheet and group chat', send: 'Send my request' },
         };
         const setMode = (name) => {
             const m = modes[name];
@@ -874,10 +783,10 @@
         const bad = document.getElementById('formError');
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (!form.reportValidity()) return;
+            if (!form.reportValidity()) { const first = form.querySelector(':invalid'); if (first) first.focus(); return; }
             const btn = form.querySelector('.form-submit');
             const label = btn.textContent;
-            btn.disabled = true; btn.textContent = 'Sending...';
+            btn.disabled = true; btn.setAttribute('aria-busy', 'true'); btn.textContent = 'Sending…';
             ok.classList.remove('show'); bad.classList.remove('show');
             try {
                 const res = await fetch('https://formspree.io/f/xrenylap', { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' } });
@@ -886,9 +795,11 @@
             } catch (err) {
                 bad.classList.add('show');
             } finally {
-                btn.disabled = false; btn.textContent = ok.classList.contains('show') ? modes.lgu.send : label;
+                btn.disabled = false; btn.removeAttribute('aria-busy'); btn.textContent = ok.classList.contains('show') ? modes.lgu.send : label;
             }
         });
     </script>
+    <script>window.hallmarkSlots = (m) => { for (const [k, v] of Object.entries(m)) { const s = document.querySelector(`[data-slot="${k}"]`); if (!s) continue; const im = new Image(); im.src = typeof v === 'string' ? v : v.src; im.alt = (typeof v === 'object' && v.alt) || s.dataset.alt || ''; s.querySelectorAll(':scope > img').forEach((o) => o.remove()); s.prepend(im); } };
+document.querySelectorAll('[data-slot] img').forEach((i) => { if (i.complete && !i.naturalWidth) i.remove(); else i.addEventListener('error', () => i.remove(), { once: true }); });</script>
 </body>
 </html>
