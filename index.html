@@ -37,7 +37,8 @@
     <style>
 /* Hallmark · shape: Split Studio · genre: modern-minimal · theme: brand · redesign: full · job: hire · draw: 184fb6
  * paper: oklch(15% 0.035 255) · accent: oklch(78% 0.16 75) · display: IBM Plex Sans · body: Plus Jakarta Sans · hero: Stage · nav: masthead · footer: colophon block · signature: the record, one sample incident shown as its own audit trail
- * axes: dark/grotesk-sans/warm · posture: Restrained · contrast: pass · fold: pass · v2.0.0 */
+ * axes: dark/grotesk-sans/warm · posture: Full palette (field: navy and civic blue, signal: gold, seal: flag red, ink) · contrast: pass · fold: pass · v2.0.0 */
+/* Hallmark · colour pass by Impeccable colorize + bolder · Philippine flag palette: navy and civic blue grounds, gold for action, red only for the emergency moment */
 /* Hallmark · pre-emit critique: P4 H4 E4 S5 R4 V4 · weakest: P, the page argued nothing a buyer could disagree with; the record now says the system keeps names and times, the one thing a template cannot show */
 /* Hallmark · swapped hero Corridor for Stage · the product record is the strongest material and needs the right half */
 /* Hallmark · dismissed 49 · the four step buttons each carry a title and a one-line description by design, so they wrap inside a full-width control */
@@ -47,6 +48,22 @@
 @import url("./base.css");
 
 :root {
+    --color-blue-field: oklch(22% 0.07 262);
+    --color-blue-deep: oklch(28% 0.10 262);
+    --color-blue: oklch(62% 0.17 263);
+    --color-red: oklch(55% 0.21 25);
+    --color-red-ink: oklch(68% 0.19 25);
+    --color-light: oklch(97% 0.006 255);
+    --color-light-2: oklch(93% 0.01 255);
+    --color-light-3: oklch(90% 0.012 255);
+    --color-light-ink: oklch(22% 0.035 255);
+    --color-light-ink-2: oklch(38% 0.025 255);
+    --color-light-muted: oklch(47% 0.02 255);
+    --color-light-rule: oklch(86% 0.012 255);
+    --color-light-rule-strong: oklch(76% 0.015 255);
+    --color-light-red: oklch(50% 0.2 25);
+    --color-light-blue: oklch(45% 0.17 263);
+    --color-link-line: var(--color-blue);
     --color-placeholder: oklch(56% 0.016 255);
     --nav-h: 76px;
     --radius-btn: 6px;
@@ -69,7 +86,7 @@ body { background: var(--color-paper); }
 .btn-lg { min-height: 52px; padding: 0 var(--space-xl); }
 .btn--quiet { background: transparent; color: var(--color-ink); border-color: var(--color-rule-strong); }
 .btn--quiet:hover { background: var(--color-paper-3); border-color: var(--color-muted); }
-.link { color: var(--color-ink); text-decoration: underline; text-decoration-color: var(--color-accent); text-decoration-thickness: 1px; text-underline-offset: 0.22em; transition: color var(--dur-short) var(--ease-out); }
+.link { color: var(--color-ink); text-decoration: underline; text-decoration-color: var(--color-link-line); text-decoration-thickness: 1px; text-underline-offset: 0.22em; transition: color var(--dur-short) var(--ease-out); }
 .link:hover { color: var(--color-accent); }
 .link:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; border-radius: 2px; }
 @media (prefers-reduced-motion: reduce) { .btn, .link { transition: none; } }
@@ -260,7 +277,7 @@ body { background: var(--color-paper); }
 
 /* Privacy, directly under the form */
 .privacy-box { margin-top: var(--space-xl); border-top: 1px solid var(--color-rule); }
-.privacy-box summary { display: inline-flex; align-items: center; min-height: 44px; margin-top: var(--space-md); cursor: pointer; color: var(--color-ink); text-decoration: underline; text-decoration-color: var(--color-accent); text-underline-offset: 0.22em; font-size: var(--text-sm); list-style: none; }
+.privacy-box summary { display: inline-flex; align-items: center; min-height: 44px; margin-top: var(--space-md); cursor: pointer; color: var(--color-ink); text-decoration: underline; text-decoration-color: var(--color-link-line); text-underline-offset: 0.22em; font-size: var(--text-sm); list-style: none; }
 .privacy-box summary::-webkit-details-marker { display: none; }
 .privacy-box summary:hover { color: var(--color-accent); }
 .privacy-box summary:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
@@ -349,6 +366,61 @@ footer { border-top: 1px solid var(--color-rule); padding-block: var(--space-3xl
 .wide-head h2 { grid-column: 1 / span 6; }
 .wide-head .pain-ask, .wide-head > p:last-child { grid-column: 8 / -1; }
 @media (max-width: 60rem) { .wide-head { grid-template-columns: minmax(0, 1fr); } .wide-head h2, .wide-head .pain-ask, .wide-head > p:last-child { grid-column: 1 / -1; } }
+
+/* ===== Colour pass ===== */
+
+/* A thin flag line at the very top: civic blue and red, split, no blend */
+.nav { border-bottom-color: var(--color-blue-deep); }
+.nav::before { content: ""; display: block; height: 3px; background: linear-gradient(90deg, var(--color-blue) 0 50%, var(--color-red) 50% 100%); }
+
+/* Hero: the signal field behind the record, dark where the headline sits */
+.hero { position: relative; isolation: isolate; overflow: hidden; }
+.hero-field { position: absolute; inset: 0; z-index: -1; background: var(--color-paper) url("img/hero-field.webp") 70% 50% / cover no-repeat; }
+.hero-field video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 58% 50%; opacity: 0.75; }
+.hero-field::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, var(--color-paper) 0% 30%, color-mix(in oklab, var(--color-paper) 55%, transparent) 62%, color-mix(in oklab, var(--color-paper) 20%, transparent) 100%); }
+.field-ctl { position: absolute; right: var(--gutter); bottom: var(--space-lg); z-index: var(--z-raised); }
+html:not(.js) .field-ctl { display: none; }
+
+/* The record: a lit civic-blue edge; the report arrives in red, the close in gold */
+.record { border-color: var(--color-blue-deep); border-top: 2px solid var(--color-blue); background: color-mix(in oklab, var(--color-paper-2) 80%, transparent); }
+.record figcaption, .record-head { background: transparent; }
+.record-list li:first-child time, .record-list li:first-child strong { color: var(--color-red-ink); }
+
+/* The Mandaluyong case owns the civic blue field; its key figures in gold */
+#proof { background: var(--color-blue-field); }
+.case .facts > div { border-top-color: var(--color-blue); }
+.case .facts dd b { color: var(--color-accent); }
+.case .film-frame { border-color: var(--color-blue-deep); }
+
+/* Light sections: the same tokens, remapped to paper */
+.light { background: var(--color-light); color: var(--color-light-ink);
+    --color-ink: var(--color-light-ink); --color-ink-2: var(--color-light-ink-2); --color-muted: var(--color-light-muted);
+    --color-rule: var(--color-light-rule); --color-rule-strong: var(--color-light-rule-strong);
+    --color-paper: var(--color-light); --color-paper-2: var(--color-light-2); --color-paper-3: var(--color-light-3);
+    --color-red-ink: var(--color-light-red); --color-link-line: var(--color-light-blue); --color-focus: var(--color-light-blue); }
+.light .link:hover { color: var(--color-link-line); }
+
+/* Where reports get lost: red marks today's problem, blue marks the fix */
+#problem h2::before { content: ""; display: block; width: 56px; height: 4px; margin-bottom: var(--space-lg); background: var(--color-red); border-radius: 2px; }
+.pain th { padding-bottom: var(--space-sm); border-bottom: 2px solid var(--color-red); color: var(--color-red-ink); font-weight: 600; }
+.pain th + th { border-bottom-color: var(--color-link-line); color: var(--color-link-line); padding-left: var(--space-lg); }
+.pain td { border-top: 0; border-bottom: 1px solid var(--color-rule); }
+.pain td + td { border-left-color: var(--color-rule-strong); }
+
+/* How it works: progress in civic blue */
+.step-bar { background: var(--color-blue); }
+.step-btn[aria-pressed="true"] { border-color: var(--color-blue); }
+
+/* The close: the offer counted in blue, the form edged in gold */
+.offer li::before { color: var(--color-blue); }
+.form-card { border-top: 2px solid var(--color-accent); }
+
+/* Footer: a civic-blue seam */
+footer { border-top-color: var(--color-blue-deep); }
+
+/* Bolder: the seams between dark and light read as decisions */
+.light h2 { font-size: var(--text-section); }
+@media (max-width: 40rem) { .pain th + th { padding-left: 0; } .pain td:first-child::before { color: var(--color-red-ink); font-weight: 600; } .pain td + td::before { color: var(--color-link-line); font-weight: 600; } }
     </style>
 </head>
 <body>
@@ -385,6 +457,10 @@ footer { border-top: 1px solid var(--color-rule); padding-block: var(--space-3xl
     <main>
         <!-- FIRST SCREEN: the promise beside the record it keeps -->
         <section class="hero" aria-labelledby="hero-title">
+            <div class="hero-field" aria-hidden="true">
+                <video id="fieldFilm" muted playsinline loop preload="none" poster="img/hero-field.webp" width="1600" height="900" tabindex="-1"></video>
+            </div>
+            <button type="button" class="ctl field-ctl" id="fieldPause" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5h3v14H8zM13 5h3v14h-3z"/></svg><span>Pause background</span></button>
             <div class="container split">
                 <div class="text">
                     <h1 id="hero-title">Know who responded, and when.</h1>
@@ -440,7 +516,7 @@ footer { border-top: 1px solid var(--color-rule); padding-block: var(--space-3xl
         </section>
 
         <!-- WHERE REPORTS GET LOST -->
-        <section class="section" id="problem" aria-labelledby="problem-title">
+        <section class="section light" id="problem" aria-labelledby="problem-title">
             <div class="container wide">
                 <div class="wide-head">
                     <h2 id="problem-title">Where does a report get lost in your office?</h2>
@@ -524,7 +600,7 @@ footer { border-top: 1px solid var(--color-rule); padding-block: var(--space-3xl
         </section>
 
         <!-- QUESTIONS -->
-        <section class="section" id="questions" aria-labelledby="questions-title">
+        <section class="section light" id="questions" aria-labelledby="questions-title">
             <div class="container split split--4-8 split--top">
                 <div class="text faq-side">
                     <h2 id="questions-title">What offices ask first.</h2>
@@ -644,6 +720,25 @@ footer { border-top: 1px solid var(--color-rule); padding-block: var(--space-3xl
         const whenSeen = (el, on, off) => new IntersectionObserver((entries) => {
             entries[0].isIntersecting ? on() : off();
         }, { threshold: 0.25 }).observe(el);
+
+        // Hero background: an abstract dispatch pulse, desktop only, still for reduced motion and data saver.
+        const field = document.getElementById('fieldFilm');
+        const fieldBtn = document.getElementById('fieldPause');
+        const wideQ = matchMedia('(min-width: 60rem)');
+        let fieldHeld = false;
+        const fieldLabel = () => {
+            fieldBtn.querySelector('span').textContent = field.paused ? 'Play background' : 'Pause background';
+            fieldBtn.querySelector('svg').innerHTML = field.paused ? '<path d="M8 5l11 7-11 7z"/>' : '<path d="M8 5h3v14H8zM13 5h3v14h-3z"/>';
+        };
+        const fieldOn = () => {
+            if (calm || !wideQ.matches) return;
+            if (!field.src) { field.src = 'video/hero-pulse.mp4'; fieldBtn.hidden = false; }
+            if (!fieldHeld) field.play().catch(() => {});
+        };
+        field.addEventListener('play', fieldLabel);
+        field.addEventListener('pause', fieldLabel);
+        fieldBtn.addEventListener('click', () => { fieldHeld = !field.paused; field.paused ? field.play().catch(() => {}) : field.pause(); });
+        whenSeen(field, fieldOn, () => field.pause());
 
         // Case film: muted on arrival (browsers block sound until a visitor asks for it).
         const hero = document.getElementById('heroFilm');
