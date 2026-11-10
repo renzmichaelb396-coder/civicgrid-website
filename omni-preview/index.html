@@ -1,0 +1,935 @@
+<!doctype html>
+<html lang="en">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta charset="utf-8">
+<title>Project OMNI</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231d4ed8'/%3E%3Cpath d='M11 26 14 6M21 26 18 6' stroke='white' stroke-width='2.4' stroke-linecap='round' fill='none'/%3E%3Cpath d='M16 8v3M16 15v3M16 22v3' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: fixed white sidebar + top bar + one task screen; CivicGrid UI law (light, blue-700 primary). Single light theme on purpose: it matches the shipped EOC. */
+:root{
+  color-scheme:light;
+  --bg:#f8fafc; --surface:#ffffff; --surface-2:#f1f5f9; --line:#e2e8f0; --line-strong:#cbd5e1;
+  --ink:#0f172a; --ink-2:#1e293b; --body:#475569; --muted:#64748b;
+  --primary:#1d4ed8; --primary-hover:#1e40af; --primary-light:#dbeafe; --primary-50:#eff6ff;
+  --ok:#15803d; --ok-bg:#f0fdf4; --warn:#b45309; --warn-bg:#fffbeb; --bad:#b91c1c; --bad-bg:#fef2f2; --gray:#4b5563; --gray-bg:#f3f4f6;
+  --road:#334155; --road-mark:#facc15;
+  --f-ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-data:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --side:256px;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{color:var(--body);font-family:var(--f-ui);font-size:14px;line-height:1.5}
+::selection{background:var(--primary-light);color:var(--ink)}
+:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+svg.i.sm{width:16px;height:16px}
+.mono{font-family:var(--f-data);font-variant-numeric:tabular-nums}
+
+/* sidebar */
+.side{position:fixed;inset:0 auto 0 0;width:var(--side);background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:20px 12px calc(16px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));z-index:30}
+.logo{display:flex;align-items:center;gap:10px;padding:0 8px 18px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.logo-mark{width:32px;height:32px;border-radius:8px;background:var(--primary);display:grid;place-items:center;color:#fff}
+.logo b{display:block;color:var(--ink);font-size:15px;font-weight:700;line-height:1.2}
+.logo span{font-size:12px;color:var(--muted)}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav button{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;color:var(--body);font-weight:500;cursor:pointer;width:100%}
+.nav button:hover{background:var(--surface-2);color:var(--ink)}
+.nav button:focus-visible{outline:2px solid var(--primary);outline-offset:-2px}
+.nav button[aria-current="page"]{background:var(--primary-50);color:var(--primary)}
+.nav .count{margin-left:auto;font-family:var(--f-data);font-size:12px;background:var(--warn-bg);color:var(--warn);border:1px solid #fcd34d;border-radius:999px;padding:0 7px}
+.side-foot{margin-top:auto;font-size:12px;color:var(--muted);padding:12px 8px 0;border-top:1px solid var(--line)}
+
+/* main */
+.main{margin-left:var(--side);min-height:100vh}
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:#fff;z-index:25}
+.topbar-in{max-width:1280px;margin:0 auto;display:flex;align-items:center;gap:12px;padding-block:14px;padding-left:max(32px,env(safe-area-inset-left,0px));padding-right:max(32px,env(safe-area-inset-right,0px))}
+.topbar .menu-btn{display:none}
+input,select{scroll-margin-top:96px}
+.topbar h1{margin:0;font-size:24px;font-weight:700;color:var(--ink);line-height:1.2;text-wrap:balance}
+.top-right{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.user{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-2)}
+.avatar{width:28px;height:28px;border-radius:50%;background:var(--primary-light);color:var(--primary);display:grid;place-items:center;font-weight:700;font-size:12px}
+.content{max-width:1280px;margin:0 auto;padding-block:28px 40px;padding-left:max(32px,env(safe-area-inset-left,0px));padding-right:max(32px,env(safe-area-inset-right,0px))}
+.lede{margin:0 0 20px;max-width:70ch}
+
+/* type */
+h2{font-size:18px;font-weight:600;color:var(--ink-2);margin:0}
+h3{font-size:15px;font-weight:600;color:var(--ink-2);margin:0}
+.label,label{display:block;font-size:12px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+label{margin-bottom:6px}
+.req{color:var(--bad)}
+
+/* surfaces */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:24px;min-width:0}
+.card + .card{margin-top:16px}
+.card-h{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.cols{display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:24px;align-items:start}
+.cols-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:1100px){.cols{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:900px){.cols-2{grid-template-columns:minmax(0,1fr)}}
+
+/* controls */
+input,select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line-strong);border-radius:8px;padding:9px 11px;min-height:40px}
+input::placeholder,textarea::placeholder{color:var(--muted)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-light)}
+input[aria-invalid="true"]{border-color:var(--bad)}
+.err{color:var(--bad);font-size:12.5px;margin-top:4px}
+.grid-f{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.grid-f .full{grid-column:1/-1}
+.btn{font:inherit;font-weight:600;font-size:14px;border-radius:8px;padding:9px 14px;min-height:40px;cursor:pointer;border:1px solid transparent;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:background-color .15s,border-color .15s}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover:not(:disabled){background:var(--primary-hover)}
+.btn-outline{background:var(--surface);color:var(--ink-2);border-color:var(--line-strong)}
+.btn-outline:hover:not(:disabled){background:var(--surface-2)}
+.btn-sm{min-height:32px;padding:5px 10px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.row-btns{display:flex;flex-wrap:wrap;gap:8px}
+.spin{animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{font:inherit;font-size:13px;font-weight:500;min-height:36px;padding:6px 12px;border-radius:8px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink-2);cursor:pointer}
+.seg button:hover{background:var(--surface-2)}
+.seg button[aria-pressed="true"]{background:var(--primary-50);border-color:var(--primary);color:var(--primary)}
+.hint{font-size:12.5px;color:var(--muted);margin-top:4px}
+
+/* badges (UI law: outline, status pairs) */
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px;border:1px solid;white-space:nowrap}
+.b-open{color:var(--warn);background:var(--warn-bg);border-color:#fcd34d}
+.b-alarm{color:#fff;background:var(--bad);border-color:var(--bad)}
+.b-done{color:var(--ok);background:var(--ok-bg);border-color:#86efac}
+.b-info{color:var(--primary);background:var(--primary-50);border-color:#93c5fd}
+.b-gray{color:var(--gray);background:var(--gray-bg);border-color:#d1d5db}
+
+/* phone */
+.phone{width:100%;max-width:380px;margin:0 auto;border:1px solid var(--line-strong);border-radius:28px;background:var(--surface);overflow:hidden;box-shadow:0 12px 32px -12px rgba(15,23,42,.25)}
+.phone-top{background:var(--primary);color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.phone-top b{font-weight:600}
+.phone-body{padding:16px;display:flex;flex-direction:column;gap:14px}
+.loop{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-2);background:var(--surface-2);border-radius:8px;padding:8px 10px}
+
+/* steps list */
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+.steps li{display:grid;grid-template-columns:28px 1fr;gap:12px;align-items:start}
+.steps .n{width:28px;height:28px;border-radius:50%;background:var(--primary-50);color:var(--primary);display:grid;place-items:center;font-weight:700;font-size:13px}
+.steps b{display:block;color:var(--ink-2);font-weight:600}
+
+/* board */
+.strip-wrap{padding:0 14px}
+.strip{position:relative;height:104px}
+.road{position:absolute;left:0;right:0;top:54px;height:20px;background:var(--road);border-radius:4px}
+.road::after{content:"";position:absolute;left:0;right:0;top:9px;border-top:2px dashed var(--road-mark)}
+.tick{position:absolute;top:80px;font-family:var(--f-data);font-size:11px;color:var(--muted);transform:translateX(-50%);white-space:nowrap}
+.pin{position:absolute;top:20px;width:30px;height:30px;transform:translateX(-50%);border:0;background:none;padding:0;cursor:pointer}
+.pin svg{width:30px;height:30px;display:block}
+.pin .pl{position:absolute;left:50%;top:-17px;transform:translateX(-50%);font:600 11px var(--f-data);color:var(--bad);white-space:nowrap}
+.pin.p-pending .pl{color:var(--primary)}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:var(--ink-2);margin-top:6px}
+.legend .lg{display:inline-flex;align-items:center;gap:6px}
+.legend svg{width:18px;height:18px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:flex-end;flex:1 1 auto}
+.cols-2>.card{margin-top:0}
+.search{position:relative;min-width:0;flex:1 1 240px;max-width:320px}
+.search svg{position:absolute;left:10px;top:11px;color:var(--muted)}
+.search input{padding-left:34px}
+.tbl{overflow-x:auto;margin:0 -24px;padding:0 24px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{text-align:left;font-size:12px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);padding:10px 12px;white-space:nowrap}
+td{border-bottom:1px solid var(--line);padding:12px;vertical-align:top;color:var(--ink-2)}
+tbody tr:last-child td{border-bottom:0}
+tr.click{cursor:pointer}
+tr.click:hover td{background:var(--surface-2)}
+tr.click:focus-visible{outline:2px solid var(--primary);outline-offset:-2px}
+.sub{font-size:12.5px;color:var(--muted)}
+.empty{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:32px 16px;color:var(--muted)}
+.empty svg{width:28px;height:28px;color:#94a3b8}
+
+/* incident */
+.inc-h{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:4px}
+.inc-h .mono{font-size:18px;font-weight:600;color:var(--ink)}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px 24px;margin-top:20px}
+.kv .v{color:var(--ink-2);font-weight:500;margin-top:2px}
+.media{display:flex;gap:10px;flex-wrap:wrap}
+.thumb{width:132px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.thumb .ph{height:84px;background:linear-gradient(160deg,#cbd5e1,#94a3b8);display:grid;place-items:center;color:#fff}
+.thumb .ph svg{width:24px;height:24px}
+.thumb .cap{font-family:var(--f-data);font-size:11.5px;padding:6px 8px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.inline-form{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:10px;align-items:end;background:var(--surface-2);border-radius:10px;padding:14px;margin-top:12px}
+@media (max-width:900px){.inline-form{grid-template-columns:minmax(0,1fr)}}
+.history{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.history li{display:grid;grid-template-columns:64px 1fr;gap:12px;font-size:13.5px;color:var(--ink-2)}
+.history .who{color:var(--muted)}
+.cls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:900px){.cls{grid-template-columns:minmax(0,1fr)}}
+.cls label.opt{display:block;text-transform:none;letter-spacing:0;font-size:13px;color:var(--body);font-weight:400;border:1px solid var(--line-strong);border-radius:10px;padding:14px;cursor:pointer;margin:0;background:var(--surface)}
+.cls label.opt:hover{border-color:var(--primary)}
+.cls input{position:absolute;opacity:0;width:1px;height:1px;min-height:0}
+.cls label.opt:has(input:checked){border-color:var(--primary);background:var(--primary-50);box-shadow:0 0 0 1px var(--primary)}
+.cls label.opt:has(input:focus-visible){outline:2px solid var(--primary);outline-offset:2px}
+.cls .t{display:block;font-size:15px;font-weight:600;color:var(--ink);margin-bottom:4px}
+.locked{display:flex;gap:10px;align-items:center;background:var(--ok-bg);color:var(--ok);border:1px solid #86efac;border-radius:10px;padding:12px 14px;font-weight:500}
+
+/* reports */
+.heat{display:grid;grid-template-columns:44px repeat(8,minmax(0,1fr));gap:4px;font-size:11.5px}
+.heat .h{color:var(--muted);text-align:center;font-family:var(--f-data)}
+.heat .r{color:var(--muted);align-self:center}
+.cell{height:30px;border-radius:5px;display:grid;place-items:center;font-family:var(--f-data);font-size:11.5px}
+.scale{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-top:12px}
+.scale .bar{flex:0 0 140px;height:8px;border-radius:4px;background:linear-gradient(90deg,#eff6ff,#1d4ed8)}
+
+/* access */
+.yes{color:var(--ok)} .no{color:#cbd5e1}
+td.c{text-align:center} th.c{text-align:center}
+.note-line{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--warn);background:var(--warn-bg);border:1px solid #fcd34d;border-radius:10px;padding:10px 12px;margin-bottom:16px}
+
+/* next + footer */
+.next{display:flex;justify-content:flex-end;margin-top:24px}
+.next button{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;color:var(--primary);font-weight:600;padding:6px 4px;border-radius:6px}
+.next button:hover{color:var(--primary-hover);text-decoration:underline;text-underline-offset:3px}
+.next button:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.foot{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px;margin-top:32px}
+
+/* ---- v5: alarm, chips, pins, stepper, dialog ---- */
+[hidden]{display:none!important}
+.nav .count.is-alarm{background:var(--bad);color:#fff;border-color:var(--bad)}
+.alarm{background:#b91c1c;color:#fff;border-radius:12px;padding:18px 22px;margin-bottom:16px;box-shadow:0 12px 24px -16px rgba(185,28,28,.7)}
+.alarm-h{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.alarm-h svg{width:26px;height:26px;animation:pulse 1.6s ease-in-out infinite}
+.alarm-h b{font-size:20px;font-weight:700;line-height:1.2}
+.alarm-h span{color:#fee2e2;font-size:14px}
+@keyframes pulse{50%{opacity:.45}}
+.alarm-l{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.alarm-l li{display:grid;grid-template-columns:auto minmax(0,1.4fr) auto minmax(0,1.2fr) auto;gap:8px 18px;align-items:center;background:rgba(255,255,255,.14);border-radius:10px;padding:10px 14px;font-size:15px}
+.alarm-l .id{font-weight:600;font-size:16px}
+.alarm-l .age b{font-family:var(--f-data);font-variant-numeric:tabular-nums}
+.alarm-l .why{font-weight:600}
+.btn-light{background:#fff;color:#7f1d1d;border-color:#fff}
+.btn-light:hover{background:#fee2e2}
+@media (max-width:1000px){.alarm-l li{grid-template-columns:minmax(0,1fr) auto}.alarm-l .where,.alarm-l .why{grid-column:1/-1}}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px}
+.chip{font:inherit;font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:6px 14px;border-radius:999px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink-2);cursor:pointer}
+.chip:hover{background:var(--surface-2)}
+.chip .n{font-family:var(--f-data);font-size:13px;min-width:24px;text-align:center;border-radius:999px;padding:0 7px;border:1px solid transparent}
+.chip.t-alarm .n{background:var(--bad);color:#fff}
+.chip.t-pend .n{background:var(--primary-light);color:var(--primary);border-color:#93c5fd}
+.chip.t-act .n{background:var(--warn-bg);color:var(--warn);border-color:#fcd34d}
+.chip.t-done .n{background:var(--ok-bg);color:var(--ok);border-color:#86efac}
+.chip[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+tr.r-alarm td{background:var(--bad-bg);font-weight:500}
+tr.r-alarm.click:hover td{background:#fee2e2}
+tr.r-pend td{background:var(--primary-50)}
+tr.r-pend.click:hover td{background:var(--primary-light)}
+.next-s{font-weight:500;color:var(--ink-2)}
+.next-s.ok{color:var(--ok)} .next-s.info{color:var(--primary)}
+.age{font-family:var(--f-data);font-variant-numeric:tabular-nums}
+.chk{display:flex;align-items:flex-start;gap:10px;text-transform:none;letter-spacing:0;font-size:14px;font-weight:500;color:var(--ink-2);margin:0;cursor:pointer}
+.chk input{width:20px;height:20px;min-height:0;margin:1px 0 0;accent-color:var(--primary);flex:none;padding:0}
+.chk.inline{align-items:center}
+textarea{resize:vertical}
+.stepper{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;row-gap:10px}
+.stepper li{display:flex;align-items:center;gap:10px;font-weight:600;color:var(--muted);font-size:14px}
+.stepper li+li::before{content:"";width:36px;height:2px;background:var(--line-strong);margin:0 12px}
+.stepper .sd{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:13px;border:2px solid var(--line-strong);color:var(--muted);background:var(--surface)}
+@media (max-width:900px){.stepper{column-gap:22px}.stepper li+li::before{display:none}}
+.stepper li.done{color:var(--ok)} .stepper li.done .sd{background:var(--ok);border-color:var(--ok);color:#fff}
+.stepper li.cur{color:var(--primary)} .stepper li.cur .sd{background:var(--primary);border-color:var(--primary);color:#fff}
+.nextline{display:flex;align-items:center;gap:10px;margin-top:16px;padding:12px 14px;background:var(--primary-50);border:1px solid #93c5fd;border-radius:10px;color:var(--ink);font-weight:600}
+.nextline svg{color:var(--primary)}
+.band{display:flex;gap:10px;align-items:flex-start;border-radius:10px;padding:12px 14px;border:1px solid;margin-bottom:16px;font-weight:500}
+.band.info{background:var(--primary-50);color:var(--primary);border-color:#93c5fd}
+.band.warn{background:var(--warn-bg);color:var(--warn);border-color:#fcd34d}
+.ready{list-style:none;margin:0 0 16px;padding:0;display:flex;flex-direction:column;gap:8px}
+.ready li{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink-2)}
+.ready li.ok svg{color:var(--ok)} .ready li.no svg{color:var(--bad)}
+.ready .why{color:var(--bad)}
+.ready button{margin-left:auto}
+.card[id]{scroll-margin-top:96px}
+.phone-done{padding:28px 20px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+.phone-done .ok-c{width:64px;height:64px;border-radius:50%;background:var(--ok-bg);color:var(--ok);display:grid;place-items:center;border:1px solid #86efac}
+.phone-done .ok-c svg{width:34px;height:34px}
+.phone-done .big{font-size:20px;font-weight:600;color:var(--ink)}
+.viewas{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);text-transform:none;letter-spacing:0;margin:0;font-weight:400}
+.viewas select{width:auto;min-height:36px;padding:5px 10px;font-size:13px}
+@media (max-width:900px){.viewas>span:first-child{display:none}}
+dialog{border:0;padding:0;border-radius:16px;width:min(600px,calc(100% - 32px));max-height:calc(100vh - 48px);color:var(--body);background:var(--surface);box-shadow:0 24px 60px -20px rgba(15,23,42,.55)}
+dialog::backdrop{background:rgba(15,23,42,.55)}
+.dlg-in{display:flex;flex-direction:column;max-height:calc(100vh - 48px)}
+.dlg-h{padding:22px 24px 8px}
+.dlg-h h2{font-size:20px;font-weight:700;color:var(--ink);text-wrap:balance}
+.dlg-h p{margin:4px 0 0}
+.dlg-b{padding:8px 24px 16px;overflow:auto;display:flex;flex-direction:column;gap:16px}
+.dlg-f{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;padding:16px 24px;border-top:1px solid var(--line);background:var(--surface-2)}
+.sum{display:grid;grid-template-columns:120px minmax(0,1fr);gap:8px 16px;margin:0;font-size:14px}
+.sum>div{display:contents}
+.sum dt{color:var(--muted);font-size:12px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;padding-top:2px}
+.sum dd{margin:0;color:var(--ink-2)}
+fieldset.chks{border:1px solid var(--line-strong);border-radius:10px;padding:12px 14px 14px;margin:0;display:flex;flex-direction:column;gap:12px;min-width:0}
+fieldset.chks legend{font-size:13px;font-weight:600;color:var(--ink);padding:0 6px}
+/* toast */
+.toast{position:fixed;right:max(24px,env(safe-area-inset-right,0px));bottom:calc(24px + env(safe-area-inset-bottom,0px));background:var(--ink);color:#fff;padding:12px 16px;border-radius:10px;font-weight:500;display:flex;gap:8px;align-items:center;max-width:min(420px,calc(100% - 32px));z-index:50;box-shadow:0 10px 30px -10px rgba(15,23,42,.5)}
+.toast svg{color:#86efac}
+
+/* responsive shell */
+@media (max-width:767px){
+  .side{transform:translateX(-100%);transition:transform .2s ease-out;box-shadow:none}
+  .side.open{transform:none;box-shadow:0 0 0 100vmax rgba(15,23,42,.35)}
+  .main{margin-left:0}
+  .topbar .menu-btn{display:inline-flex}
+  .topbar-in,.content{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .topbar h1{font-size:20px}
+  .user .who-txt{display:none}
+  .grid-f{grid-template-columns:minmax(0,1fr)}
+  .tbl{margin:0 -24px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-phone" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></symbol>
+  <symbol id="i-board" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-check-c" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
+  <symbol id="i-loader" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="i-road" viewBox="0 0 24 24"><path d="M4 21 8 3M20 21 16 3M12 4v2M12 10v3M12 17v3"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+</svg>
+
+<aside class="side" id="side" aria-label="Main navigation">
+  <div class="logo">
+    <div class="logo-mark"><svg class="i"><use href="#i-road"/></svg></div>
+    <div><b>Project OMNI</b><span>Traffic Incident Management</span></div>
+  </div>
+  <nav class="nav">
+    <button data-go="patrol"><svg class="i"><use href="#i-phone"/></svg>Patrol app</button>
+    <button data-go="board"><svg class="i"><use href="#i-board"/></svg>Live board<span class="count" id="navCount">0</span></button>
+    <button data-go="incident"><svg class="i"><use href="#i-file"/></svg>Incident</button>
+    <button data-go="reports"><svg class="i"><use href="#i-chart"/></svg>Reports</button>
+    <button data-go="access"><svg class="i"><use href="#i-users"/></svg>Users &amp; access</button>
+  </nav>
+  <div class="side-foot">Prepared by CivicGrid for NLEX Corporation</div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-in">
+      <button class="btn btn-outline btn-sm menu-btn" id="menuBtn" aria-label="Open menu" aria-controls="side" aria-expanded="false"><svg class="i"><use href="#i-menu"/></svg></button>
+      <h1 id="pageTitle">Patrol app</h1>
+      <div class="top-right">
+        <span class="badge b-info">Demo data</span>
+        <label class="viewas"><span>Viewing as</span><span class="avatar" id="avatar">JS</span><select id="viewAs" aria-label="Viewing as"></select></label>
+      </div>
+    </div>
+  </header>
+
+  <main class="content">
+
+    <!-- PATROL -->
+    <section id="v-patrol" class="view">
+      <p class="lede">The patrol crew logs the incident on the road. They choose the section, direction and km post, and the loop fills in by itself.</p>
+      <div class="cols">
+        <div class="phone" aria-label="Patrol app on a phone">
+          <div class="phone-top"><b>Post 3 · J. Santos</b><span class="mono" id="clock">0000H</span></div>
+          <form class="phone-body" id="pForm" novalidate>
+            <div>
+              <label for="pSection">Section <span class="req">*</span></label>
+              <select id="pSection"></select>
+            </div>
+            <div class="grid-f">
+              <div>
+                <label for="pDir">Direction <span class="req">*</span></label>
+                <select id="pDir"></select>
+              </div>
+              <div>
+                <label for="pKm">Km post <span class="req">*</span></label>
+                <input id="pKm" inputmode="decimal" placeholder="42.6" aria-describedby="pKmErr">
+              </div>
+            </div>
+            <div class="err" id="pKmErr" hidden></div>
+            <div class="loop"><svg class="i sm"><use href="#i-pin"/></svg><span id="pLoop">Loop: enter the km post</span></div>
+            <div>
+              <label id="pTypeLbl">Type of incident <span class="req">*</span></label>
+              <div class="seg" id="pType" role="group" aria-labelledby="pTypeLbl"></div>
+              <div class="err" id="pTypeErr" hidden>Choose the type of incident.</div>
+            </div>
+            <div>
+              <label for="pSub">Subtype</label>
+              <select id="pSub" disabled><option>Choose the type first</option></select>
+            </div>
+            <div class="grid-f">
+              <div><label for="pLoc">Location</label><select id="pLoc"></select></div>
+              <div><label for="pDet">Detected by</label><select id="pDet"></select></div>
+            </div>
+            <div><label for="pWx">Weather</label><select id="pWx"></select></div>
+            <div>
+              <label for="pMedia">Photos or video</label>
+              <input id="pMedia" type="file" accept="image/*,video/*" multiple>
+              <div class="hint" id="pMediaHint">Optional. Attach what the crew can see.</div>
+            </div>
+            <button class="btn btn-primary" type="submit" id="pSend">Send to TCR</button>
+          </form>
+          <div class="phone-done" id="pDone" hidden>
+            <div class="ok-c"><svg class="i"><use href="#i-check"/></svg></div>
+            <div class="big">Sent to TCR</div>
+            <div class="mono big" id="pDoneId"></div>
+            <p style="margin:0">TCR has it on the live board. The time and your ID are stamped on the record.</p>
+            <button class="btn btn-primary" type="button" id="pAgain">Log another incident</button>
+          </div>
+        </div>
+        <div class="card">
+          <h2 style="margin-bottom:16px">What happens after the crew sends it</h2>
+          <ol class="steps">
+            <li><span class="n">1</span><span><b>An incident number is created</b>Automatic and in sequence, for example <span class="mono">OMNI-2026-000124</span>.</span></li>
+            <li><span class="n">2</span><span><b>Time and person are stamped</b>Date and military time, plus the crew member's ID.</span></li>
+            <li><span class="n">3</span><span><b>TCR sees it at once</b>It lands on the live board and on the km-post strip for that section.</span></li>
+            <li><span class="n">4</span><span><b>Nothing is forgotten</b>If it is still open after 2 hours, TCR gets an alarm.</span></li>
+          </ol>
+        </div>
+      </div>
+      <div class="next"><button data-go="board">Next: Live board <svg class="i sm"><use href="#i-arrow"/></svg></button></div>
+    </section>
+
+    <!-- BOARD -->
+    <section id="v-board" class="view" hidden>
+      <p class="lede">What needs a person comes first. Red means open for more than 2 hours. Blue means a TCR Supervisor must approve. Amber is open and on track.</p>
+      <div class="alarm" id="alarm" hidden role="alert"></div>
+      <div class="card">
+        <div class="card-h">
+          <h2>Expressway strip</h2>
+          <div class="toolbar">
+            <label class="chk inline"><input type="checkbox" id="showFin"><span>Show finalized</span></label>
+            <select id="stripSec" aria-label="Section shown on the strip" style="width:auto;min-width:200px"></select>
+          </div>
+        </div>
+        <div class="strip-wrap"><div class="strip" id="strip"></div></div>
+        <div class="legend" id="legend"></div>
+      </div>
+      <div class="card">
+        <div class="card-h">
+          <h2>Incidents</h2>
+          <div class="toolbar">
+            <div class="search"><svg class="i sm"><use href="#i-search"/></svg><input id="q" placeholder="Search number, plate, km or type" aria-label="Search incidents"></div>
+          </div>
+        </div>
+        <div class="chips" id="chips" role="group" aria-label="Filter incidents"></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Incident no.</th><th>Where</th><th>Type</th><th>Status</th><th>Open for</th><th>Next step</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table></div>
+      </div>
+      <div class="next"><button data-go="incident">Next: Complete an incident <svg class="i sm"><use href="#i-arrow"/></svg></button></div>
+    </section>
+
+    <!-- INCIDENT -->
+    <section id="v-incident" class="view" hidden>
+      <p class="lede">Complete the record, send responders, then confirm before it is final. Road crashes are approved by a TCR Supervisor. Every change is saved with the time and the person's name.</p>
+      <div id="incBody"></div>
+      <div class="next"><button data-go="reports">Next: Reports <svg class="i sm"><use href="#i-arrow"/></svg></button></div>
+    </section>
+
+    <!-- REPORTS -->
+    <section id="v-reports" class="view" hidden>
+      <p class="lede">Filter any period and export it to Excel, CSV or PDF. The heat map shows when incidents happen, and the end-of-shift report lists what each patrol crew attended.</p>
+      <div class="card">
+        <div class="grid-f" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr))">
+          <div><label for="rFrom">From</label><input id="rFrom" type="date" value="2026-11-01"></div>
+          <div><label for="rTo">To</label><input id="rTo" type="date" value="2026-11-09"></div>
+          <div><label for="rType">Type</label><select id="rType"></select></div>
+          <div><label for="rSec">Section</label><select id="rSec"></select></div>
+        </div>
+        <div class="card-h" style="margin:16px 0 0">
+          <span id="rCount" class="sub"></span>
+          <div class="row-btns">
+            <button class="btn btn-outline btn-sm" data-export="Excel"><svg class="i sm"><use href="#i-down"/></svg>Excel</button>
+            <button class="btn btn-outline btn-sm" data-export="CSV"><svg class="i sm"><use href="#i-down"/></svg>CSV</button>
+            <button class="btn btn-outline btn-sm" data-export="PDF"><svg class="i sm"><use href="#i-down"/></svg>PDF</button>
+          </div>
+        </div>
+      </div>
+      <div class="cols-2" style="margin-top:16px">
+        <div class="card">
+          <div class="card-h"><h2>When incidents happen</h2><span class="sub">Last 7 days · demo figures</span></div>
+          <div class="heat" id="heat"></div>
+          <div class="scale"><span>Fewer</span><span class="bar"></span><span>More</span></div>
+        </div>
+        <div class="card">
+          <div class="card-h"><h2>End-of-shift report</h2><select id="crew" aria-label="Patrol crew" style="width:auto"></select></div>
+          <div class="tbl"><table>
+            <thead><tr><th>Time</th><th>Incident no.</th><th>Km · direction</th><th>Type</th></tr></thead>
+            <tbody id="shift"></tbody>
+          </table></div>
+          <div class="row-btns" style="margin-top:16px"><button class="btn btn-outline btn-sm" data-export="Shift report PDF"><svg class="i sm"><use href="#i-down"/></svg>Shift report (PDF)</button></div>
+        </div>
+      </div>
+      <div class="next"><button data-go="access">Next: Users &amp; access <svg class="i sm"><use href="#i-arrow"/></svg></button></div>
+    </section>
+
+    <!-- ACCESS -->
+    <section id="v-access" class="view" hidden>
+      <p class="lede">Each person signs in with their own account. The six access levels below come from the Terms of Reference.</p>
+      <div class="note-line"><svg class="i sm"><use href="#i-info"/></svg><span>Proposed permissions, based on our reading of the Terms of Reference. To be confirmed with NLEX.</span></div>
+      <div class="card">
+        <div class="tbl"><table>
+          <thead><tr><th>Access level</th><th class="c">Log incidents</th><th class="c">Complete details</th><th class="c">Finalize breakdowns</th><th class="c">Finalize road crashes</th><th class="c">Run reports</th><th class="c">Download media</th><th class="c">Manage users</th></tr></thead>
+          <tbody id="roles"></tbody>
+        </table></div>
+      </div>
+      <div class="next"><button data-go="patrol">Back to the start: Patrol app <svg class="i sm"><use href="#i-arrow"/></svg></button></div>
+    </section>
+
+    <div class="foot">Prepared by CivicGrid Software Development Services for NLEX Corporation. Pre-bid preview with demo data. Fields follow the initial Terms of Reference (ver. 21 Sept 2026); final fields will follow NLEX's Functional Requirements Document (Annex B).</div>
+  </main>
+</div>
+<div class="toast" id="toast" hidden role="status" aria-live="polite"><svg class="i sm"><use href="#i-check-c"/></svg><span id="toastTxt"></span></div>
+<dialog id="dlg" aria-labelledby="dlgT"></dialog>
+
+<script>
+const ico=(id,cls="i sm")=>`<svg class="${cls}"><use href="#i-${id}"/></svg>`;
+const SECTIONS={
+ "NLEX Mainline":{min:8,max:94,dirs:["Northbound","Southbound"]},
+ "SCTEX Mainline":{min:0,max:94,dirs:["Tarlac Bound","Subic Bound"]},
+ "Segment 8.1":{min:0,max:6,dirs:["Eastbound","Westbound"]},
+ "Segment 9":{min:0,max:3,dirs:["Eastbound","Westbound"]},
+ "Segment 10":{min:0,max:6,dirs:["Northbound","Southbound"]},
+ "Harbor Link":{min:0,max:8,dirs:["Eastbound","Westbound"]},
+ "Connector Road":{min:0,max:8,dirs:["Northbound","Southbound"]}
+};
+const TYPES={
+ "Vehicle breakdown":["Engine","Fuel","Mechanical","Tire","Others"],
+ "Road crash":["Rear End Collision","Side Swipe","Angle Collision","Multiple Collision","Single Vehicle Road Crash","Hit Objects on the Road","Hit Toll Plaza Equipment","Hit Pedestrian","Others"],
+ "Security":["Abandoned Vehicle","Stray Animal","Fence Breaching","Stoning","Road Rage","Theft","Others"],
+ "Other incidents":["Vehicle On Fire","Grass Fire","Object On Carriageway","Traffic Build Up","Counterflow","Medical Case – Motorist/Pedestrian","Others"]
+};
+const LOCS=["Carriageway","Toll Plaza","Interchange","Intersection","Rest Bay","Facilities","Exit","Others"];
+const DETECT=["CCTV","Hotline","ECB","Direct"];
+const WX=["Fair","Rainy","Stormy"];
+const UNITS=["Patrol","Rider","EMS","IRT","Tow Truck","Investigator","Field Supervisor","Water/Fire Truck","Security"];
+const CLASSES={
+ Minor:"Any incident not listed under Material or Major.",
+ Material:"Damage to property, injury, an unsafe traffic situation, a motorist asking for help through the ECB, or vehicles queuing back from an off-ramp.",
+ Major:"A road crash with a fatality, a vehicle on fire, force majeure, major pollution, a major safety hazard, or an unscheduled closure of the carriageway."
+};
+const TCR="TCR Specialist · K. Garcia";
+const $=id=>document.getElementById(id);
+const opts=(el,arr)=>{el.innerHTML=arr.map(v=>`<option>${v}</option>`).join("")};
+const pad=n=>String(n).padStart(2,"0");
+const mil=d=>pad(d.getHours())+pad(d.getMinutes())+"H";
+const ymd=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const ago=m=>new Date(Date.now()-m*60000);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const loopTxt=km=>{const a=Math.floor(km/5)*5;return `Loop: km ${a}–${a+5}`};
+const minsBetween=(a,b)=>Math.max(0,Math.round((b-a)/60000));
+const fmtMin=m=>m<1?"<1 min":m+" min";
+const fmtAge=m=>{m=Math.max(0,Math.floor(m));const h=Math.floor(m/60);return m<1?"<1 m":h?`${h} h ${pad(m%60)} m`:`${m} m`};
+let seq=123,pType=null,currentId=null,currentView="patrol",filt="active",showFin=false,lastAlarmN=-1;
+
+/* who is using the screen (this is what makes the six access levels visible) */
+const VIEWERS={
+ field:{key:"field",name:"J. Santos",title:"Field Personnel",ini:"JS"},
+ specialist:{key:"specialist",name:"K. Garcia",title:"TCR Specialist",ini:"KG"},
+ supervisor:{key:"supervisor",name:"R. Villanueva",title:"TCR Supervisor",ini:"RV"},
+ analyst:{key:"analyst",name:"P. Navarro",title:"Data Analyst",ini:"PN"},
+ investigator:{key:"investigator",name:"E. Cruz",title:"Investigator",ini:"EC"},
+ admin:{key:"admin",name:"L. Mendoza",title:"Administrator",ini:"LM"}
+};
+const VIEWS={patrol:"Patrol app",board:"Live board",incident:"Incident",reports:"Reports",access:"Users & access"};
+const VIEW_OK={patrol:["field"],board:["specialist","supervisor","investigator"],incident:["specialist","supervisor","investigator"],reports:["analyst","supervisor","admin"],access:["admin"]};
+const VIEW_DEFAULT={patrol:"field",board:"specialist",incident:"specialist",reports:"analyst",access:"admin"};
+let viewer=VIEWERS.field;
+const who=()=>`${viewer.title} · ${viewer.name}`;
+const canEdit=i=>i.status==="open"&&["specialist","supervisor"].includes(viewer.key);
+
+let incidents=[
+ {id:"OMNI-2026-000119",t:ago(185),sec:"NLEX Mainline",km:21.4,dir:"Northbound",type:"Road crash",sub:"Rear End Collision",loc:"Carriageway",det:"CCTV",wx:"Fair",by:"Post 2 · M. Reyes",status:"open",media:["IMG_0412.jpg","IMG_0413.jpg"],
+  vehicles:[{cls:"Class 1",make:"Toyota Vios",plate:"NAB 1234"},{cls:"Class 2",make:"Isuzu Elf",plate:"TRK 5521"}],people:[{name:"Ramon Bautista",role:"Driver",ext:"Minor"}],
+  resp:[{unit:"Patrol",d:ago(178),a:ago(172),c:null},{unit:"Tow Truck",d:ago(170),a:ago(150),c:null}],cls:null,log:[]},
+ {id:"OMNI-2026-000120",t:ago(95),sec:"NLEX Mainline",km:33.2,dir:"Southbound",type:"Road crash",sub:"Side Swipe",loc:"Carriageway",det:"Direct",wx:"Fair",by:"Post 4 · C. Ramos",status:"pending",media:["IMG_0431.jpg"],
+  vehicles:[{cls:"Class 1",make:"Honda Civic",plate:"DEF 4410"},{cls:"Class 1",make:"Suzuki Ertiga",plate:"GHI 2205"}],people:[{name:"Maria Dela Cruz",role:"Passenger",ext:"Minor"}],
+  resp:[{unit:"Patrol",d:ago(90),a:ago(84),c:ago(60)},{unit:"Tow Truck",d:ago(88),a:ago(75),c:ago(55)}],cls:"Material",log:[]},
+ {id:"OMNI-2026-000121",t:ago(64),sec:"SCTEX Mainline",km:55.2,dir:"Subic Bound",type:"Vehicle breakdown",sub:"Tire",loc:"Carriageway",det:"Hotline",wx:"Rainy",by:"Post 7 · A. Lim",status:"open",media:[],
+  vehicles:[{cls:"Class 1",make:"Mitsubishi Montero",plate:"ABC 7788"}],people:[],resp:[{unit:"Patrol",d:ago(60),a:ago(52),c:null}],cls:null,log:[]},
+ {id:"OMNI-2026-000122",t:ago(22),sec:"NLEX Mainline",km:44.8,dir:"Southbound",type:"Security",sub:"Stray Animal",loc:"Carriageway",det:"Direct",wx:"Fair",by:"Post 3 · J. Santos",status:"open",media:["IMG_0420.jpg"],
+  vehicles:[],people:[],resp:[],cls:null,log:[]},
+ {id:"OMNI-2026-000118",t:ago(300),sec:"NLEX Mainline",km:67.0,dir:"Northbound",type:"Other incidents",sub:"Object On Carriageway",loc:"Carriageway",det:"CCTV",wx:"Fair",by:"Post 5 · R. Dela Cruz",status:"final",media:[],
+  vehicles:[],people:[],resp:[{unit:"Patrol",d:ago(295),a:ago(285),c:ago(270)}],cls:"Minor",log:[]}
+];
+incidents.forEach(i=>{i.noPeople=false;i.pick=null;i.fin=null;i.subm=null;i.returnNote=null;
+ i.log.push({t:i.t,who:i.by,what:"Logged the incident"});
+ if(i.status==="final"){i.fin={by:TCR,t:ago(268)};i.log.push({t:ago(268),who:TCR,what:"Finalized as Minor"})}
+ if(i.status==="pending"){i.subm={by:TCR,t:ago(40)};i.log.push({t:ago(40),who:TCR,what:"Submitted as Material for supervisor approval"})}});
+
+/* status, alarm and "what next" */
+const isDone=i=>i.status==="final";
+const ageMin=i=>(Date.now()-i.t)/60000;
+const isAlarm=i=>!isDone(i)&&ageMin(i)>120;
+const isCrash=i=>i.type==="Road crash";
+const needsVeh=i=>isCrash(i)||i.type==="Vehicle breakdown";
+const RANK={Minor:0,Material:1,Major:2};
+function minClass(i){if(isCrash(i)&&i.people.some(p=>p.ext==="Fatality"))return"Major";if(i.people.length)return"Material";return"Minor"}
+function checks(i,chosen){
+ const c=[],notClr=i.resp.filter(r=>!r.c);
+ c.push({ok:notClr.length===0,label:"Every dispatched unit has cleared the scene",why:notClr.length?`${notClr.map(r=>r.unit).join(", ")} not cleared yet`:"",fix:"responders",go:"Responders"});
+ if(needsVeh(i))c.push({ok:i.vehicles.length>0,label:"At least one vehicle is recorded",why:"no vehicle recorded yet",fix:"vehicles",go:"Vehicles"});
+ if(isCrash(i))c.push({ok:i.people.length>0||i.noPeople,label:"Injured, fatality or medical case is recorded, or confirmed as none",why:"not recorded and not confirmed as none",fix:"people",go:"Injured"});
+ const min=minClass(i);
+ c.push({ok:!!chosen&&RANK[chosen]>=RANK[min],label:"A classification is chosen and meets the TOR minimum",why:!chosen?"choose a classification":`the TOR makes this at least ${min}`,fix:"finalize",go:"Classification"});
+ return c;
+}
+function nextStep(i){
+ if(isDone(i))return{t:"Done. Record is locked",k:"ok"};
+ if(i.status==="pending")return{t:"Supervisor to approve",k:"info"};
+ if(!i.resp.length&&needsVeh(i))return{t:"Dispatch a responder",k:"warn"};
+ const na=i.resp.find(r=>!r.a);if(na)return{t:`Waiting: ${na.unit} to arrive`,k:"warn"};
+ const nc=i.resp.find(r=>!r.c);if(nc)return{t:`Waiting: ${nc.unit} to clear`,k:"warn"};
+ if(needsVeh(i)&&!i.vehicles.length)return{t:"Add the vehicles",k:"warn"};
+ if(isCrash(i)&&!i.people.length&&!i.noPeople)return{t:"Record injured, or confirm none",k:"warn"};
+ return{t:viewer.key==="specialist"&&isCrash(i)?"Submit for supervisor approval":"Ready to finalize",k:"ok"};
+}
+function badge(i){
+ if(isDone(i))return `<span class="badge b-done">${ico("check")}Finalized · ${i.cls}</span>`;
+ if(i.status==="pending")return `<span class="badge b-info">${ico("clock")}Waiting for supervisor</span>`;
+ if(isAlarm(i))return `<span class="badge b-alarm">${ico("alert")}Open over 2 h</span>`;
+ if(ageMin(i)<10)return `<span class="badge b-info">New</span>`;
+ return `<span class="badge b-open">Open</span>`;
+}
+function toast(msg){$("toastTxt").textContent=msg;$("toast").hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>$("toast").hidden=true,3200)}
+const logI=(i,what)=>i.log.push({t:new Date(),who:who(),what});
+
+/* navigation */
+const RENDER={patrol:()=>{$("pForm").hidden=false;$("pDone").hidden=true},board:()=>renderBoard(),incident:()=>renderIncident(),reports:()=>renderReports(),access:()=>renderRoles()};
+function setViewer(k){viewer=VIEWERS[k];$("avatar").textContent=viewer.ini;$("viewAs").value=k}
+opts($("viewAs"),[]);$("viewAs").innerHTML=Object.values(VIEWERS).map(v=>`<option value="${v.key}">${v.title} · ${v.name}</option>`).join("");
+$("viewAs").addEventListener("change",()=>{setViewer($("viewAs").value);
+ if(!VIEW_OK[currentView].includes(viewer.key))go(Object.keys(VIEW_OK).find(x=>VIEW_OK[x].includes(viewer.key)));else RENDER[currentView]()});
+function go(v){
+ if(!VIEWS[v])v="patrol";
+ if(!VIEW_OK[v].includes(viewer.key))setViewer(VIEW_DEFAULT[v]);
+ currentView=v;
+ document.querySelectorAll(".view").forEach(s=>s.hidden=s.id!=="v-"+v);
+ document.querySelectorAll(".nav button").forEach(b=>b.dataset.go===v?b.setAttribute("aria-current","page"):b.removeAttribute("aria-current"));
+ $("pageTitle").textContent=VIEWS[v];
+ RENDER[v]();
+ closeMenu();window.scrollTo(0,0);
+ try{history.replaceState(null,"","#"+v)}catch(e){}
+}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-go]");if(b){e.preventDefault();go(b.dataset.go)}});
+const side=$("side"),menuBtn=$("menuBtn");
+function closeMenu(){side.classList.remove("open");menuBtn.setAttribute("aria-expanded","false")}
+menuBtn.addEventListener("click",e=>{e.stopPropagation();const o=side.classList.toggle("open");menuBtn.setAttribute("aria-expanded",String(o))});
+document.addEventListener("click",e=>{if(side.classList.contains("open")&&!side.contains(e.target)&&e.target!==menuBtn)closeMenu()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeMenu()});
+function updateCount(){const a=incidents.filter(i=>!isDone(i)),al=a.some(isAlarm),n=$("navCount");
+ n.textContent=a.length;n.classList.toggle("is-alarm",al);n.setAttribute("aria-label",`${a.length} active incidents${al?", some need attention":""}`)}
+
+/* patrol */
+opts($("pSection"),Object.keys(SECTIONS));opts($("pLoc"),LOCS);opts($("pDet"),DETECT);opts($("pWx"),WX);
+$("pType").innerHTML=Object.keys(TYPES).map(t=>`<button type="button" aria-pressed="false" data-t="${t}">${t}</button>`).join("");
+function syncDir(){opts($("pDir"),SECTIONS[$("pSection").value].dirs);checkKm(false)}
+function checkKm(show){
+ const s=SECTIONS[$("pSection").value],raw=$("pKm").value.trim(),v=parseFloat(raw),err=$("pKmErr");
+ let msg="";
+ if(raw==="")msg=show?"Enter the km post.":"";
+ else if(isNaN(v)||v<s.min||v>s.max)msg=`${$("pSection").value} runs from km ${s.min} to km ${s.max}.`;
+ err.textContent=msg;err.hidden=!msg;$("pKm").setAttribute("aria-invalid",msg?"true":"false");
+ $("pLoop").textContent=(!msg&&raw!=="")?loopTxt(v)+" (set from the km post)":"Loop: enter the km post";
+ return !msg&&raw!=="";
+}
+$("pSection").addEventListener("change",syncDir);
+$("pKm").addEventListener("input",()=>checkKm(false));
+$("pType").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;pType=b.dataset.t;
+ $("pType").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+ opts($("pSub"),TYPES[pType]);$("pSub").disabled=false;$("pTypeErr").hidden=true});
+$("pMedia").addEventListener("change",()=>{const n=$("pMedia").files.length;$("pMediaHint").textContent=n?`${n} file${n>1?"s":""} attached.`:"Optional. Attach what the crew can see."});
+$("pAgain").addEventListener("click",()=>{$("pDone").hidden=true;$("pForm").hidden=false;window.scrollTo(0,0)});
+syncDir();
+$("pForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const kmOk=checkKm(true);if(!pType)$("pTypeErr").hidden=false;
+ if(!kmOk){$("pKm").focus();return} if(!pType)return;
+ const btn=$("pSend");btn.disabled=true;btn.innerHTML=`${ico("loader","i sm spin")}Sending…`;
+ setTimeout(()=>{
+  seq++;const id="OMNI-2026-"+String(seq).padStart(6,"0"),t=new Date(),files=[...$("pMedia").files].map(f=>f.name);
+  incidents.unshift({id,t,sec:$("pSection").value,km:parseFloat($("pKm").value),dir:$("pDir").value,type:pType,sub:$("pSub").value,loc:$("pLoc").value,det:$("pDet").value,wx:$("pWx").value,by:"Post 3 · J. Santos",status:"open",media:files,vehicles:[],people:[],resp:[],cls:null,
+   noPeople:false,pick:null,fin:null,subm:null,returnNote:null,
+   log:[{t,who:"Post 3 · J. Santos",what:"Logged the incident"+(files.length?` with ${files.length} media file${files.length>1?"s":""}`:"")}]});
+  currentId=id;updateCount();
+  $("pForm").reset();pType=null;$("pType").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed","false"));
+  opts($("pSub"),["Choose the type first"]);$("pSub").disabled=true;$("pMediaHint").textContent="Optional. Attach what the crew can see.";syncDir();
+  btn.disabled=false;btn.textContent="Send to TCR";
+  $("pDoneId").textContent=id;$("pForm").hidden=true;$("pDone").hidden=false;
+  toast(`${id} sent to the live board.`);
+ },700);
+});
+setInterval(()=>$("clock").textContent=mil(new Date()),1000);$("clock").textContent=mil(new Date());
+
+/* board */
+const PIN={
+ alarm:`<svg viewBox="0 0 28 28" aria-hidden="true"><path d="M14 3 26 24H2z" fill="#b91c1c" stroke="#fff" stroke-width="2" stroke-linejoin="round"/><path d="M14 11v6M14 20h.01" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>`,
+ open:`<svg viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="10" fill="#b45309" stroke="#fff" stroke-width="2"/><circle cx="14" cy="14" r="3.5" fill="#fff"/></svg>`,
+ pending:`<svg viewBox="0 0 28 28" aria-hidden="true"><rect x="4" y="4" width="20" height="20" rx="4" fill="#1d4ed8" stroke="#fff" stroke-width="2"/><path d="M14 9v5l3 2" stroke="#fff" stroke-width="2" stroke-linecap="round" fill="none"/></svg>`,
+ done:`<svg viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="10" fill="#15803d" stroke="#fff" stroke-width="2"/><path d="m9.5 14 3 3 6-6.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`
+};
+opts($("stripSec"),Object.keys(SECTIONS));
+$("stripSec").addEventListener("change",renderStrip);
+$("q").addEventListener("input",renderRows);
+$("showFin").addEventListener("change",()=>{showFin=$("showFin").checked;renderStrip()});
+$("alarm").addEventListener("click",e=>{const b=e.target.closest("[data-open]");if(b){currentId=b.dataset.open;go("incident")}});
+$("chips").addEventListener("click",e=>{const b=e.target.closest("[data-f]");if(b){filt=b.dataset.f;renderChips();renderRows()}});
+const rankOf=i=>isAlarm(i)?0:i.status==="pending"?1:i.status==="open"?2:3;
+function renderBoard(){
+ const act=incidents.filter(i=>!isDone(i)),al=act.filter(isAlarm).sort((a,b)=>a.t-b.t),a=$("alarm");
+ if(al.length){a.hidden=false;
+  a.innerHTML=`<div class="alarm-h">${ico("alert","i")}<b>${al.length===1?"1 incident needs attention":al.length+" incidents need attention"}</b><span>Open for more than 2 hours</span></div><ul class="alarm-l">${al.map(x=>`<li><span class="mono id">${x.id}</span><span class="where">${esc(x.sec)} · km ${x.km} · ${esc(x.dir)}</span><span class="age">Open <b data-age="${x.t.getTime()}">${fmtAge(ageMin(x))}</b></span><span class="why">${esc(nextStep(x).t)}</span><button class="btn btn-light btn-sm" data-open="${x.id}">Open incident</button></li>`).join("")}</ul>`}
+ else a.hidden=true;
+ lastAlarmN=al.length;$("showFin").checked=showFin;
+ renderChips();renderStrip();renderRows();updateCount();
+}
+function renderChips(){
+ const act=incidents.filter(i=>!isDone(i)),C=[["active","t-act","Active",act.length],["alarm","t-alarm","Needs attention",act.filter(isAlarm).length],["pending","t-pend","Waiting for supervisor",incidents.filter(i=>i.status==="pending").length],["final","t-done","Finalized",incidents.filter(isDone).length]];
+ $("chips").innerHTML=C.map(c=>`<button type="button" class="chip ${c[1]}" data-f="${c[0]}" aria-pressed="${filt===c[0]}">${c[2]}<span class="n">${c[3]}</span></button>`).join("")}
+function renderStrip(){
+ const sec=$("stripSec").value,s=SECTIONS[sec],span=s.max-s.min,step=span>40?10:span>10?2:1;
+ let h=`<div class="road"></div>`;
+ for(let k=Math.ceil(s.min/step)*step;k<=s.max;k+=step)h+=`<span class="tick" style="left:${(k-s.min)/span*100}%">km ${k}</span>`;
+ incidents.filter(i=>i.sec===sec&&(showFin||!isDone(i))).forEach(i=>{const c=isDone(i)?"done":i.status==="pending"?"pending":isAlarm(i)?"alarm":"open";
+  const lbl=(c==="alarm"||c==="pending")?`<span class="pl">#${i.id.slice(-3)}</span>`:"";
+  h+=`<button class="pin p-${c}" style="left:${(i.km-s.min)/span*100}%" data-id="${i.id}" aria-label="${i.id}, km ${i.km}, ${esc(i.type)}, ${c==="alarm"?"needs attention":c==="pending"?"waiting for supervisor":c==="done"?"finalized":"open"}" title="${i.id} · km ${i.km} · ${esc(i.sub)}">${lbl}${PIN[c]}</button>`});
+ $("strip").innerHTML=h;
+ $("strip").querySelectorAll(".pin").forEach(p=>p.addEventListener("click",()=>{currentId=p.dataset.id;go("incident")}));
+ $("legend").innerHTML=`<span class="lg">${PIN.alarm}Needs attention (over 2 h)</span><span class="lg">${PIN.pending}Waiting for supervisor</span><span class="lg">${PIN.open}Open</span><span class="lg">${PIN.done}Finalized</span>`;
+}
+function renderRows(){
+ const q=$("q").value.trim().toLowerCase();
+ const vis=i=>filt==="active"?!isDone(i):filt==="alarm"?isAlarm(i):filt==="pending"?i.status==="pending":isDone(i);
+ const list=incidents.filter(vis).filter(i=>!q||[i.id,i.sec,i.km,i.dir,i.type,i.sub,...i.vehicles.map(v=>v.plate)].join(" ").toLowerCase().includes(q)).sort((a,b)=>rankOf(a)-rankOf(b)||a.t-b.t);
+ const none={active:["No active incidents","Everything logged has been finalized."],alarm:["Nothing needs attention","No incident has been open for more than 2 hours."],pending:["Nothing is waiting for a supervisor","Road crashes submitted for approval show up here."],final:["No finalized incidents yet","Incidents appear here once they are final."]}[filt];
+ $("rows").innerHTML=list.length?list.map(i=>{const n=nextStep(i);return `<tr class="click ${isAlarm(i)?"r-alarm":i.status==="pending"?"r-pend":""}" tabindex="0" data-id="${i.id}"><td class="mono">${i.id}</td><td>${esc(i.sec)}<div class="sub"><span class="mono">km ${i.km}</span> · ${esc(i.dir)}</div></td><td>${esc(i.type)}<div class="sub">${esc(i.sub)}</div></td><td>${badge(i)}</td><td>${isDone(i)?`<span class="sub">Closed</span>`:`<b class="age" data-age="${i.t.getTime()}">${fmtAge(ageMin(i))}</b><div class="sub">since <span class="mono">${mil(i.t)}</span></div>`}</td><td><span class="next-s ${n.k}">${n.t}</span></td></tr>`}).join("")
+  :`<tr><td colspan="6"><div class="empty">${ico("search","i")}<b style="color:var(--ink-2)">${q?"No incidents match":none[0]}</b><span>${q?"Try another number, plate or km post.":none[1]}</span></div></td></tr>`;
+ $("rows").querySelectorAll("tr.click").forEach(r=>{const o=()=>{currentId=r.dataset.id;go("incident")};r.addEventListener("click",o);r.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();o()}})});
+}
+setInterval(()=>{document.querySelectorAll("[data-age]").forEach(e=>e.textContent=fmtAge((Date.now()-(+e.dataset.age))/60000));
+ const n=incidents.filter(isAlarm).length;if(n!==lastAlarmN){lastAlarmN=n;updateCount();if(currentView==="board")renderBoard()}},15000);
+
+/* confirmation dialog: every irreversible step is a clear yes or no */
+const dlg=$("dlg");
+dlg.addEventListener("click",e=>{if(e.target===dlg)dlg.close()});
+function confirmDlg(o){
+ const boxes=(o.boxes||[]).map((b,k)=>`<label class="chk"><input type="checkbox" data-k="${k}"><span>${b}</span></label>`).join("");
+ dlg.innerHTML=`<form class="dlg-in" novalidate onsubmit="return false">
+  <div class="dlg-h"><h2 id="dlgT">${o.title}</h2><p class="sub">${o.sub||""}</p></div>
+  <div class="dlg-b">${o.body||""}
+   ${o.note?`<div><label for="dlgNote">${o.note.label} <span class="req">*</span></label><textarea id="dlgNote" rows="3" placeholder="${o.note.ph}" aria-describedby="dlgErr"></textarea><div class="err" id="dlgErr" hidden>${o.note.err}</div></div>`:""}
+   ${boxes?`<fieldset class="chks"><legend>Tick each one to continue</legend>${boxes}</fieldset>`:""}
+  </div>
+  <div class="dlg-f"><button type="button" class="btn btn-outline" id="dlgNo">No, go back</button><button type="button" class="btn btn-primary" id="dlgYes" ${boxes?"disabled":""}>${o.yes}</button></div></form>`;
+ const yes=$("dlgYes"),no=$("dlgNo");
+ no.addEventListener("click",()=>dlg.close());
+ dlg.querySelectorAll(".chks input").forEach(c=>c.addEventListener("change",()=>{yes.disabled=![...dlg.querySelectorAll(".chks input")].every(x=>x.checked)}));
+ yes.addEventListener("click",()=>{
+  let v;
+  if(o.note){v=$("dlgNote").value.trim();if(!v){$("dlgErr").hidden=false;$("dlgNote").setAttribute("aria-invalid","true");$("dlgNote").focus();return}}
+  yes.disabled=true;no.disabled=true;yes.innerHTML=`${ico("loader","i sm spin")}Saving…`;
+  setTimeout(()=>{dlg.close();o.onConfirm(v)},600)});
+ dlg.showModal();
+}
+function summary(i,cls){
+ return `<dl class="sum">
+  <div><dt>Incident</dt><dd class="mono">${i.id}</dd></div>
+  <div><dt>Where</dt><dd>${esc(i.sec)} · km ${i.km} · ${esc(i.dir)}</dd></div>
+  <div><dt>Type</dt><dd>${esc(i.type)} · ${esc(i.sub)}</dd></div>
+  <div><dt>Classification</dt><dd><b>${cls}</b><div class="sub">${CLASSES[cls]}</div></dd></div>
+  <div><dt>Vehicles</dt><dd>${i.vehicles.length?i.vehicles.map(v=>`${esc(v.make)} (${esc(v.plate)})`).join(", "):"None"}</dd></div>
+  <div><dt>People</dt><dd>${i.people.length?i.people.map(p=>`${esc(p.name)}, ${p.role.toLowerCase()}, ${p.ext.toLowerCase()}`).join("; "):(i.noPeople?"Confirmed: none injured":"None recorded")}</dd></div>
+  <div><dt>Responders</dt><dd>${i.resp.length?i.resp.map(r=>`${esc(r.unit)}: sent ${mil(r.d)}, arrived ${r.a?mil(r.a):"—"}, cleared ${r.c?mil(r.c):"—"}`).join("<br>"):"None dispatched"}</dd></div>
+ </dl>`;
+}
+const finish=(i,msg)=>{updateCount();renderIncident();toast(msg)};
+function startFinalize(i){const cls=i.pick;
+ confirmDlg({title:`Finalize ${i.id} as ${cls}?`,sub:"Please check the record once more. You will not be able to change it after this.",body:summary(i,cls),
+  boxes:["The location and km post are correct.","Vehicles, injured and fatality details are complete.",`The classification “${cls}” matches its TOR definition.`,"I understand the record locks after this. Later changes need a TCR Supervisor and are logged."],
+  yes:"Yes, finalize incident",onConfirm:()=>{i.status="final";i.cls=cls;i.pick=null;i.fin={by:who(),t:new Date()};i.returnNote=null;logI(i,`Finalized as ${cls}`);finish(i,`${i.id} finalized as ${cls}.`)}})}
+function startSubmit(i){const cls=i.pick;
+ confirmDlg({title:`Submit ${i.id} for supervisor approval?`,sub:"Road crashes are approved by a TCR Supervisor. You cannot edit the record after you submit it.",body:summary(i,cls),
+  boxes:["The location and km post are correct.","Vehicles, injured and fatality details are complete.",`The classification “${cls}” matches its TOR definition.`,"I understand a TCR Supervisor will review this before it is final."],
+  yes:"Yes, submit for approval",onConfirm:()=>{i.status="pending";i.cls=cls;i.pick=null;i.subm={by:who(),t:new Date()};i.returnNote=null;logI(i,`Submitted as ${cls} for supervisor approval`);finish(i,`${i.id} submitted for supervisor approval.`)}})}
+function startApprove(i){
+ confirmDlg({title:`Approve and finalize ${i.id}?`,sub:`Submitted by ${esc(i.subm.by)} as ${i.cls}.`,body:summary(i,i.cls),
+  boxes:["I reviewed the details and the responder times.",`I agree the classification is ${i.cls}.`,"I approve this record. It locks, and later changes are logged with my name."],
+  yes:"Yes, approve and finalize",onConfirm:()=>{i.status="final";i.fin={by:who(),t:new Date()};logI(i,`Approved and finalized as ${i.cls}`);finish(i,`${i.id} approved and finalized as ${i.cls}.`)}})}
+function startReturn(i){
+ confirmDlg({title:`Return ${i.id} to the specialist?`,sub:"The record reopens for editing. Your note is saved in the edit history.",
+  note:{label:"What needs to be fixed",ph:"For example: add the second vehicle's plate.",err:"Write what needs to be fixed before returning it."},
+  yes:"Yes, return to specialist",onConfirm:text=>{i.status="open";i.pick=i.cls;i.cls=null;i.subm=null;i.returnNote={by:who(),t:new Date(),text};logI(i,`Returned to specialist: ${text}`);finish(i,`${i.id} returned to the specialist.`)}})}
+function startCorrection(i){
+ confirmDlg({title:`Request a correction to ${i.id}?`,sub:"The record reopens for editing. Your reason is saved in the edit history.",
+  note:{label:"Reason for the correction",ph:"For example: wrong km post entered.",err:"Write the reason before reopening the record."},
+  yes:"Yes, reopen the record",onConfirm:text=>{i.status="open";i.pick=i.cls;i.cls=null;i.fin=null;i.returnNote={by:who(),t:new Date(),text:`Reopened for correction: ${text}`};logI(i,`Reopened for correction: ${text}`);finish(i,`${i.id} reopened for correction.`)}})}
+
+/* incident */
+function stepsOf(i){
+ const rd=i.resp.every(r=>r.c)&&(i.resp.length>0||!needsVeh(i));
+ const dt=rd&&checks(i,i.pick||i.cls).filter(c=>c.fix==="vehicles"||c.fix==="people").every(c=>c.ok);
+ const S=[{l:"Logged",d:true},{l:"Responders",d:rd},{l:"Details",d:dt}];
+ if(isCrash(i)){S.push({l:"Submitted",d:i.status!=="open"},{l:"Supervisor approval",d:isDone(i)})}else S.push({l:"Finalized",d:isDone(i)});
+ return S;
+}
+function instr(i){
+ if(i.status==="pending")return viewer.key==="supervisor"?"Review the record, then approve and finalize it or return it to the specialist.":"Wait for the TCR Supervisor to approve or return it.";
+ if(isDone(i))return"Nothing. The record is final and locked.";
+ if(!canEdit(i))return"Your access level can view this record only.";
+ if(!i.resp.length&&needsVeh(i))return"Dispatch a responder in the Responders section.";
+ const na=i.resp.find(r=>!r.a),nc=i.resp.find(r=>!r.c);
+ if(na)return`Mark ${na.unit} as arrived when it reaches the scene.`;
+ if(nc)return`Mark ${nc.unit} as cleared when it leaves the scene.`;
+ if(needsVeh(i)&&!i.vehicles.length)return"Add the vehicles involved.";
+ if(isCrash(i)&&!i.people.length&&!i.noPeople)return"Add the injured, or confirm that nobody was hurt.";
+ if(!i.pick)return"Choose a classification, then finalize.";
+ return viewer.key==="specialist"&&isCrash(i)?"Submit for supervisor approval.":"Finalize the incident.";
+}
+function renderStepper(i){
+ const S=stepsOf(i),cur=S.findIndex(s=>!s.d);
+ $("stepBox").innerHTML=`<ol class="stepper" aria-label="Progress">${S.map((s,k)=>`<li class="${s.d?"done":k===cur?"cur":""}" ${k===cur?'aria-current="step"':""}><span class="sd">${s.d?ico("check","i sm"):k+1}</span>${s.l}</li>`).join("")}</ol><div class="nextline">${ico("arrow","i")}<span>${isDone(i)||(!canEdit(i)&&i.status!=="pending")?"":"Next: "}${esc(instr(i))}</span></div>`;
+}
+function renderReady(i){
+ const box=$("readyBox");if(!box)return;
+ const ck=checks(i,i.pick),ok=ck.every(c=>c.ok),label=viewer.key==="specialist"&&isCrash(i)?"Submit for supervisor approval":"Finalize incident";
+ box.innerHTML=`<h3 style="margin-bottom:12px">Before you finalize</h3><ul class="ready">${ck.map(c=>`<li class="${c.ok?"ok":"no"}">${ico(c.ok?"check-c":"alert","i")}<span>${c.label}${c.ok?"":`<span class="why"> — ${c.why}</span>`}</span>${c.ok?"":`<button class="btn btn-outline btn-sm" data-fix="${c.fix}">Go to ${c.go}</button>`}</li>`).join("")}</ul>
+  <div class="row-btns"><button class="btn btn-primary" id="finBtn" ${ok?"":"disabled"}>${label}</button><button class="btn btn-outline" data-go="board">Back to the live board</button></div>
+  <div class="hint">${ok?"You will be asked to confirm before anything is saved.":"Finish the items above to continue."}</div>`;
+ box.querySelectorAll("[data-fix]").forEach(b=>b.addEventListener("click",()=>{const el=$("sec-"+b.dataset.fix);if(el)el.scrollIntoView({behavior:"smooth",block:"start"})}));
+ $("finBtn").addEventListener("click",()=>{viewer.key==="specialist"&&isCrash(i)?startSubmit(i):startFinalize(i)});
+}
+function renderIncident(){
+ const i=incidents.find(x=>x.id===currentId)||incidents.find(x=>!isDone(x))||incidents[0];currentId=i.id;
+ const edit=canEdit(i);
+ const respRows=i.resp.map((r,ix)=>`<tr><td>${esc(r.unit)}</td><td class="mono">${mil(r.d)}</td><td class="mono">${r.a?mil(r.a):"—"}</td><td class="mono">${r.c?mil(r.c):"—"}</td><td class="mono">${r.a?fmtMin(minsBetween(r.d,r.a)):"—"}</td><td class="mono">${r.a&&r.c?fmtMin(minsBetween(r.a,r.c)):"—"}</td><td>${r.c?`<span class="badge b-done">${ico("check")}Cleared</span>`:edit?(!r.a?`<button class="btn btn-outline btn-sm" data-arr="${ix}">Mark arrived</button>`:`<button class="btn btn-outline btn-sm" data-clr="${ix}">Mark cleared</button>`):""}</td></tr>`).join("");
+ let band="";
+ if(i.returnNote&&i.status==="open")band=`<div class="band warn">${ico("alert","i")}<span><b>${esc(i.returnNote.by)} at ${mil(i.returnNote.t)}:</b> ${esc(i.returnNote.text)}</span></div>`;
+ if(i.status==="pending")band=`<div class="band info">${ico("clock","i")}<span><b>${viewer.key==="supervisor"?"Waiting for your approval.":"Waiting for a TCR Supervisor."}</b> Submitted by ${esc(i.subm.by)} at ${mil(i.subm.t)} as ${i.cls}.${viewer.key==="supervisor"?"":" The record cannot be edited until the supervisor decides."}</span></div>`;
+ let fin;
+ if(isDone(i))fin=`<div class="locked">${ico("lock","i")}<span>Finalized as <b>${i.cls}</b> by ${esc(i.fin.by)} at <span class="mono">${mil(i.fin.t)}</span>. Later changes need a TCR Supervisor and are logged.</span></div>${viewer.key==="supervisor"?`<div class="row-btns" style="margin-top:14px"><button class="btn btn-outline" id="corrBtn">Request correction</button></div>`:""}`;
+ else if(i.status==="pending")fin=`<div class="label">Classification submitted</div><div class="v" style="margin:4px 0 14px;color:var(--ink-2)"><b>${i.cls}</b><div class="sub">${CLASSES[i.cls]}</div></div>${viewer.key==="supervisor"?`<div class="row-btns"><button class="btn btn-primary" id="appBtn">Approve and finalize</button><button class="btn btn-outline" id="retBtn">Return to specialist</button></div>`:`<div class="hint">Only a TCR Supervisor can approve a road crash.</div>`}`;
+ else if(edit)fin=`<div id="clsBox"></div><div id="readyBox" style="margin-top:20px"></div>`;
+ else fin=`<div class="hint">Your access level can view this record only.</div>`;
+ $("incBody").innerHTML=`${band}
+ <div class="card"><div id="stepBox"></div></div>
+ <div class="card">
+  <div class="inc-h"><span class="mono">${i.id}</span>${badge(i)}</div>
+  <div class="sub">Logged by ${esc(i.by)} on ${ymd(i.t)} at <span class="mono">${mil(i.t)}</span>${isDone(i)?"":` · open for <b class="age" data-age="${i.t.getTime()}">${fmtAge(ageMin(i))}</b>`}</div>
+  <div class="kv">
+   <div><span class="label">Section</span><div class="v">${esc(i.sec)}</div></div>
+   <div><span class="label">Direction</span><div class="v">${esc(i.dir)}</div></div>
+   <div><span class="label">Km post</span><div class="v mono">km ${i.km}</div><div class="sub">${loopTxt(i.km)}</div></div>
+   <div><span class="label">Type</span><div class="v">${esc(i.type)}</div><div class="sub">${esc(i.sub)}</div></div>
+   <div><span class="label">Location</span><div class="v">${esc(i.loc)}</div></div>
+   <div><span class="label">Detected by · weather</span><div class="v">${esc(i.det)} · ${esc(i.wx)}</div></div>
+  </div>
+ </div>
+ <div class="card">
+  <div class="card-h"><h3>Photos and video</h3><span class="sub">${i.media.length} file${i.media.length===1?"":"s"}</span></div>
+  ${i.media.length?`<div class="media">${i.media.map(m=>`<div class="thumb"><div class="ph">${ico("camera","i")}</div><div class="cap">${esc(m)}</div></div>`).join("")}</div>`:`<div class="sub">No media attached by the crew.</div>`}
+ </div>
+ <div class="card" id="sec-responders">
+  <div class="card-h"><h3>Responders</h3>${edit?`<div class="toolbar"><select id="rUnit" aria-label="Responder unit" style="width:auto">${UNITS.map(u=>`<option>${u}</option>`).join("")}</select><button class="btn btn-outline btn-sm" id="rSend">Dispatch</button></div>`:""}</div>
+  <div class="tbl"><table><thead><tr><th>Unit</th><th>Dispatched</th><th>Arrived</th><th>Cleared</th><th>Response time</th><th>Service time</th><th></th></tr></thead><tbody>${respRows||`<tr><td colspan="7" class="sub">No responders dispatched yet.</td></tr>`}</tbody></table></div>
+  <div class="hint">Response and service times are worked out automatically from the times you press the buttons.</div>
+ </div>
+ <div class="card" id="sec-vehicles">
+  <div class="card-h"><h3>Vehicles involved</h3>${edit?`<button class="btn btn-outline btn-sm" id="vToggle">Add vehicle</button>`:""}</div>
+  <div class="tbl"><table><thead><tr><th>Class</th><th>Make and model</th><th>Plate</th></tr></thead><tbody>${i.vehicles.length?i.vehicles.map(v=>`<tr><td>${v.cls}</td><td>${esc(v.make)}</td><td class="mono">${esc(v.plate)}</td></tr>`).join(""):`<tr><td colspan="3" class="sub">No vehicles recorded yet.</td></tr>`}</tbody></table></div>
+  <form class="inline-form" id="vForm" hidden novalidate>
+   <div><label for="vCls">Class</label><select id="vCls"><option>Class 1</option><option>Class 2</option><option>Class 3</option></select></div>
+   <div><label for="vMake">Make and model <span class="req">*</span></label><input id="vMake" placeholder="Honda City"></div>
+   <div><label for="vPlate">Plate <span class="req">*</span></label><input id="vPlate" placeholder="NAB 1234"></div>
+   <button class="btn btn-primary" type="submit">Save vehicle</button>
+   <div class="err" id="vErr" hidden style="grid-column:1/-1">Enter the make and the plate.</div>
+  </form>
+ </div>
+ <div class="card" id="sec-people">
+  <div class="card-h"><h3>Injured, fatality and medical</h3>${edit?`<button class="btn btn-outline btn-sm" id="hToggle">Add person</button>`:""}</div>
+  <div class="tbl"><table><thead><tr><th>Name</th><th>Person involved</th><th>Extent</th></tr></thead><tbody>${i.people.length?i.people.map(p=>`<tr><td>${esc(p.name)}</td><td>${p.role}</td><td>${p.ext}</td></tr>`).join(""):`<tr><td colspan="3" class="sub">${i.noPeople?"Confirmed: no injured, fatality or medical case.":"No injured, fatality or medical case recorded."}</td></tr>`}</tbody></table></div>
+  ${edit&&!i.people.length&&isCrash(i)?`<label class="chk" style="margin-top:12px"><input type="checkbox" id="noPpl" ${i.noPeople?"checked":""}><span>Confirm: no injured, fatality or medical case</span></label>`:""}
+  <form class="inline-form" id="hForm" hidden novalidate>
+   <div><label for="hName">Name <span class="req">*</span></label><input id="hName" placeholder="Full name"></div>
+   <div><label for="hRole">Person involved</label><select id="hRole"><option>Driver</option><option>Passenger</option><option>Pedestrian</option></select></div>
+   <div><label for="hExt">Extent</label><select id="hExt"><option>Minor</option><option>Severe</option><option>Fatality</option></select></div>
+   <button class="btn btn-primary" type="submit">Save person</button>
+   <div class="err" id="hErr" hidden style="grid-column:1/-1">Enter the person's name.</div>
+  </form>
+ </div>
+ <div class="card">
+   <h3 style="margin-bottom:14px">Edit history</h3>
+   <ul class="history">${i.log.map(l=>`<li><span class="mono">${mil(l.t)}</span><span>${esc(l.what)}<div class="who">${esc(l.who)}</div></span></li>`).join("")}</ul>
+ </div>
+ <div class="card" id="sec-finalize">
+  <h3 style="margin-bottom:14px">${isDone(i)?"Finalized":"Finalize"}</h3>
+  ${fin}
+ </div>`;
+ renderStepper(i);
+ if(edit){
+  $("clsBox").innerHTML=`<div class="cls" role="radiogroup" aria-label="Classification">${Object.keys(CLASSES).map(k=>`<label class="opt"><input type="radio" name="cls" value="${k}" ${i.pick===k?"checked":""}><span class="t">${k}</span>${CLASSES[k]}</label>`).join("")}</div><div class="hint">Minimum for this record under the TOR: <b>${minClass(i)}</b>.</div>`;
+  document.querySelectorAll('input[name="cls"]').forEach(r=>r.addEventListener("change",()=>{i.pick=r.value;renderReady(i);renderStepper(i)}));
+  renderReady(i);
+ }
+ const tog=(btn,form,first)=>{$(btn)&&$(btn).addEventListener("click",()=>{$(form).hidden=!$(form).hidden;if(!$(form).hidden)$(first).focus()})};
+ tog("vToggle","vForm","vMake");tog("hToggle","hForm","hName");
+ $("vForm").addEventListener("submit",e=>{e.preventDefault();const mk=$("vMake").value.trim(),pl=$("vPlate").value.trim().toUpperCase();
+  if(!mk||!pl){$("vErr").hidden=false;$("vMake").setAttribute("aria-invalid",String(!mk));$("vPlate").setAttribute("aria-invalid",String(!pl));return}
+  i.vehicles.push({cls:$("vCls").value,make:mk,plate:pl});logI(i,`Added vehicle ${pl}`);renderIncident();toast("Vehicle saved.")});
+ $("hForm").addEventListener("submit",e=>{e.preventDefault();const nm=$("hName").value.trim();
+  if(!nm){$("hErr").hidden=false;$("hName").setAttribute("aria-invalid","true");return}
+  i.people.push({name:nm,role:$("hRole").value,ext:$("hExt").value});logI(i,`Added ${$("hRole").value.toLowerCase()} (${$("hExt").value.toLowerCase()})`);renderIncident();toast("Person saved.")});
+ $("noPpl")&&$("noPpl").addEventListener("change",()=>{i.noPeople=$("noPpl").checked;if(i.noPeople)logI(i,"Confirmed no injured, fatality or medical case");renderReady(i);renderStepper(i)});
+ $("rSend")&&$("rSend").addEventListener("click",()=>{const u=$("rUnit").value;i.resp.push({unit:u,d:new Date(),a:null,c:null});logI(i,`Dispatched ${u}`);renderIncident();toast(`${u} dispatched.`)});
+ document.querySelectorAll("[data-arr]").forEach(b=>b.addEventListener("click",()=>{const r=i.resp[+b.dataset.arr];r.a=new Date();logI(i,`${r.unit} arrived on scene`);renderIncident();toast(`${r.unit} marked arrived.`)}));
+ document.querySelectorAll("[data-clr]").forEach(b=>b.addEventListener("click",()=>{const r=i.resp[+b.dataset.clr];r.c=new Date();logI(i,`${r.unit} cleared the scene`);renderIncident();toast(`${r.unit} marked cleared.`)}));
+ $("appBtn")&&$("appBtn").addEventListener("click",()=>startApprove(i));
+ $("retBtn")&&$("retBtn").addEventListener("click",()=>startReturn(i));
+ $("corrBtn")&&$("corrBtn").addEventListener("click",()=>startCorrection(i));
+}
+
+/* reports */
+opts($("rType"),["All types",...Object.keys(TYPES)]);opts($("rSec"),["All sections",...Object.keys(SECTIONS)]);
+["rType","rSec","rFrom","rTo"].forEach(id=>$(id).addEventListener("change",renderCount));
+function renderCount(){const t=$("rType").value,s=$("rSec").value;
+ const n=incidents.filter(i=>(t==="All types"||i.type===t)&&(s==="All sections"||i.sec===s)).length;
+ $("rCount").textContent=`${n} incident${n===1?"":"s"} match these filters.`}
+document.querySelectorAll("[data-export]").forEach(b=>b.addEventListener("click",()=>{if(b.disabled)return;const lbl=b.innerHTML;b.disabled=true;b.innerHTML=`${ico("loader","i sm spin")}Preparing…`;
+ setTimeout(()=>{b.disabled=false;b.innerHTML=lbl;toast(`${b.dataset.export} report prepared. Downloads are turned off in this preview.`)},700)}));
+const HEAT=[[1,0,2,3,2,4,3,1],[0,1,3,5,4,6,4,2],[1,1,2,4,3,5,6,2],[2,0,3,4,5,4,3,1],[1,2,4,6,5,7,6,3],[3,2,3,5,4,6,7,4],[2,1,2,3,3,4,5,3]];
+const CREWS=["Post 3 · J. Santos","Post 2 · M. Reyes","Post 5 · R. Dela Cruz","Post 7 · A. Lim"];
+opts($("crew"),CREWS);$("crew").addEventListener("change",renderShift);
+function renderReports(){
+ const days=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],hrs=["0000","0300","0600","0900","1200","1500","1800","2100"];
+ let h=`<span></span>`+hrs.map(x=>`<span class="h">${x}</span>`).join("");
+ HEAT.forEach((row,d)=>{h+=`<span class="r">${days[d]}</span>`+row.map((v,x)=>`<span class="cell" title="${days[d]} ${hrs[x]}: ${v} incidents" style="background:color-mix(in srgb,#1d4ed8 ${6+v*13}%,#eff6ff);color:${v>=4?"#fff":"#1e293b"}">${v}</span>`).join("")});
+ $("heat").innerHTML=h;renderCount();renderShift();
+}
+function renderShift(){const who=$("crew").value,list=incidents.filter(i=>i.by===who);
+ $("shift").innerHTML=list.length?list.map(i=>`<tr><td class="mono">${mil(i.t)}</td><td class="mono">${i.id}</td><td><span class="mono">km ${i.km}</span> · ${esc(i.dir)}</td><td>${esc(i.type)}</td></tr>`).join("")
+  :`<tr><td colspan="4"><div class="empty">${ico("file","i")}<b style="color:var(--ink-2)">No incidents this shift</b><span>This crew has not attended any incident yet.</span></div></td></tr>`}
+
+/* access */
+function renderRoles(){const Y=`<span class="yes" aria-label="Yes">${ico("check","i")}</span>`,N=`<span class="no" aria-label="No">${ico("minus","i")}</span>`;
+ const R=[["Field Personnel","Basic details only",Y,"Basic details",N,N,N,N,N],["TCR Specialist","Completes details; finalizes breakdowns and other incidents; submits road crashes for approval",Y,Y,Y,N,N,N,N],["TCR Supervisor / Manager","Approves and finalizes road crashes; finalizes all other incidents; approves later corrections",Y,Y,Y,Y,Y,N,N],["Data Analyst","Generates reports",N,N,N,N,Y,N,N],["Investigator","Views and downloads media",N,"View only",N,N,N,Y,N],["Administrator","Manages users and system settings",N,N,N,N,Y,N,Y]];
+ $("roles").innerHTML=R.map(r=>`<tr><td><b style="color:var(--ink)">${r[0]}</b><div class="sub">${r[1]}</div></td>${r.slice(2).map(c=>`<td class="c">${c.startsWith("<")?c:`<span class="sub">${c}</span>`}</td>`).join("")}</tr>`).join("")}
+
+/* start */
+updateCount();
+go((location.hash||"").replace("#",""));
+</script>
