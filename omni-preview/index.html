@@ -320,6 +320,34 @@ fieldset.chks legend{font-size:13px;font-weight:600;color:var(--ink);padding:0 6
 .signin-or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12.5px;margin:20px 0}
 .signin-or::before,.signin-or::after{content:"";flex:1;border-top:1px solid var(--line)}
 
+/* ---- v9: offline save, patrol updates, NLEX shift report, NLEX access list ---- */
+.new-tag{display:inline-block;margin-left:6px;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--primary);background:var(--primary-50);border:1px solid #93c5fd;border-radius:999px;padding:0 6px;vertical-align:1px}
+.sim{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:8px 16px;background:var(--surface-2);border-bottom:1px solid var(--line)}
+.sim .chk{font-size:13px}
+.netbar{display:flex;align-items:center;gap:8px;padding:8px 16px;font-size:13px;font-weight:600;color:var(--warn);background:var(--warn-bg);border-bottom:1px solid #fcd34d}
+.netbar.is-send{color:var(--primary);background:var(--primary-50);border-color:#93c5fd}
+.mine{border-top:1px solid var(--line);padding:14px 16px 16px;display:flex;flex-direction:column;gap:10px}
+.mine-h{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mine ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.mine li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:13px;color:var(--ink-2)}
+.mine li.wait{background:var(--warn-bg);border-color:#fcd34d}
+.mine li.none{display:flex;gap:8px;color:var(--muted);border-style:dashed}
+.endshift{border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.endshift summary{cursor:pointer;font-weight:600;color:var(--ink-2);font-size:13.5px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.endshift[open] summary{margin-bottom:10px}
+.eform{display:flex;flex-direction:column;gap:8px;padding:10px 0;border-top:1px solid var(--line)}
+.sheet-h{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:18px}
+.sf{border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0}
+.sf .v{color:var(--ink-2);font-weight:500;margin-top:2px}
+.sheet-t{margin:18px 0 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+table.sheet{font-size:13px}
+table.sheet th{white-space:normal;font-size:11px;padding:8px}
+table.sheet td{padding:8px}
+table.sheet.wide{min-width:1120px}
+.signbox{border:1px dashed var(--line-strong);border-radius:10px;padding:14px;color:var(--ink-2);font-weight:500}
+.xm{font-weight:700;color:var(--ink)}
+.phone-done .ok-c.wait{background:var(--warn-bg);color:var(--warn);border-color:#fcd34d}
+
 /* responsive shell */
 @media (max-width:767px){
   .side{transform:translateX(-100%);transition:transform .2s ease-out;box-shadow:none}
@@ -406,6 +434,11 @@ tr.r-alarm .sub,tr.r-pend .sub{color:#475569}
               <label for="lPost">Patrol post <span class="req">*</span></label>
               <select id="lPost"></select>
             </div>
+            <div>
+              <label for="lShift">Shift <span class="req">*</span></label>
+              <select id="lShift"><option>1</option><option>2</option><option>3</option></select>
+              <div class="hint">As on NLEX's patrol crew shift report (shift 1, 2 or 3).</div>
+            </div>
             <fieldset class="chks" id="lCrew" aria-describedby="lCrewErr"><legend>Crew on board <span class="req">*</span></legend></fieldset>
             <div class="err" id="lCrewErr" hidden>Tick at least one crew member who is on board.</div>
             <div>
@@ -434,10 +467,12 @@ tr.r-alarm .sub,tr.r-pend .sub{color:#475569}
 
     <!-- PATROL -->
     <section id="v-patrol" class="view">
-      <p class="lede">The patrol crew logs the incident on the road. The phone suggests the section, direction and km post from GPS; the crew checks the km post sign and taps Correct, or types it. The loop fills in by itself from NLEX's own loop table.</p>
+      <p class="lede">The patrol crew logs the incident on the road. The phone suggests the section, direction and km post from GPS; the crew checks the km post sign and taps Correct, or types it. The loop fills in by itself from NLEX's own loop table. With no signal, the report is saved on the phone and sends by itself later. The crew can add photos or a short update to its open incidents.</p>
       <div class="cols">
         <div class="phone" aria-label="Patrol app on a phone">
           <div class="phone-top"><b id="pHead">Post 3 · J. Santos</b><span class="mono" id="clock">0000H</span></div>
+          <div class="sim"><label class="chk inline"><input type="checkbox" id="pNoSig"><span>Simulate: no signal</span></label><span class="badge b-gray">Preview simulation</span></div>
+          <div class="netbar" id="pNet" hidden aria-live="polite"><svg class="i sm"><use href="#i-clock"/></svg><span id="pNetTxt"></span></div>
           <form class="phone-body" id="pForm" novalidate>
             <div class="gps" id="pGps">
               <div class="gps-h"><span class="label">Location from GPS</span><span class="badge b-gray">Sample location (preview)</span></div>
@@ -476,6 +511,7 @@ tr.r-alarm .sub,tr.r-pend .sub{color:#475569}
               <label for="pSub">Subtype</label>
               <select id="pSub" disabled><option>Choose the type first</option></select>
             </div>
+            <div id="pExtras" style="display:contents"></div>
             <div class="grid-f">
               <div><label for="pLoc">Location</label><select id="pLoc"></select></div>
               <div><label for="pSloc">Sublocation</label><select id="pSloc"></select></div>
@@ -492,11 +528,63 @@ tr.r-alarm .sub,tr.r-pend .sub{color:#475569}
             <button class="btn btn-primary" type="submit" id="pSend">Send to TCR</button>
           </form>
           <div class="phone-done" id="pDone" hidden>
-            <div class="ok-c"><svg class="i"><use href="#i-check"/></svg></div>
-            <div class="big">Sent to TCR</div>
+            <div class="ok-c" id="pDoneIco"><svg class="i"><use href="#i-check"/></svg></div>
+            <div class="big" id="pDoneBig">Sent to TCR</div>
             <div class="mono big" id="pDoneId"></div>
-            <p style="margin:0">TCR has it on the live board. The time and your ID are stamped on the record.</p>
+            <p style="margin:0" id="pDoneTxt">TCR has it on the live board. The time and your ID are stamped on the record.</p>
             <button class="btn btn-primary" type="button" id="pAgain">Log another incident</button>
+          </div>
+          <form class="phone-body" id="pUpd" hidden novalidate>
+            <div>
+              <div class="label">Update to</div>
+              <div class="mono big" id="pUpdId" style="font-size:18px;font-weight:600;color:var(--ink)"></div>
+              <div class="sub" id="pUpdSub"></div>
+            </div>
+            <div>
+              <label for="pUpdNote">Update note</label>
+              <div class="seg" id="pQuick" role="group" aria-label="Quick notes" style="margin-bottom:8px"><button type="button" data-q="Lane cleared">Lane cleared</button><button type="button" data-q="Waiting for tow">Waiting for tow</button></div>
+              <textarea id="pUpdNote" rows="3" placeholder="For example: one lane open, tow truck on the way." aria-describedby="pUpdErr"></textarea>
+            </div>
+            <div>
+              <label for="pUpdMedia">Add photos or video</label>
+              <input id="pUpdMedia" type="file" accept="image/*,video/*" multiple>
+              <div class="hint" id="pUpdHint">Optional.</div>
+            </div>
+            <div class="err" id="pUpdErr" hidden>Write a short update or add a photo.</div>
+            <div class="hint" style="margin:0">Only TCR can finalize the incident or change its classification.</div>
+            <div class="row-btns"><button class="btn btn-primary" type="submit" id="pUpdSend">Send update</button><button class="btn btn-outline" type="button" id="pUpdBack">Back</button></div>
+          </form>
+          <div class="mine" id="pMineBox">
+            <div class="mine-h"><h2 class="h3">My open incidents</h2><span class="sub" id="pMineN"></span></div>
+            <ul id="pMine"></ul>
+            <details class="endshift" id="pEnd">
+              <summary>Before sign-out <span class="badge b-gray">Entered by crew</span></summary>
+              <div class="hint" style="margin:0 0 4px">For NLEX's patrol crew shift report. Incidents fill the report by themselves.</div>
+              <form class="eform" id="eStat" novalidate>
+                <div class="label">Stationary</div>
+                <div><label for="eStatLoc">Location <span class="req">*</span></label><input id="eStatLoc" placeholder="e.g. Bocaue Toll Plaza"></div>
+                <div class="grid-f"><div><label for="eStatS">Start <span class="req">*</span></label><input id="eStatS" type="time"></div><div><label for="eStatE">End</label><input id="eStatE" type="time"></div></div>
+                <div class="err" id="eStatErr" hidden>Enter the location and the start time.</div>
+                <div><button class="btn btn-outline btn-sm" type="submit">Add stationary</button></div>
+              </form>
+              <form class="eform" id="eOdo" novalidate>
+                <div class="label">Odometer</div>
+                <div class="grid-f"><div><label for="eOdoW">In or out</label><select id="eOdoW"><option>In</option><option>Out</option></select></div><div><label for="eOdoT">Time <span class="req">*</span></label><input id="eOdoT" type="time"></div></div>
+                <div class="grid-f"><div><label for="eOdoR">Odo reading <span class="req">*</span></label><input id="eOdoR" inputmode="numeric" placeholder="e.g. 48210"></div><div><label for="eOdoBy">Checked by</label><input id="eOdoBy" placeholder="Name"></div></div>
+                <div class="err" id="eOdoErr" hidden>Enter the time and the odometer reading.</div>
+                <div><button class="btn btn-outline btn-sm" type="submit">Save odometer</button></div>
+              </form>
+              <form class="eform" id="eAppr" novalidate>
+                <div class="label">Apprehension</div>
+                <div class="grid-f"><div><label for="eApT">Time</label><input id="eApT" type="time"></div><div><label for="eApRef">Ref no.</label><input id="eApRef"></div></div>
+                <div class="grid-f"><div><label for="eApPlate">Plate no. <span class="req">*</span></label><input id="eApPlate" placeholder="e.g. NAB 1234"></div><div><label for="eApVt">Vehicle type</label><input id="eApVt" placeholder="e.g. Class 1"></div></div>
+                <div class="grid-f"><div><label for="eApSex">Gender</label><select id="eApSex"><option value="">—</option><option>M</option><option>F</option></select></div><div><label for="eApLoc">Location</label><input id="eApLoc" placeholder="e.g. km 23+400 SB"></div></div>
+                <div><label for="eApAct">Action taken <span class="req">*</span></label><select id="eApAct"><option value="">Choose</option><option>Issued TOP</option><option>Verbal warning</option></select></div>
+                <div><label for="eApRem">Remarks</label><input id="eApRem" placeholder="State the reason if verbal warning"></div>
+                <div class="err" id="eApErr" hidden></div>
+                <div><button class="btn btn-outline btn-sm" type="submit">Add apprehension</button></div>
+              </form>
+            </details>
           </div>
         </div>
         <div class="card">
@@ -506,6 +594,7 @@ tr.r-alarm .sub,tr.r-pend .sub{color:#475569}
             <li><span class="n">2</span><span><b>Time and person are stamped</b>Date and military time, the crew member's ID, and whether the km post came from GPS or was typed.</span></li>
             <li><span class="n">3</span><span><b>TCR sees it at once</b>It lands on the live board and on the km-post strip for that section.</span></li>
             <li><span class="n">4</span><span><b>Nothing is forgotten</b>If it is still open after 2 hours, TCR gets an alarm.</span></li>
+            <li><span class="n">5</span><span><b>No signal is not a problem</b>The report is saved on the phone and sends by itself when the signal is back, with the time it was logged. Our answer to "poor connectivity", a patrol concern in NLEX's requirements.</span></li>
           </ol>
         </div>
       </div>
@@ -515,13 +604,14 @@ tr.r-alarm .sub,tr.r-pend .sub{color:#475569}
     <!-- BOARD -->
     <section id="v-board" class="view" hidden>
       <p class="lede">What needs a person comes first. Red means open for more than 2 hours. Blue means a TCR Supervisor must approve. Amber is open and on track.</p>
+      <p class="hint" style="margin:-10px 0 18px;max-width:80ch">From NLEX's event flow: Field Personnel create the incidents they catch directly on patrol. TCR Personnel create the ones spotted on CCTV or reported through the hotline, dispatch resources in the field, and update and complete the event form. TCR Specialists finalize all incident types except road crashes and major incidents; TCR Supervisors finalize all types.</p>
       <div class="alarm" id="alarm" hidden role="alert"></div>
       <div class="card">
         <div class="card-h">
           <h2>Incidents</h2>
           <div class="toolbar">
             <button class="btn btn-primary btn-sm" type="button" id="logBtn"><svg class="i sm"><use href="#i-plus"/></svg>Log incident</button>
-            <div class="search"><svg class="i sm"><use href="#i-search"/></svg><input id="q" placeholder="Search number, plate, km or type" aria-label="Search incidents"></div>
+            <div class="search"><svg class="i sm"><use href="#i-search"/></svg><input id="q" placeholder="Search any detail: number, plate, name, km, place" aria-label="Search incidents by any detail on the incident form"></div>
           </div>
         </div>
         <div class="chips" id="chips" role="group" aria-label="Filter incidents"></div>
@@ -551,14 +641,14 @@ tr.r-alarm .sub,tr.r-pend .sub{color:#475569}
 
     <!-- INCIDENT -->
     <section id="v-incident" class="view" hidden>
-      <p class="lede">Complete the record, send responders, then confirm before it is final. Road crashes are approved by a TCR Supervisor. Every change is saved with the time and the person's name.</p>
+      <p class="lede">Complete the record, send responders, then confirm before it is final. Road crashes and major incidents are approved by a TCR Supervisor. Every change is saved with the time and the person's name.</p>
       <div id="incBody"></div>
       <div class="next"><button data-go="access">Next: Users &amp; access <svg class="i sm"><use href="#i-arrow"/></svg></button></div>
     </section>
 
     <!-- REPORTS -->
     <section id="v-reports" class="view" hidden>
-      <p class="lede">Filter any period and export it to Excel, CSV or PDF. The heat maps show when and where incidents happen, and the end-of-shift report lists what each patrol crew attended and the credit points they earned.</p>
+      <p class="lede">Filter any period and export it to Excel, CSV or PDF. The heat maps show when and where incidents happen, and the patrol crew shift report follows NLEX's own paper form: it fills itself from the incidents, and the crew adds the few entries only they know.</p>
       <div class="card">
         <div class="grid-f" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr))">
           <div><label for="rFrom">From</label><input id="rFrom" type="date" value="2026-11-08"></div>
@@ -591,18 +681,39 @@ tr.r-alarm .sub,tr.r-pend .sub{color:#475569}
         </div>
       </div>
       <div class="card" style="margin-top:16px">
-        <div class="card-h"><h2>End-of-shift report</h2><select id="crew" aria-label="Patrol post" style="width:auto"></select></div>
-        <div class="crewline" id="crewLine"></div>
-        <div class="cols-2">
-          <div class="tbl" style="margin:0;padding:0"><table>
-            <thead><tr><th>Time</th><th>Incident no.</th><th>Km · direction</th><th>Type</th><th class="c">Points</th></tr></thead>
-            <tbody id="shift"></tbody>
-          </table></div>
-          <div class="tbl" style="margin:0;padding:0"><table>
-            <thead><tr><th>Crew member</th><th class="c">Incidents</th><th class="c">Credit points</th></tr></thead>
-            <tbody id="credit"></tbody>
-          </table></div>
+        <div class="card-h"><div><h2>Patrol crew shift report</h2><div class="sub">Laid out like NLEX's own form (TSO-F010). Intervention rows and the activity counts fill themselves from the incidents.</div></div><select id="crew" aria-label="Patrol post" style="width:auto"></select></div>
+        <div class="sheet-h" id="srHead"></div>
+        <h3 class="h3 sheet-t">Intervention details</h3>
+        <div class="tbl"><table class="sheet wide">
+          <thead><tr><th>SOE</th><th>EOE</th><th>Event type</th><th>Direction</th><th>Lane</th><th>Location</th><th>Vehicle make/type · plate no.</th><th>Remarks / action taken</th><th class="c">ERTS</th><th class="c">EMS</th><th class="c">INV</th><th>Events no.</th><th class="c">Responder 1st</th><th class="c">Back-up</th></tr></thead>
+          <tbody id="shift"></tbody>
+        </table></div>
+        <div class="hint">SOE: start of event · EOE: end of event · ERTS: emergency roadside towing services (NLEX form legend). Lane is on NLEX's form but not in the TOR incident fields: to align with NLEX.</div>
+        <div class="cols-2" style="margin-top:4px">
+          <div>
+            <h3 class="h3 sheet-t">Stationary <span class="badge b-gray">Entered by crew</span></h3>
+            <table class="sheet"><thead><tr><th>Location</th><th>Start</th><th>End</th></tr></thead><tbody id="srStat"></tbody></table>
+          </div>
+          <div>
+            <h3 class="h3 sheet-t">Summary of activities</h3>
+            <table class="sheet"><thead><tr><th>Activity</th><th class="c">Count</th></tr></thead><tbody id="srSum"></tbody></table>
+            <div class="hint">"—" means no matching incident type in NLEX's list yet: to align with NLEX.</div>
+          </div>
         </div>
+        <h3 class="h3 sheet-t">Checked by</h3>
+        <div class="signbox">Supervisor / Sector Head<div class="sub">Not checked yet</div></div>
+        <h3 class="h3 sheet-t" style="margin-top:24px">Page 2 · Odometer <span class="badge b-gray">Entered by crew</span></h3>
+        <table class="sheet"><thead><tr><th></th><th>Time</th><th>Odo reading</th><th>Checked by</th></tr></thead><tbody id="srOdo"></tbody></table>
+        <h3 class="h3 sheet-t">Apprehension details <span class="badge b-gray">Entered by crew</span></h3>
+        <div class="tbl"><table class="sheet">
+          <thead><tr><th>Time</th><th>Ref no.</th><th>Plate no.</th><th>Vehicle type</th><th>Gender</th><th>Location</th><th>Action taken</th><th>Remarks</th></tr></thead>
+          <tbody id="srAppr"></tbody>
+        </table></div>
+        <h3 class="h3 sheet-t" style="margin-top:24px">Credit points per crew member <span class="badge b-info">Proposed</span></h3>
+        <div class="tbl"><table>
+          <thead><tr><th>Crew member</th><th class="c">Incidents</th><th class="c">Credit points</th></tr></thead>
+          <tbody id="credit"></tbody>
+        </table></div>
         <div class="note-line" style="margin:16px 0 0"><svg class="i sm"><use href="#i-info"/></svg><span>Proposed scoring: road crash 3 points, breakdown or security 2, other incidents 1, credited to every crew member on board. NLEX sets the final scoring.</span></div>
         <div class="row-btns" style="margin-top:16px"><button class="btn btn-outline btn-sm" data-export="Shift report PDF"><svg class="i sm"><use href="#i-down"/></svg>Shift report (PDF)</button></div>
       </div>
@@ -611,12 +722,21 @@ tr.r-alarm .sub,tr.r-pend .sub{color:#475569}
 
     <!-- ACCESS -->
     <section id="v-access" class="view" hidden>
-      <p class="lede">Patrol posts sign in per shift with the crew on board; control-room staff sign in with their NLEX company account. The six access levels below come from the Terms of Reference.</p>
+      <p class="lede">Patrol posts sign in per shift with the crew on board; control-room staff sign in with their NLEX company account. The six access levels come from the Terms of Reference. NLEX's requirements document has a second list, shown below it.</p>
       <div class="note-line"><svg class="i sm"><use href="#i-info"/></svg><span>Proposed permissions, based on our reading of the Terms of Reference. To be confirmed with NLEX.</span></div>
       <div class="card">
+        <div class="card-h"><h2>TOR access levels</h2><span class="sub">Terms of Reference · proposed</span></div>
         <div class="tbl"><table>
-          <thead><tr><th>Access level</th><th class="c">Log incidents</th><th class="c">Complete details</th><th class="c">Finalize breakdowns</th><th class="c">Finalize road crashes</th><th class="c">Run reports</th><th class="c">Download media</th><th class="c">Manage users</th></tr></thead>
+          <thead><tr><th>Access level</th><th class="c">Log incidents</th><th class="c">Complete details</th><th class="c">Finalize breakdowns</th><th class="c">Finalize road crashes and major</th><th class="c">Run reports</th><th class="c">Download media</th><th class="c">Manage users</th></tr></thead>
           <tbody id="roles"></tbody>
+        </table></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h2>NLEX's user account access</h2><span class="sub">Requirements document, "User Account Access" table</span></div>
+        <div class="note-line"><svg class="i sm"><use href="#i-info"/></svg><span>NLEX's two lists differ: to align with NLEX.</span></div>
+        <div class="tbl"><table>
+          <thead><tr><th>User</th><th class="c">Field Data Collector</th><th class="c">Data Editor</th><th class="c">Viewing</th></tr></thead>
+          <tbody id="nlexAccess"></tbody>
         </table></div>
       </div>
       <div class="next"><button data-go="reports">Next: Reports <svg class="i sm"><use href="#i-arrow"/></svg></button></div>
@@ -637,38 +757,81 @@ const SECTIONS={
    "S (Subic side)":{min:87.82,max:151,loops:[[87.82,113.47,5],[113.47,151,6]]},
    "N (Tarlac side)":{min:87.82,max:122.25,loops:[[87.82,92.05,5],[92.05,122.25,7]]}}},
  "Segment 8.1":{min:17.9,max:20.4,dirs:["Eastbound","Westbound"],loops:[[17.9,20.4,1]]},
+ /* Segment 8.2 and SFEX are in the TOR section list (e.5.7) but not in the FRD km table: no km range, so the km check is off.
+    Directions not set by NLEX for these two: the TOR's NB/SB/EB/WB are offered. */
+ "Segment 8.2":{nokm:true,dirs:["Northbound","Southbound","Eastbound","Westbound"]},
  "Segment 9":{min:15.2,max:17.9,dirs:["Eastbound","Westbound"],loops:[[15.2,17.9,1]]},
  "Segment 10":{min:9.3,max:15.2,dirs:["Northbound","Southbound"],loops:[[9.3,15.2,1]]},
  "Harbor Link":{min:6.5,max:9.3,dirs:["Eastbound","Westbound"],loops:[[6.5,9.3,1]]},
  "Connector Road":{min:9.3,max:16.35,dirs:["Northbound","Southbound"],loops:[[9.3,16.35,1]]},
+ "SFEX":{nokm:true,dirs:["Northbound","Southbound","Eastbound","Westbound"]},
  "Tabang Spur":{min:32.482,max:33.098,dirs:["In-bound","Out-bound"],loops:[[32.482,33.098,2]]}
 };
 const rangeOf=(sec,zone)=>{const s=SECTIONS[sec];if(!s.zones)return s;if(zone&&s.zones[zone])return s.zones[zone];
  const z=Object.values(s.zones);return{min:Math.min(...z.map(x=>x.min)),max:Math.max(...z.map(x=>x.max)),loops:z[0].loops}};
 const chain=km=>{const m=Math.round(km*1000);return `${Math.floor(m/1000)}+${String(m%1000).padStart(3,"0")}`};
 const parseKm=x=>{x=String(x).trim();if(/^\d+\+\d{1,3}$/.test(x)){const[a,b]=x.split("+");return +a+(+b)/1000}return /^\d+(\.\d+)?$/.test(x)?parseFloat(x):NaN};
-const loopOf=(sec,km,zone)=>{const r=rangeOf(sec,zone),l=(r.loops||[]).find(x=>km>=x[0]&&km<=x[1]);return l?`Loop ${l[2]} (km ${chain(l[0])} to ${chain(l[1])})`:"Loop: outside the loop table"};
-/* incident types follow TOR IV.B.10(e)(17) */
+const NOKM_LOOP="Loop: km check off (no km range for this section in NLEX's table)";
+const loopOf=(sec,km,zone)=>{const r=rangeOf(sec,zone);if(r.nokm)return NOKM_LOOP;const l=(r.loops||[]).find(x=>km>=x[0]&&km<=x[1]);return l?`Loop ${l[2]} (km ${chain(l[0])} to ${chain(l[1])})`:"Loop: outside the loop table"};
+const loopLine=(sec,km,zone)=>rangeOf(sec,zone).nokm?NOKM_LOOP:loopOf(sec,km,zone)+", set from the km post";
+/* km check shared by the patrol app and the control-room dialog */
+const kmMsg=(sec,zone,raw,show)=>{const r=rangeOf(sec,zone),v=parseKm(raw);
+ if(raw==="")return show?"Enter the km post.":"";
+ if(r.nokm)return isNaN(v)?"Enter the km post as a number, for example 3.2 or 3+200.":"";
+ return(isNaN(v)||v<r.min||v>r.max)?`${sec}${zone?` zone ${zone}`:""} runs from km ${chain(r.min)} to km ${chain(r.max)}.`:""};
+/* incident types and categories follow the FRD table "Type of Incidents and Categories" (Annex B) */
 const TYPES={
- "Vehicle breakdown":["Engine","Fuel","Mechanical","Tire","Others"],
- "Road crash":["Angle Collision","Hit Objects on the Road","Hit Toll Plaza Equipment","Multiple Collision","Rear End Collision","Single Vehicle Road Crash","Side Swipe","Hit and Run","Hit Animal","Hit Pedestrian","Pedestrian/Passenger Fell On Moving Vehicle","Bridge Hit Incident","Others"],
- "Security":["Abandoned Vehicle","Damage To Property","Damage To Property Due To Vandals","Fence Breaching","Robbery/Holdup","RA2000","Stoning","Stray Animal","Strike","Theft","Others (Theft at TSFs)","Threats","Road Rage","Pedestrian","Under Capacity/Unauthorized Vehicle","Others"],
- "Other incidents":["Convoy","Counterflow","Fire","Vehicle On Fire","Force Majeure","Grass Fire","Hit By Foreign Object","Medical Case – Motorist/Pedestrian","Medical Case – NLEX Corp Personnel","TCG Hit","Traffic Build Up","Object On Carriageway","Gantry Hit","Others"]
+ "Vehicle Breakdown":["Engine","Fuel","Mechanical","Tire","Others (Specify – Manual Typing)"],
+ "Road Crash":["Angle Collision","Hit Objects on the Road","Hit Toll Plaza Equipment","Multiple Collision","Rear End Collision","Single Vehicle Road Crash","Side Swipe","Hit and Run","Hit Animal","Hit Pedestrian","Pedestrian/Passenger Fell On Moving Vehicle","Hit by Foreign Object","Vehicle Move Backward","Head-On Collision","Bridge Hit Incident","Others"],
+ /* RA2000 is not in the FRD Security list, but it is in TOR e.17.iii and on NLEX's own shift report sample (FRD p17, "Summary of activities"), so it stays */
+ "Security":["Abandoned Vehicle","Damage To Property","Damage To Property Due To Vandals","Fence Breaching","Others","Others (Theft at TSFs)","RA2000","Pedestrian","Robbery/Holdup","Stoning","Stray Animal","Strike","Theft","Threats","Road rage","Under Capacity/Unauthorized Vehicle"],
+ "Other Incidents":["Convoy","Counterflow","Fire","Vehicle On Fire","Force Majeure","Grass Fire","Hit By Foreign Object","Medical Case – Motorist/Pedestrian","Medical Case – NLEX Corp Personnel (Organic /Outsourced)","TCG Hit","Traffic Build Up","Object On Carriageway","Gantry Hit","Under Capacity Vehicles","Others"],
+ "Gantry Hit":[]
 };
-const MAINCAUSE=["Human Error","Vehicle Error","Road Error","Others"];
-const SUBCAUSE=["Blown Tire","Detachable Parts","Driver Fell Asleep","Environment","Insufficient Braking Distance","Mechanical","Miscalculation","Sudden Loss of Control","Unsafe Load","Others"];
+const NEWTYPE={"Gantry Hit":true}; /* FRD: "Gantry Hit* (New)" */
+/* Vehicle Breakdown level 3 (FRD) */
+const L3={
+ Engine:["Carburator","Engine","Engine Oil","Fan Belt","Fuel Filter","Fuel Line Hose","Fuel Pump","Fuel Strainer","Injection Pump","Overheat","Radiator Hose","Strainer","Timing Belt","Alternator"],
+ Fuel:["Out of Gasoline","Out of Diesel","Out of Charge (For EV Vehicles)","Others (Specify)"],
+ Mechanical:["Accelerator Cable","Axle","Ball Cross Joint","Bearing","Brake","Broken Rim","Clutch","Differential","Propeller","Shift Gear","Steering","Stud","Transmission"],
+ Tire:["Blown Tire","Detached Tire","Flat Tire","Peeled Off Tire"]
+};
+/* Road Crash main cause and its sub causes (FRD levels 3 and 4). "Environment" is in the TOR list but not in the FRD, so it is not offered. */
+const CAUSES={
+ "Human Error":["Driver Fell Asleep","Drunk Driving","Failure To Give Way","Insufficient Braking Distance","Miscalculation","Speeding","Pedestrian Along Carriageway","Sudden Lost Of Control","Unsafe Load","Distracted Driving"],
+ "Vehicle Error":["Blown Tire","Detachable Parts","Electrical","Flat Tire","Mechanical","Others (Specify – Manual Typing)"],
+ "Road Error":["Road/Equipment Condition"],
+ "Others (Specify – Manual Typing)":[]
+};
+const MAINCAUSE=Object.keys(CAUSES);
+const needSpec=v=>/Specify/.test(v||"");
+const causeOk=c=>!!c.main&&(CAUSES[c.main]&&CAUSES[c.main].length?!!c.sub:true)&&(!(needSpec(c.main)||needSpec(c.sub))||!!c.spec);
+const causeTxt=c=>c.main?`${c.main}${c.sub?` · ${c.sub}`:""}${c.spec?` · “${c.spec}”`:""}`:"";
+const typeLine=i=>[i.sub,i.l3,i.spec&&`“${i.spec}”`,i.tire&&(i.tire.brand||i.tire.size)&&`Tire: ${[i.tire.brand,i.tire.size].filter(Boolean).join(", ")}`].filter(Boolean).join(" · ");
+/* extra type fields (level 3, tire brand and size, "Specify") shared by the patrol app and the control-room dialog */
+function extrasHTML(p){return `<div id="${p}L3W" hidden><label for="${p}L3">Part or cause</label><select id="${p}L3"></select></div>
+ <div id="${p}TireW" class="grid-f" hidden><div><label for="${p}TireB">Tire brand</label><input id="${p}TireB" placeholder="e.g. Bridgestone"></div><div><label for="${p}TireS">Tire size</label><input id="${p}TireS" placeholder="e.g. 195/65 R15"></div></div>
+ <div id="${p}SpecW" hidden><label for="${p}Spec">Specify <span class="req">*</span></label><input id="${p}Spec" placeholder="Type what it was" aria-describedby="${p}SpecErr"><div class="err" id="${p}SpecErr" hidden>Type what it was.</div></div>`}
+function syncExtras(p,type,rebuild){const subOk=type&&TYPES[type]&&TYPES[type].length,sub=subOk?$(p+"Sub").value:"",l3=type==="Vehicle Breakdown"&&L3[sub];
+ if(rebuild){$(p+"L3").innerHTML=l3?`<option value="">Choose</option>`+l3.map(v=>`<option>${esc(v)}</option>`).join(""):"";$(p+"Spec").value="";$(p+"TireB").value="";$(p+"TireS").value=""}
+ $(p+"L3W").hidden=!l3;$(p+"TireW").hidden=!(type==="Vehicle Breakdown"&&sub==="Tire");
+ const sp=needSpec(sub)||(!!l3&&needSpec($(p+"L3").value));$(p+"SpecW").hidden=!sp;if(!sp)$(p+"SpecErr").hidden=true}
+function readExtras(p){const sp=!$(p+"SpecW").hidden;return{l3:$(p+"L3W").hidden?"":$(p+"L3").value,spec:sp?$(p+"Spec").value.trim():"",
+ tire:$(p+"TireW").hidden?null:{brand:$(p+"TireB").value.trim(),size:$(p+"TireS").value.trim()},specMissing:sp&&!$(p+"Spec").value.trim()}}
+/* everything on the incident form, for search (TOR q.3) */
+const hay=i=>JSON.stringify([i.id,i.sec,i.zone,chain(i.km),String(i.km),i.dir,i.loc,i.sloc,i.det,i.wx,i.type,i.sub,i.l3,i.spec,i.tire,i.dmg.yes===true?"damage to property":"",i.dmg.what,i.cause,i.cls,i.by,i.post,i.crew,i.media,i.vehicles,i.people,i.resp.map(r=>[r.unit,r.rem]),i.notes.map(n=>[n.who,n.text])]).toLowerCase();
 const LOCS=["Carriageway","Toll Plaza","Interchange","Intersection","TSF","Rest Bay","Facilities","AOVP","Customer Service (POS)","Exit","Others"];
 /* sublocations from the FRD table (name and km post) */
 const SUBLOC={
  NLEX:{
-  "Toll Plaza":["Balintawak Toll Barrier (11+890 NB)","Espana Toll Barrier (13+700)","Karuhatan Toll Plaza (14+500)","Valenzuela Toll Plaza (15+300)","Karuhatan Toll Barrier (15+300 EB)","Lawang Bato Toll Plaza NB Entry (17+300)","Mindanao Toll Barrier (20+000 WB)","Meycauayan Toll Plaza (20+128)","Marilao Toll Plaza (23+317)","CDV Toll Plaza (25+900)","Bocaue Toll Barrier (27+196)","Bocaue Toll Plaza (27+746)","Tambubong Toll Plaza (28+764)","Balagtas Toll Barrier (33+840)","Tabang Toll Barrier (36+600)","Sta Rita Toll Plaza (38+518)","Pulilan Toll Plaza (45+366)","San Simon Toll Plaza (56+960)","San Fernando Toll Plaza (65+836)","Mexico Toll Plaza (72+925)","Angeles Toll Plaza (81+342)","Dau Toll Plaza (83+353)","Sta Ines Toll Barrier (88+200)"],
-  "Interchange":["New Caloocan (9+300)","Balintawak Cloverleaf (9+560)","Harbor Link (13+565)","Karuhatan-Mc Arthur (14+654)","Valenzuela (15+392)","Meycauayan (20+128)","Mindanao (20+400)","Marilao (23+850)","CDV (26+100)","Bocaue (27+746)","Tambubong (28+764)","Burol (32+482)","Balagtas (33+360)","Santa Rita (38+518)","Pulilan (45+366)","San Simon (56+960)","San Fernando (65+840)","Mexico (72+873)","Angeles (81+304)","Dau (83+300)","Balem (85+560)","Sta Ines (88+652)"],
-  "Intersection":["Florentino (14+352)","España (14+527)","Magsaysay (16+350)"],
-  "TSF":["Drive and Dine (16+800 SB)","Petron Marilao (22+200 NB)","Petron Balagtas (30+200 SB)","Shell Burol (32+000 NB)","Shell of Asia (36+000 SB)","Petron Plaridel (42+000 NB)","Total San Simon (55+000 NB)","Mega Caltex (63+000 SB)","Petron Lakeshore (71+000 NB)","Shell Capaya (76+000 SB)","Shell Suclaban (77+000 NB)"],
+  "Toll Plaza":["Balintawak Toll Barrier (11+890 NB)","Mindanao Toll Barrier (20+000 WB)","Karuhatan Toll Barrier (15+300 EB)","Karuhatan Toll Plaza (14+500)","Espana Toll Barrier (13+700)","Espana Toll Plaza","Valenzuela Toll Plaza (15+300)","Lawang Bato Toll Plaza NB Entry (17+300)","Meycauayan Toll Plaza (20+128)","Marilao Toll Plaza (23+317)","CDV Toll Plaza (25+900)","Bocaue Toll Barrier (27+196)","Bocaue Toll Plaza (27+746)","Tambubong Toll Plaza (28+764)","Balagtas Toll Barrier (33+840)","Tabang Toll Barrier (36+600)","Sta Rita Toll Plaza (38+518)","Pulilan Toll Plaza (45+366)","San Simon Toll Plaza (56+960)","San Fernando Toll Plaza (65+836)","Mexico Toll Plaza (72+925)","Angeles Toll Plaza (81+342)","Dau Toll Plaza (83+353)","Sta Ines Toll Barrier (88+200)"],
+  "Interchange":["Balintawak Cloverleaf (9+560)","New Caloocan (9+300)","Harbor Link (13+565)","Valenzuela (15+392)","Meycauayan (20+128)","Marilao (23+850)","CDV (26+100)","Bocaue (27+746)","Tambubong (28+764)","Burol (32+482)","Balagtas (33+360)","Santa Rita (38+518)","Pulilan (45+366)","San Simon (56+960)","San Fernando (65+840)","Mexico (72+873)","Angeles (81+304)","Dau (83+300)","Balem (85+560)","Sta Ines (88+652)"],
+  "Intersection":["Karuhatan-Mc Arthur (14+654)","Mindanao (20+400)","Florentino (14+352)","España (14+527)","Magsaysay (16+350)"],
+  "TSF":["Drive and Dine (16+800 SB)","Petron Marilao (22+200 NB)","Petron Balagtas (30+200 SB)","Shell Burol (32+000 NB)","Shell of Asia (36+000 SB)","Petron Plaridel (42+000 NB)","Total San Simon (55+000 NB)","Mega Caltex (63+000 SB)","Petron Lakeshore (71+000 NB)","Shell Suclaban (77+000 NB)","Shell Capaya (76+000 SB)"],
   "Facilities":["OMC (12+000)","ODB (38+518)"],
   "AOVP":["Balintawak AOVP (12+000)","Bocaue AOVP (27+000)"],
   "Customer Service (POS)":["Balintawak POS (11+890 NB)","Valenzuela POS (15+300)","Tabang POS (36+600)","San Fernando POS (65+836)"],
-  "Exit":["Dagat-dagatan WB (8+500)","Libis Baesa SB (11+200)","Gen T De Leon Exit EB (16+500)","Parada Exit WB (16+800)","Lawang Bato NB (17+150)","Lingunan SB (17+200)","Libtong Exit NB (19+700)","F. Raymundo NB (21+000)","Pandayan SB (21+000)"]},
+  "Exit":["Lawang Bato NB (17+150 NB)","Libtong Exit NB (19+700 NB)","F. Raymundo NB (21+000 NB)","Libis Baesa SB (11+200 SB)","Lingunan SB (17+200 SB)","Pandayan SB (21+000 SB)","Dagat-dagatan WB (8+500 WB)","Parada Exit WB (16+800 WB)","Gen T DeLeon Exit EB (16+500 EB)"]},
  SCTEX:{
   "Toll Plaza":["Mabiga (88+000)","Clark South A & B (89+860 S)","Clark North (92+050 N)","Dolores (93+480 N)","Porac (99+894 S)","New Clark City (100+000 N)","Concepcion (103+800 N)","Florida (113+470 S)","San Miguel (117+742 N)","Tarlac (121+106 N)","Dinalupihan (132+047 S)","Tipo (143+931 S)"],
   "Interchange":["Mabiga (88+000)","Clark South A & B (89+860 S)","Clark North (92+050 N)","Dolores (93+480 N)","Porac (99+894 S)","New Clark City (100+000 N)","Concepcion (103+800 N)","Florida (113+470 S)","San Miguel (117+742 N)","CLLEX (122+250 N)","Dinalupihan (132+047 S)"],
@@ -683,15 +846,22 @@ const DENOM=["Private","Public utility","Government","Diplomatic","Others"];
 const LOADS=["None","Light","Heavy","Hazardous"];
 /* patrol posts and the crew on board (who gets credit) */
 const POSTS={"Post 2":["M. Reyes","D. Tan"],"Post 3":["J. Santos","P. Aquino","R. Flores"],"Post 4":["C. Ramos","L. Gomez"],"Post 5":["R. Dela Cruz","V. Ortiz"],"Post 7":["A. Lim","N. Castro"]};
-const POINTS={"Road crash":3,"Vehicle breakdown":2,"Security":2,"Other incidents":1};
-let shift={post:"Post 3",crew:[...POSTS["Post 3"]]};
+const POINTS={"Road Crash":3,"Vehicle Breakdown":2,"Security":2,"Other Incidents":1};
+let shift={post:"Post 3",crew:[...POSTS["Post 3"]],no:"1",t0:new Date(Date.now()-330*60000)};
+/* crew entries for NLEX's shift report (stationary, odometer, apprehensions): entered on the patrol app before sign-out */
+const SHIFTLOG={"Post 3":{stat:[{loc:"Balintawak Toll Barrier (11+890 NB)",s:"0700",e:"0745"}],odo:{In:{t:"0600",r:"48210",by:"R. Villanueva"}},appr:[]}};
+const slog=p=>SHIFTLOG[p]||(SHIFTLOG[p]={stat:[],odo:{},appr:[]});
 const postBy=p=>`${p} · ${POSTS[p][0]}`;
 const shiftBy=()=>`${shift.post} · ${shift.crew[0]}`;
+/* classification wording copied from TOR e.24 */
 const CLASSES={
- Minor:"Any incident not listed under Material or Major.",
- Material:"Damage to property, injury, an unsafe traffic situation, a motorist asking for help through the ECB, or vehicles queuing back from an off-ramp.",
- Major:"A road crash with a fatality, a vehicle on fire, force majeure, major pollution, a major safety hazard, or an unscheduled closure of the carriageway."
+ Minor:"Minor. Any incident not listed under Major or Material.",
+ Material:"Damage to Property, Damage to Property due to TCG Hit, Injury, Injury and Damage to Property, Injury and Unsafe Traffic Situation, Unsafe Traffic Situation, Motorist Requesting Assistance via ECB and Other Concern, Vehicle Queuing Back from Off Ramp.",
+ Major:"Road Crash Resulted to Fatality, Road Crash Resulted to Fatality and Damage To Property, Road Crash Resulted to Fatality and Injury, Road Crash Resulted to Fatality, Injury and Damage to Property, Vehicle on Fire, Force Majeure, Major Pollution, Major Safety Hazard, Unscheduled Closure of Carriageway."
 };
+/* TOR e.24 situations the record's own fields cannot show: TCR ticks them */
+const FLAGS={closure:["Major","Unscheduled Closure of Carriageway"],pollution:["Major","Major Pollution"],hazard:["Major","Major Safety Hazard"],
+ unsafe:["Material","Unsafe Traffic Situation"],ecb:["Material","Motorist Requesting Assistance via ECB and Other Concern"],queue:["Material","Vehicle Queuing Back from Off Ramp"]};
 const TCR="TCR Specialist · K. Garcia";
 const $=id=>document.getElementById(id);
 const opts=(el,arr)=>{el.innerHTML=arr.map(v=>`<option>${v}</option>`).join("")};
@@ -724,33 +894,34 @@ const canEdit=i=>i.status==="open"&&["specialist","supervisor"].includes(viewer.
 const V=(cls,make,plate,o={})=>Object.assign({cls,make,plate,year:"",dsex:"",denom:"Private",pax:"",owner:"",oaddr:"",load:"None",speed:"",belt:""},o);
 const P=(cat,name,role,o={})=>Object.assign({cat,name,role,addr:"",age:"",sex:"",contact:"",belt:"",ext:"",cc:"",endorsed:"",waiver:"",rem:"",decl:"",cod:""},o);
 let incidents=[
- {id:"OMNI-2026-000119",t:ago(185),sec:"NLEX Mainline",zone:"",km:21.4,dir:"Northbound",type:"Road crash",sub:"Rear End Collision",loc:"Carriageway",sloc:"",det:"CCTV",wx:"Fair",post:"Post 2",status:"open",media:["IMG_0412.jpg","IMG_0413.jpg"],
+ {id:"OMNI-2026-000119",t:ago(185),sec:"NLEX Mainline",zone:"",km:21.4,dir:"Northbound",type:"Road Crash",sub:"Rear End Collision",loc:"Carriageway",sloc:"",det:"CCTV",wx:"Fair",post:"Post 2",status:"open",media:["IMG_0412.jpg","IMG_0413.jpg"],
   vehicles:[V("Class 1","Toyota Vios","NAB 1234",{year:"2019",dsex:"Male",pax:"2",owner:"Ramon Aguilar",oaddr:"Valenzuela City",speed:"60",belt:"Yes"}),V("Class 2","Isuzu Elf","TRK 5521",{year:"2016",dsex:"Male",denom:"Public utility",pax:"1",owner:"JRL Trucking",oaddr:"Meycauayan, Bulacan",load:"Heavy",speed:"70",belt:"No"})],
   people:[P("Injured","Ramon Aguilar","Driver",{age:"41",sex:"Male",belt:"Yes",ext:"Minor",cc:"Pain on left wrist",endorsed:"No",waiver:"Yes"})],
   resp:[{unit:"Looping",d:ago(178),a:ago(172),c:null,x:null,rem:""},{unit:"Tow Truck",d:ago(170),a:ago(150),c:null,x:null,rem:""}],cls:null,log:[],
   cause:{main:"Human Error",sub:"Insufficient Braking Distance"},dmg:{yes:false,what:""},
   notes:[{t:ago(176),who:"Post 2 · M. Reyes",text:"Two lanes blocked northbound. Traffic building back to km 20."}]},
- {id:"OMNI-2026-000120",t:ago(95),sec:"NLEX Mainline",zone:"",km:33.2,dir:"Southbound",type:"Road crash",sub:"Side Swipe",loc:"Carriageway",sloc:"",det:"Direct",wx:"Fair",post:"Post 4",status:"pending",media:["IMG_0431.jpg"],
+ {id:"OMNI-2026-000120",t:ago(95),sec:"NLEX Mainline",zone:"",km:33.2,dir:"Southbound",type:"Road Crash",sub:"Side Swipe",loc:"Carriageway",sloc:"",det:"Direct",wx:"Fair",post:"Post 4",status:"pending",media:["IMG_0431.jpg"],
   vehicles:[V("Class 1","Honda Civic","DEF 4410",{year:"2021",dsex:"Female",pax:"1",speed:"80",belt:"Yes"}),V("Class 1","Suzuki Ertiga","GHI 2205",{year:"2020",dsex:"Male",pax:"4",speed:"75",belt:"Yes"})],
   people:[P("Injured","Maria Dela Cruz","Passenger",{age:"29",sex:"Female",belt:"Yes",ext:"Minor",cc:"Bruise on forehead",endorsed:"No",waiver:"Yes"})],
   resp:[{unit:"Looping",d:ago(90),a:ago(84),c:ago(60),x:null,rem:""},{unit:"Tow Truck",d:ago(88),a:ago(75),c:ago(55),x:null,rem:""}],cls:"Material",log:[],
   cause:{main:"Human Error",sub:"Miscalculation"},dmg:{yes:true,what:"Guardrail, about 4 m"},notes:[]},
- {id:"OMNI-2026-000121",t:ago(64),sec:"SCTEX Mainline",zone:"S (Subic side)",km:99.9,dir:"Subic Bound",type:"Vehicle breakdown",sub:"Tire",loc:"Interchange",sloc:"Porac (99+894 S)",det:"Hotline",wx:"Rainy",post:"Post 7",status:"open",media:[],
+ {id:"OMNI-2026-000121",t:ago(64),sec:"SCTEX Mainline",zone:"S (Subic side)",km:99.9,dir:"Subic Bound",type:"Vehicle Breakdown",sub:"Tire",l3:"Flat Tire",tire:{brand:"Bridgestone",size:"265/65 R17"},loc:"Interchange",sloc:"Porac (99+894 S)",det:"Hotline",wx:"Rainy",post:"Post 7",status:"open",media:[],
   vehicles:[V("Class 1","Mitsubishi Montero","ABC 7788",{year:"2018",dsex:"Male",pax:"3"})],people:[],
   resp:[{unit:"Looping",d:ago(60),a:ago(52),c:null,x:null,rem:""}],cls:null,log:[],cause:{main:"",sub:""},dmg:{yes:null,what:""},notes:[]},
  {id:"OMNI-2026-000122",t:ago(22),sec:"NLEX Mainline",zone:"",km:44.8,dir:"Southbound",type:"Security",sub:"Stray Animal",loc:"Carriageway",sloc:"",det:"Direct",wx:"Fair",post:"Post 3",status:"open",media:["IMG_0420.jpg"],
   vehicles:[],people:[],resp:[],cls:null,log:[],cause:{main:"",sub:""},dmg:{yes:null,what:""},notes:[]},
- {id:"OMNI-2026-000118",t:ago(300),sec:"NLEX Mainline",zone:"",km:67.0,dir:"Northbound",type:"Other incidents",sub:"Object On Carriageway",loc:"Carriageway",sloc:"",det:"CCTV",wx:"Fair",post:"Post 5",status:"final",media:[],
+ {id:"OMNI-2026-000118",t:ago(300),sec:"NLEX Mainline",zone:"",km:67.0,dir:"Northbound",type:"Other Incidents",sub:"Object On Carriageway",loc:"Carriageway",sloc:"",det:"CCTV",wx:"Fair",post:"Post 5",status:"final",media:[],
   vehicles:[],people:[],resp:[{unit:"Looping",d:ago(295),a:ago(285),c:ago(270),x:null,rem:"Tire tread removed from lane 2"}],cls:"Minor",log:[],cause:{main:"",sub:""},dmg:{yes:false,what:""},notes:[]}
 ];
 incidents.forEach(i=>{i.by=postBy(i.post);i.crew=[...POSTS[i.post]];i.noPeople=false;i.pick=null;i.fin=null;i.subm=null;i.returnNote=null;
+ i.l3=i.l3||"";i.spec=i.spec||"";i.tire=i.tire||null;i.flags={};i.cause.spec="";
  i.log.push({t:i.t,who:i.by,what:"Logged the incident"+(i.media.length?` with ${i.media.length} media file${i.media.length>1?"s":""}`:"")});
  i.resp.forEach(r=>{i.log.push({t:r.d,who:TCR,what:`Dispatched ${r.unit}`});if(r.a)i.log.push({t:r.a,who:TCR,what:`${r.unit} arrived on scene`});if(r.c)i.log.push({t:r.c,who:TCR,what:`${r.unit} cleared the scene`})});
  i.notes.forEach(n=>i.log.push({t:n.t,who:n.who,what:"Added a detail entry"}));
  const a0=i.resp.find(r=>r.a);let dtT=new Date((a0?a0.a:i.t).getTime()+5*60000);const nx=()=>(dtT=new Date(dtT.getTime()+2*60000));
  i.vehicles.forEach(v=>i.log.push({t:nx(),who:TCR,what:`Added vehicle ${v.plate}`}));
  i.people.forEach(p=>i.log.push({t:nx(),who:TCR,what:`Added ${p.cat.toLowerCase()} record: ${p.role.toLowerCase()}`}));
- if(i.type==="Road crash"&&i.cause.main)i.log.push({t:nx(),who:TCR,what:`Cause set to ${i.cause.main} / ${i.cause.sub}; damage to property: ${i.dmg.yes?i.dmg.what:"none"}`});
+ if(i.type==="Road Crash"&&i.cause.main)i.log.push({t:nx(),who:TCR,what:`Cause set to ${i.cause.main} / ${i.cause.sub}; damage to property: ${i.dmg.yes?i.dmg.what:"none"}`});
  if(i.status==="final"){i.fin={by:TCR,t:ago(268)};i.log.push({t:ago(268),who:TCR,what:"Finalized as Minor"})}
  if(i.status==="pending"){i.subm={by:TCR,t:ago(40)};i.log.push({t:ago(40),who:TCR,what:"Submitted as Material for supervisor approval"})}
  i.log.sort((a,b)=>a.t-b.t)});
@@ -759,20 +930,35 @@ incidents.forEach(i=>{i.by=postBy(i.post);i.crew=[...POSTS[i.post]];i.noPeople=f
 const isDone=i=>i.status==="final";
 const ageMin=i=>(Date.now()-i.t)/60000;
 const isAlarm=i=>!isDone(i)&&ageMin(i)>120;
-const isCrash=i=>i.type==="Road crash";
-const needsVeh=i=>isCrash(i)||i.type==="Vehicle breakdown";
+const isCrash=i=>i.type==="Road Crash";
+const needsVeh=i=>isCrash(i)||i.type==="Vehicle Breakdown";
 const RANK={Minor:0,Material:1,Major:2};
 const open=r=>!r.c&&!r.x;
-function minClass(i){if(isCrash(i)&&i.people.some(p=>p.cat==="Fatality"))return"Major";if(i.people.some(p=>p.cat!=="Fatality")||i.dmg.yes)return"Material";return"Minor"}
+/* NLEX event flow (FRD p9): the TCR Specialist finalizes all types except road crashes and major incidents; a TCR Supervisor finalizes all types */
+const needsApproval=(i,cls)=>isCrash(i)||(cls||i.pick||i.cls)==="Major"||minClass(i).cls==="Major";
+const submitsForApproval=(i,cls)=>viewer.key==="specialist"&&needsApproval(i,cls);
+/* lowest class the record allows under TOR e.24, with the TOR wording that applies. A medical case alone sets no minimum. */
+function minClass(i){
+ const f=i.flags||{},inj=i.people.some(p=>p.cat==="Injured"),dead=i.people.some(p=>p.cat==="Fatality"),dmg=i.dmg.yes===true;
+ if(isCrash(i)&&dead)return{cls:"Major",why:"Road Crash Resulted to Fatality"+(inj&&dmg?", Injury and Damage to Property":inj?" and Injury":dmg?" and Damage To Property":"")};
+ if(i.sub==="Vehicle On Fire")return{cls:"Major",why:"Vehicle on Fire"};
+ if(i.sub==="Force Majeure")return{cls:"Major",why:"Force Majeure"};
+ for(const k of["closure","pollution","hazard"])if(f[k])return{cls:"Major",why:FLAGS[k][1]};
+ if(inj)return{cls:"Material",why:dmg?"Injury and Damage to Property":f.unsafe?"Injury and Unsafe Traffic Situation":"Injury"};
+ if(i.sub==="TCG Hit")return{cls:"Material",why:"Damage to Property due to TCG Hit"};
+ if(dmg)return{cls:"Material",why:"Damage to Property"};
+ for(const k of["unsafe","ecb","queue"])if(f[k])return{cls:"Material",why:FLAGS[k][1]};
+ return{cls:"Minor",why:"Minor"};
+}
 function checks(i,chosen){
  const c=[],notClr=i.resp.filter(open);
  c.push({ok:notClr.length===0,label:"Every dispatched unit has cleared the scene or was cancelled",why:notClr.length?`${notClr.map(r=>r.unit).join(", ")} not cleared yet`:"",fix:"responders",go:"Responders"});
  if(needsVeh(i))c.push({ok:i.vehicles.length>0,label:"At least one vehicle is recorded",why:"no vehicle recorded yet",fix:"vehicles",go:"Vehicles"});
  if(isCrash(i))c.push({ok:i.people.length>0||i.noPeople,label:"Injured, fatality or medical case is recorded, or confirmed as none",why:"not recorded and not confirmed as none",fix:"people",go:"Injured"});
- if(isCrash(i))c.push({ok:!!(i.cause.main&&i.cause.sub),label:"Main cause and sub cause are recorded",why:"cause not recorded yet",fix:"cause",go:"Cause"});
+ if(isCrash(i))c.push({ok:causeOk(i.cause),label:"Main cause and sub cause are recorded",why:"cause not recorded yet",fix:"cause",go:"Cause"});
  if(isCrash(i))c.push({ok:i.dmg.yes!==null,label:"Damage to property is answered (yes or no)",why:"not answered yet",fix:"cause",go:"Damage"});
- const min=minClass(i);
- c.push({ok:!!chosen&&RANK[chosen]>=RANK[min],label:"A classification is chosen and meets the TOR minimum",why:!chosen?"choose a classification":`the TOR makes this at least ${min}`,fix:"finalize",go:"Classification"});
+ const m=minClass(i);
+ c.push({ok:!!chosen&&RANK[chosen]>=RANK[m.cls],label:"A classification is chosen and meets the TOR minimum",why:!chosen?"choose a classification":`the TOR makes this at least ${m.cls} (“${m.why}”)`,fix:"finalize",go:"Classification"});
  return c;
 }
 function nextStep(i){
@@ -783,9 +969,9 @@ function nextStep(i){
  const nc=i.resp.find(open);if(nc)return{t:`Waiting: ${nc.unit} to clear`,k:"warn"};
  if(needsVeh(i)&&!i.vehicles.length)return{t:"Add the vehicles",k:"warn"};
  if(isCrash(i)&&!i.people.length&&!i.noPeople)return{t:"Record injured, or confirm none",k:"warn"};
- if(isCrash(i)&&!(i.cause.main&&i.cause.sub))return{t:"Record the cause",k:"warn"};
+ if(isCrash(i)&&!causeOk(i.cause))return{t:"Record the cause",k:"warn"};
  if(isCrash(i)&&i.dmg.yes===null)return{t:"Answer damage to property",k:"warn"};
- return{t:viewer.key==="specialist"&&isCrash(i)?"Submit for supervisor approval":"Ready to finalize",k:"ok"};
+ return{t:submitsForApproval(i)?"Submit for supervisor approval":"Ready to finalize",k:"ok"};
 }
 function badge(i){
  if(isDone(i))return `<span class="badge b-done">${ico("check")}Finalized · ${i.cls}</span>`;
@@ -798,7 +984,7 @@ function toast(msg){$("toastTxt").textContent=msg;$("toast").hidden=false;clearT
 const logI=(i,what)=>i.log.push({t:new Date(),who:who(),what});
 
 /* navigation */
-const RENDER={login:()=>renderLogin(),patrol:()=>{$("pForm").hidden=false;$("pDone").hidden=true;if(gps.state==="idle")gpsFind();$("pHead").textContent=`${shift.post} · ${shift.crew[0]}${shift.crew.length>1?` +${shift.crew.length-1}`:""}`},board:()=>renderBoard(),incident:()=>renderIncident(),reports:()=>renderReports(),access:()=>renderRoles()};
+const RENDER={login:()=>renderLogin(),patrol:()=>{$("pForm").hidden=false;$("pDone").hidden=true;$("pUpd").hidden=true;if(gps.state==="idle")gpsFind();renderNet();renderMine();$("pHead").textContent=`${shift.post} · ${shift.crew[0]}${shift.crew.length>1?` +${shift.crew.length-1}`:""}`},board:()=>renderBoard(),incident:()=>renderIncident(),reports:()=>renderReports(),access:()=>renderRoles()};
 function setViewer(k){viewer=VIEWERS[k];$("avatar").textContent=viewer.ini;$("viewAs").value=k}
 opts($("viewAs"),[]);$("viewAs").innerHTML=Object.values(VIEWERS).map(v=>`<option value="${v.key}">${v.title} · ${v.name}</option>`).join("");
 $("viewAs").addEventListener("change",()=>{setViewer($("viewAs").value);
@@ -825,19 +1011,24 @@ function updateCount(){const a=incidents.filter(i=>!isDone(i)),al=a.some(isAlarm
 
 /* patrol */
 opts($("pSection"),Object.keys(SECTIONS));opts($("pLoc"),LOCS);opts($("pDet"),DETECT);opts($("pWx"),WX);
-$("pType").innerHTML=Object.keys(TYPES).map(t=>`<button type="button" aria-pressed="false" data-t="${t}">${t}</button>`).join("");
+$("pType").innerHTML=Object.keys(TYPES).map(t=>`<button type="button" aria-pressed="false" data-t="${t}">${t}${NEWTYPE[t]?`<span class="new-tag">New</span>`:""}</button>`).join("");
+$("pExtras").innerHTML=extrasHTML("p");
+/* subtype list for a type; Gantry Hit has no subtype in the FRD */
+function fillSub(p,t){const s=$(p+"Sub");if(!t){s.innerHTML="<option>Choose the type first</option>";s.disabled=true}
+ else if(!TYPES[t].length){s.innerHTML="<option>No subtype in NLEX's list</option>";s.disabled=true}
+ else{s.innerHTML=TYPES[t].map(v=>`<option>${esc(v)}</option>`).join("");s.disabled=false}
+ syncExtras(p,t,true)}
+const subOf=(p,t)=>t&&TYPES[t].length?$(p+"Sub").value:"";
 const pZoneVal=()=>SECTIONS[$("pSection").value].zones?$("pZone").value:"";
 function syncSloc(){const l=slocList($("pSection").value,$("pLoc").value),s=$("pSloc");
  if(l.length){opts(s,["Choose the exact place",...l]);s.disabled=false}else{opts(s,["Not needed for this location"]);s.disabled=true}}
 function syncDir(){const s=SECTIONS[$("pSection").value];opts($("pDir"),s.dirs);
  $("pZoneWrap").hidden=!s.zones;if(s.zones)opts($("pZone"),Object.keys(s.zones));syncSloc();checkKm(false)}
 function checkKm(show){
- const sec=$("pSection").value,zone=pZoneVal(),s=rangeOf(sec,zone),raw=$("pKm").value.trim(),v=parseKm(raw),err=$("pKmErr");
- let msg="";
- if(raw==="")msg=show?"Enter the km post.":"";
- else if(isNaN(v)||v<s.min||v>s.max)msg=`${sec}${zone?` zone ${zone}`:""} runs from km ${chain(s.min)} to km ${chain(s.max)}.`;
+ const sec=$("pSection").value,zone=pZoneVal(),raw=$("pKm").value.trim(),v=parseKm(raw),err=$("pKmErr");
+ const msg=kmMsg(sec,zone,raw,show);
  err.textContent=msg;err.hidden=!msg;$("pKm").setAttribute("aria-invalid",msg?"true":"false");
- $("pLoop").textContent=(!msg&&raw!=="")?loopOf(sec,v,zone)+", set from the km post":"Loop: enter the km post";
+ $("pLoop").textContent=(!msg&&raw!=="")?loopLine(sec,v,zone):"Loop: enter the km post";
  return !msg&&raw!=="";
 }
 $("pSection").addEventListener("change",syncDir);
@@ -846,9 +1037,11 @@ $("pLoc").addEventListener("change",syncSloc);
 $("pKm").addEventListener("input",()=>checkKm(false));
 $("pType").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;pType=b.dataset.t;
  $("pType").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
- opts($("pSub"),TYPES[pType]);$("pSub").disabled=false;$("pTypeErr").hidden=true});
+ fillSub("p",pType);$("pTypeErr").hidden=true});
+$("pSub").addEventListener("change",()=>syncExtras("p",pType,true));
+$("pExtras").addEventListener("change",e=>{if(e.target.id==="pL3")syncExtras("p",pType,false)});
 $("pMedia").addEventListener("change",()=>{const n=$("pMedia").files.length;$("pMediaHint").textContent=n?`${n} file${n>1?"s":""} attached.`:"Optional. Attach what the crew can see."});
-$("pAgain").addEventListener("click",()=>{$("pDone").hidden=true;$("pForm").hidden=false;window.scrollTo(0,0);gpsFind()});
+$("pAgain").addEventListener("click",()=>{$("pDone").hidden=true;$("pForm").hidden=false;doneWaiting=false;window.scrollTo(0,0);gpsFind()});
 syncDir();
 
 /* GPS km-post suggestion. Simulated in this preview: the viewer's real location is never read.
@@ -923,36 +1116,115 @@ gpsRender();
 $("pForm").addEventListener("submit",e=>{
  e.preventDefault();
  const kmOk=checkKm(true);if(!pType)$("pTypeErr").hidden=false;
- if(!kmOk){$("pKm").focus();return} if(!pType)return;
- const btn=$("pSend");btn.disabled=true;btn.innerHTML=`${ico("loader","i sm spin")}Sending…`;
+ const ex=pType?readExtras("p"):null;if(ex&&ex.specMissing)$("pSpecErr").hidden=false;
+ if(!kmOk){$("pKm").focus();return} if(!pType)return; if(ex.specMissing){$("pSpec").focus();return}
+ const btn=$("pSend"),sl=$("pSloc");btn.disabled=true;btn.innerHTML=`${ico("loader","i sm spin")}${offline?"Saving on phone…":"Sending…"}`;
+ /* the report is captured now, with the time it was logged; with no signal it waits on the phone */
+ const rep={t:new Date(),sec:$("pSection").value,zone:pZoneVal(),km:parseKm($("pKm").value),dir:$("pDir").value,type:pType,sub:subOf("p",pType),l3:ex.l3,spec:ex.spec,tire:ex.tire,
+  loc:$("pLoc").value,sloc:sl.disabled||sl.selectedIndex===0?"":sl.value,det:$("pDet").value,wx:$("pWx").value,post:shift.post,by:shiftBy(),crew:[...shift.crew],
+  files:[...$("pMedia").files].map(f=>f.name),locNote:gpsNote()};
+ const wasOffline=offline;
  setTimeout(()=>{
-  seq++;const id="OMNI-2026-"+String(seq).padStart(6,"0"),t=new Date(),files=[...$("pMedia").files].map(f=>f.name),sl=$("pSloc"),locNote=gpsNote();
-  incidents.unshift({id,t,sec:$("pSection").value,zone:pZoneVal(),km:parseKm($("pKm").value),dir:$("pDir").value,type:pType,sub:$("pSub").value,loc:$("pLoc").value,sloc:sl.disabled||sl.selectedIndex===0?"":sl.value,det:$("pDet").value,wx:$("pWx").value,
-   post:shift.post,by:shiftBy(),crew:[...shift.crew],status:"open",media:files,vehicles:[],people:[],resp:[],cls:null,cause:{main:"",sub:""},dmg:{yes:null,what:""},notes:[],
-   noPeople:false,pick:null,fin:null,subm:null,returnNote:null,
-   log:[{t,who:shiftBy(),what:"Logged the incident"+(files.length?` with ${files.length} media file${files.length>1?"s":""}`:"")+`. ${locNote}`}]});
-  currentId=id;updateCount();
   $("pForm").reset();pType=null;clearTimeout(gps.timer);gps.applied=null;gps.base=null;gps.state="idle";gpsMark(false);gpsRender();$("pType").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed","false"));
-  opts($("pSub"),["Choose the type first"]);$("pSub").disabled=true;$("pMediaHint").textContent="Optional. Attach what the crew can see.";syncDir();
+  fillSub("p",null);$("pMediaHint").textContent="Optional. Attach what the crew can see.";syncDir();
   btn.disabled=false;btn.textContent="Send to TCR";
-  $("pDoneId").textContent=id;$("pForm").hidden=true;$("pDone").hidden=false;
-  toast(`${id} sent to the live board.`);
- },700);
+  if(wasOffline){outbox.push({kind:"report",rep});showDone(null);toast("No signal. The report is saved on this phone and sends by itself.")}
+  else{const id=deliver(rep,null);showDone(id);toast(`${id} sent to the live board.`)}
+  renderNet();renderMine();
+ },wasOffline?400:700);
 });
+
+/* sending: the number is given when the report reaches TCR; the time logged is the time the crew saved it */
+function deliver(r,sentAt){
+ seq++;const id="OMNI-2026-"+String(seq).padStart(6,"0"),f=r.files;
+ incidents.unshift({id,t:r.t,sec:r.sec,zone:r.zone,km:r.km,dir:r.dir,type:r.type,sub:r.sub,l3:r.l3,spec:r.spec,tire:r.tire,loc:r.loc,sloc:r.sloc,det:r.det,wx:r.wx,
+  post:r.post,by:r.by,crew:r.crew,status:"open",media:f,vehicles:[],people:[],resp:[],cls:null,cause:{main:"",sub:"",spec:""},dmg:{yes:null,what:""},notes:[],flags:{},
+  noPeople:false,pick:null,fin:null,subm:null,returnNote:null,
+  log:[{t:r.t,who:r.by,what:"Logged the incident"+(f.length?` with ${f.length} media file${f.length>1?"s":""}`:"")+`. ${r.locNote}`+(sentAt?`. Saved offline at ${mil(r.t)}, sent ${mil(sentAt)}`:"")}]});
+ currentId=id;updateCount();return id;
+}
+/* "Simulate: no signal" (preview only). Our answer to the FRD patrol concern "Time-consuming input, poor connectivity". */
+let offline=false,outbox=[],doneWaiting=false,flushing=false;
+const nQueued=()=>outbox.length;
+function renderNet(){const n=nQueued(),b=$("pNet");b.classList.remove("is-send");
+ if(flushing){b.hidden=false;b.classList.add("is-send");$("pNetTxt").textContent=`Signal back. Sending ${n} saved item${n>1?"s":""}…`;return}
+ b.hidden=!offline&&!n;
+ $("pNetTxt").textContent=offline?(n?`No signal. Waiting for signal (${n})`:"No signal. Reports are saved on this phone."):"";
+ if(doneWaiting&&!$("pDone").hidden)$("pDoneId").textContent=`Waiting for signal (${n})`}
+function showDone(id){const ok=!!id;doneWaiting=!ok;
+ $("pDoneIco").innerHTML=ico(ok?"check":"clock","i");$("pDoneIco").classList.toggle("wait",!ok);
+ $("pDoneBig").textContent=ok?"Sent to TCR":"Saved on this phone";
+ $("pDoneId").textContent=ok?id:`Waiting for signal (${nQueued()})`;$("pDoneId").classList.toggle("mono",ok);
+ $("pDoneTxt").textContent=ok?"TCR has it on the live board. The time and your ID are stamped on the record.":"It sends by itself when the signal is back. The time you logged it is kept.";
+ $("pForm").hidden=true;$("pUpd").hidden=true;$("pDone").hidden=false}
+function flush(){if(flushing||!outbox.length)return;flushing=true;renderNet();
+ setTimeout(()=>{const now=new Date();let reps=0,upds=0,last=null;
+  outbox.forEach(j=>{if(j.kind==="report"){last=deliver(j.rep,now);reps++}else{applyUpdate(j,now);upds++}});
+  outbox=[];flushing=false;
+  if(doneWaiting&&!$("pDone").hidden&&last)showDone(last);
+  renderNet();renderMine();updateCount();
+  const msg=[reps&&`${reps} saved report${reps>1?"s":""}`,upds&&`${upds} saved update${upds>1?"s":""}`].filter(Boolean).join(" and ");
+  toast(`${msg} sent.`)},900)}
+$("pNoSig").addEventListener("change",()=>{offline=$("pNoSig").checked;renderNet();if(!offline)flush()});
+
+/* my open incidents: the crew can add photos or a short update (TOR: create/update an incident). Only TCR finalizes. */
+function renderMine(){
+ const list=incidents.filter(i=>i.post===shift.post&&!isDone(i)).sort((a,b)=>b.t-a.t),waiting=outbox.filter(j=>j.kind==="report");
+ $("pMineN").textContent=`${shift.post} · ${list.length} open`;
+ const W=waiting.map((j,k)=>`<li class="wait"><span><b>Saved on phone</b> · ${esc(j.rep.type)}<div class="sub">km ${chain(j.rep.km)} · ${esc(j.rep.dir)} · logged <span class="mono">${mil(j.rep.t)}</span> · waiting for signal</div></span><span class="badge b-open">Not sent</span></li>`).join("");
+ const L=list.map(i=>`<li><span><b class="mono">${i.id}</b> · ${esc(i.type)}<div class="sub">km ${chain(i.km)} · ${esc(i.dir)} · ${i.status==="pending"?"waiting for supervisor":"open"}</div></span><button type="button" class="btn btn-outline btn-sm" data-upd="${i.id}">Update</button></li>`).join("");
+ $("pMine").innerHTML=W+L||`<li class="none">${ico("file")}<span>No open incidents for ${esc(shift.post)}.</span></li>`}
+let updId=null;
+$("pMine").addEventListener("click",e=>{const b=e.target.closest("[data-upd]");if(!b)return;const i=incidents.find(x=>x.id===b.dataset.upd);if(!i)return;
+ updId=i.id;$("pUpdId").textContent=i.id;$("pUpdSub").textContent=`${i.type}${i.sub?` · ${i.sub}`:""} · km ${chain(i.km)} · ${i.dir}`;
+ $("pUpd").reset();$("pUpdErr").hidden=true;$("pUpdHint").textContent="Optional.";
+ $("pForm").hidden=true;$("pDone").hidden=true;$("pUpd").hidden=false;$("pUpdNote").focus()});
+$("pQuick").addEventListener("click",e=>{const b=e.target.closest("[data-q]");if(!b)return;const t=$("pUpdNote");
+ t.value=t.value.trim()?`${t.value.trim().replace(/[.]$/,"")}. ${b.dataset.q}`:b.dataset.q;$("pUpdErr").hidden=true;t.focus()});
+$("pUpdMedia").addEventListener("change",()=>{const n=$("pUpdMedia").files.length;$("pUpdHint").textContent=n?`${n} file${n>1?"s":""} attached.`:"Optional.";if(n)$("pUpdErr").hidden=true});
+$("pUpdBack").addEventListener("click",()=>{$("pUpd").hidden=true;$("pForm").hidden=false});
+function applyUpdate(j,sentAt){const i=incidents.find(x=>x.id===j.id);if(!i)return;
+ if(j.note)i.notes.push({t:j.saved,who:j.by,text:j.note});
+ if(j.files.length)i.media.push(...j.files);
+ i.log.push({t:j.saved,who:j.by,what:`Patrol update${j.note?`: ${j.note}`:""}${j.files.length?` (${j.files.length} media file${j.files.length>1?"s":""} added)`:""}${sentAt?`. Saved offline at ${mil(j.saved)}, sent ${mil(sentAt)}`:""}`});
+ i.log.sort((a,b)=>a.t-b.t)}
+$("pUpd").addEventListener("submit",e=>{e.preventDefault();const note=$("pUpdNote").value.trim(),files=[...$("pUpdMedia").files].map(f=>f.name);
+ if(!note&&!files.length){$("pUpdErr").hidden=false;$("pUpdNote").focus();return}
+ const btn=$("pUpdSend"),job={kind:"update",id:updId,note,files,saved:new Date(),by:shiftBy()},wasOffline=offline;
+ btn.disabled=true;btn.innerHTML=`${ico("loader","i sm spin")}${wasOffline?"Saving on phone…":"Sending…"}`;
+ setTimeout(()=>{btn.disabled=false;btn.textContent="Send update";
+  if(wasOffline){outbox.push(job);toast("No signal. The update is saved on this phone and sends by itself.")}
+  else{applyUpdate(job,null);toast(`Update sent to TCR for ${job.id}.`)}
+  $("pUpd").hidden=true;$("pForm").hidden=false;renderNet();renderMine()},wasOffline?400:600)});
+
+/* before sign-out: crew entries for NLEX's shift report */
+const hhmm=v=>(v||"").replace(":","");
+const quickSave=(form,fn)=>{const b=form.querySelector("button[type=submit]"),l=b.textContent;b.disabled=true;b.innerHTML=`${ico("loader","i sm spin")}Saving…`;
+ setTimeout(()=>{b.disabled=false;b.textContent=l;fn();form.reset();toast("Added to the shift report.")},400)};
+$("eStat").addEventListener("submit",e=>{e.preventDefault();const loc=$("eStatLoc").value.trim(),s=$("eStatS").value;
+ if(!loc||!s){$("eStatErr").hidden=false;(!loc?$("eStatLoc"):$("eStatS")).focus();return}$("eStatErr").hidden=true;
+ quickSave(e.target,()=>slog(shift.post).stat.push({loc,s:hhmm(s),e:hhmm($("eStatE").value)}))});
+$("eOdo").addEventListener("submit",e=>{e.preventDefault();const t=$("eOdoT").value,r=$("eOdoR").value.trim();
+ if(!t||!r){$("eOdoErr").hidden=false;(!t?$("eOdoT"):$("eOdoR")).focus();return}$("eOdoErr").hidden=true;
+ quickSave(e.target,()=>{slog(shift.post).odo[$("eOdoW").value]={t:hhmm(t),r,by:$("eOdoBy").value.trim()}})});
+$("eAppr").addEventListener("submit",e=>{e.preventDefault();const pl=$("eApPlate").value.trim(),act=$("eApAct").value,rem=$("eApRem").value.trim();
+ const miss=!pl?"Enter the plate number.":!act?"Choose the action taken.":act==="Verbal warning"&&!rem?"State the reason for the verbal warning in Remarks.":"";
+ if(miss){$("eApErr").textContent=miss;$("eApErr").hidden=false;(!pl?$("eApPlate"):!act?$("eApAct"):$("eApRem")).focus();return}$("eApErr").hidden=true;
+ quickSave(e.target,()=>slog(shift.post).appr.push({t:hhmm($("eApT").value),ref:$("eApRef").value.trim(),plate:pl.toUpperCase(),vt:$("eApVt").value.trim(),sex:$("eApSex").value,loc:$("eApLoc").value.trim(),act,rem}))});
 const tick=()=>{const m=mil(new Date());$("clock").textContent=m;$("clock2").textContent=m};setInterval(tick,1000);tick();
 
 /* sign in */
 opts($("lPost"),Object.keys(POSTS));$("lPost").value=shift.post;
 function renderCrewBoxes(){const p=$("lPost").value;
  $("lCrew").innerHTML=`<legend>Crew on board <span class="req">*</span></legend>`+POSTS[p].map((n,k)=>`<label class="chk"><input type="checkbox" value="${esc(n)}" ${p===shift.post?(shift.crew.includes(n)?"checked":""):"checked"}><span>${esc(n)}${k===0?` <span class="sub">(crew lead)</span>`:""}</span></label>`).join("")}
-function renderLogin(){$("lPost").value=shift.post;renderCrewBoxes();$("lCrewErr").hidden=true;$("lPassErr").hidden=true;$("lPass").setAttribute("aria-invalid","false")}
+function renderLogin(){$("lPost").value=shift.post;$("lShift").value=shift.no;renderCrewBoxes();$("lCrewErr").hidden=true;$("lPassErr").hidden=true;$("lPass").setAttribute("aria-invalid","false")}
 $("lPost").addEventListener("change",renderCrewBoxes);
 $("lForm").addEventListener("submit",e=>{e.preventDefault();
  const crew=[...$("lCrew").querySelectorAll("input:checked")].map(x=>x.value),pass=$("lPass").value.trim();
  $("lCrewErr").hidden=crew.length>0;$("lPassErr").hidden=!!pass;$("lPass").setAttribute("aria-invalid",pass?"false":"true");
  if(!crew.length||!pass){(!crew.length?$("lCrew").querySelector("input"):$("lPass")).focus();return}
  const b=$("lBtn");b.disabled=true;b.innerHTML=`${ico("loader","i sm spin")}Starting shift…`;
- setTimeout(()=>{shift={post:$("lPost").value,crew};$("lPass").value="";b.disabled=false;b.textContent="Start shift";
+ setTimeout(()=>{shift={post:$("lPost").value,crew,no:$("lShift").value,t0:new Date()};$("lPass").value="";b.disabled=false;b.textContent="Start shift";
   setViewer("field");toast(`Shift started for ${shift.post}: ${crew.length} crew on board.`);go("patrol")},700)});
 $("adBtn").addEventListener("click",()=>{const b=$("adBtn"),lbl=b.innerHTML;b.disabled=true;b.innerHTML=`${ico("loader","i sm spin")}Opening company sign-in…`;
  setTimeout(()=>{b.disabled=false;b.innerHTML=lbl;setViewer("specialist");toast("Signed in as TCR Specialist through the NLEX company account (preview).");go("board")},800)});
@@ -964,7 +1236,7 @@ const PIN={
  pending:`<svg viewBox="0 0 28 28" aria-hidden="true"><rect x="4" y="4" width="20" height="20" rx="4" fill="#1d4ed8" stroke="#fff" stroke-width="2"/><path d="M14 9v5l3 2" stroke="#fff" stroke-width="2" stroke-linecap="round" fill="none"/></svg>`,
  done:`<svg viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="10" fill="#15803d" stroke="#fff" stroke-width="2"/><path d="m9.5 14 3 3 6-6.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`
 };
-opts($("stripSec"),Object.keys(SECTIONS));
+opts($("stripSec"),Object.keys(SECTIONS).filter(k=>!SECTIONS[k].nokm)); /* no strip for sections without a km range */
 $("stripSec").addEventListener("change",renderStrip);
 $("q").addEventListener("input",renderRows);
 $("showFin").addEventListener("change",()=>{showFin=$("showFin").checked;renderStrip();renderMap()});
@@ -1028,10 +1300,10 @@ function renderStrip(){
 function renderRows(){
  const q=$("q").value.trim().toLowerCase();
  const vis=i=>filt==="active"?!isDone(i):filt==="alarm"?isAlarm(i):filt==="pending"?i.status==="pending":isDone(i);
- const list=incidents.filter(vis).filter(i=>!q||[i.id,i.sec,i.km,chain(i.km),i.dir,i.type,i.sub,...i.vehicles.map(v=>v.plate)].join(" ").toLowerCase().includes(q)).sort((a,b)=>rankOf(a)-rankOf(b)||a.t-b.t);
+ const list=incidents.filter(vis).filter(i=>!q||hay(i).includes(q)).sort((a,b)=>rankOf(a)-rankOf(b)||a.t-b.t);
  const none={active:["No active incidents","Everything logged has been finalized."],alarm:["Nothing needs attention","No incident has been open for more than 2 hours."],pending:["Nothing is waiting for a supervisor","Road crashes submitted for approval show up here."],final:["No finalized incidents yet","Incidents appear here once they are final."]}[filt];
- $("rows").innerHTML=list.length?list.map(i=>{const n=nextStep(i);return `<tr class="click ${isAlarm(i)?"r-alarm":i.status==="pending"?"r-pend":""}" tabindex="0" data-id="${i.id}"><td class="mono">${i.id}</td><td>${esc(i.sec)}<div class="sub"><span class="mono">km ${chain(i.km)}</span> · ${esc(i.dir)}</div></td><td>${esc(i.type)}<div class="sub">${esc(i.sub)}</div></td><td>${badge(i)}</td><td>${isDone(i)?`<span class="sub">Closed</span>`:`<b class="age" data-age="${i.t.getTime()}">${fmtAge(ageMin(i))}</b><div class="sub">since <span class="mono">${mil(i.t)}</span></div>`}</td><td><span class="next-s ${n.k}">${n.t}</span></td></tr>`}).join("")
-  :`<tr><td colspan="6"><div class="empty">${ico("search","i")}<b style="color:var(--ink-2)">${q?"No incidents match":none[0]}</b><span>${q?"Try another number, plate or km post.":none[1]}</span></div></td></tr>`;
+ $("rows").innerHTML=list.length?list.map(i=>{const n=nextStep(i);return `<tr class="click ${isAlarm(i)?"r-alarm":i.status==="pending"?"r-pend":""}" tabindex="0" data-id="${i.id}"><td class="mono">${i.id}</td><td>${esc(i.sec)}<div class="sub"><span class="mono">km ${chain(i.km)}</span> · ${esc(i.dir)}</div></td><td>${esc(i.type)}<div class="sub">${esc(typeLine(i))}</div></td><td>${badge(i)}</td><td>${isDone(i)?`<span class="sub">Closed</span>`:`<b class="age" data-age="${i.t.getTime()}">${fmtAge(ageMin(i))}</b><div class="sub">since <span class="mono">${mil(i.t)}</span></div>`}</td><td><span class="next-s ${n.k}">${n.t}</span></td></tr>`}).join("")
+  :`<tr><td colspan="6"><div class="empty">${ico("search","i")}<b style="color:var(--ink-2)">${q?"No incidents match":none[0]}</b><span>${q?"Search looks in every field of the incident form, in this list's filter. Try another word, or another filter.":none[1]}</span></div></td></tr>`;
  $("rows").querySelectorAll("tr.click").forEach(r=>{const o=()=>{currentId=r.dataset.id;go("incident")};r.addEventListener("click",o);r.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();o()}})});
 }
 setInterval(()=>{document.querySelectorAll("[data-age]").forEach(e=>e.textContent=fmtAge((Date.now()-(+e.dataset.age))/60000));
@@ -1063,7 +1335,7 @@ function summary(i,cls){
  return `<dl class="sum">
   <div><dt>Incident</dt><dd class="mono">${i.id}</dd></div>
   <div><dt>Where</dt><dd>${esc(i.sec)}${i.zone?` · zone ${esc(i.zone)}`:""} · km ${chain(i.km)} · ${esc(i.dir)}${i.sloc?`<div class="sub">${esc(i.sloc)}</div>`:""}</dd></div>
-  <div><dt>Type</dt><dd>${esc(i.type)} · ${esc(i.sub)}${isCrash(i)?`<div class="sub">Cause: ${esc(i.cause.main||"—")} · ${esc(i.cause.sub||"—")}</div>`:""}</dd></div>
+  <div><dt>Type</dt><dd>${esc(i.type)}${typeLine(i)?` · ${esc(typeLine(i))}`:""}${isCrash(i)?`<div class="sub">Cause: ${esc(causeTxt(i.cause)||"—")}</div>`:""}</dd></div>
   <div><dt>Classification</dt><dd><b>${cls}</b><div class="sub">${CLASSES[cls]}</div></dd></div>
   <div><dt>Damage</dt><dd>${i.dmg.yes===true?`Yes: ${esc(i.dmg.what)}`:i.dmg.yes===false?"No damage to property":"Not answered"}</dd></div>
   <div><dt>Vehicles</dt><dd>${i.vehicles.length?i.vehicles.map(v=>`${esc(v.make)} (${esc(v.plate)})`).join(", "):"None"}</dd></div>
@@ -1077,7 +1349,7 @@ function startFinalize(i){const cls=i.pick;
   boxes:["The location and km post are correct.","Vehicles, injured and fatality details are complete.",`The classification “${cls}” matches its TOR definition.`,"I understand the record locks after this. Later changes need a TCR Supervisor and are logged."],
   yes:"Yes, finalize incident",onConfirm:()=>{i.status="final";i.cls=cls;i.pick=null;i.fin={by:who(),t:new Date()};i.returnNote=null;logI(i,`Finalized as ${cls}`);finish(i,`${i.id} finalized as ${cls}.`)}})}
 function startSubmit(i){const cls=i.pick;
- confirmDlg({title:`Submit ${i.id} for supervisor approval?`,sub:"Road crashes are approved by a TCR Supervisor. You cannot edit the record after you submit it.",body:summary(i,cls),
+ confirmDlg({title:`Submit ${i.id} for supervisor approval?`,sub:"Road crashes and major incidents are finalized by a TCR Supervisor (NLEX event flow). You cannot edit the record after you submit it.",body:summary(i,cls),
   boxes:["The location and km post are correct.","Vehicles, injured and fatality details are complete.",`The classification “${cls}” matches its TOR definition.`,"I understand a TCR Supervisor will review this before it is final."],
   yes:"Yes, submit for approval",onConfirm:()=>{i.status="pending";i.cls=cls;i.pick=null;i.subm={by:who(),t:new Date()};i.returnNote=null;logI(i,`Submitted as ${cls} for supervisor approval`);finish(i,`${i.id} submitted for supervisor approval.`)}})}
 function startApprove(i){
@@ -1114,6 +1386,7 @@ function startLog(){
     <div><label for="gType">Type of incident <span class="req">*</span></label><select id="gType" aria-describedby="gTypeErr"><option value="">Choose the type</option>${o(Object.keys(TYPES))}</select><div class="err" id="gTypeErr" hidden>Choose the type of incident.</div></div>
     <div><label for="gSub">Subtype</label><select id="gSub" disabled><option>Choose the type first</option></select></div>
    </div>
+   ${extrasHTML("g")}
    <div class="grid-f">
     <div><label for="gLoc">Location</label><select id="gLoc">${o(LOCS)}</select></div>
     <div><label for="gWx">Weather</label><select id="gWx">${o(WX)}</select></div>
@@ -1123,22 +1396,25 @@ function startLog(){
   </div>
   <div class="dlg-f"><button type="button" class="btn btn-outline" id="gNo">Cancel</button><button type="submit" class="btn btn-primary" id="gYes">Log incident</button></div></form>`;
  const zoneV=()=>SECTIONS[$("gSec").value].zones?$("gZone").value:"";
- const chk=show=>{const sec=$("gSec").value,zone=zoneV(),r=rangeOf(sec,zone),raw=$("gKm").value.trim(),v=parseKm(raw),err=$("gKmErr");
-  const msg=raw===""?(show?"Enter the km post.":""):(isNaN(v)||v<r.min||v>r.max)?`${sec}${zone?` zone ${zone}`:""} runs from km ${chain(r.min)} to km ${chain(r.max)}.`:"";
+ const chk=show=>{const sec=$("gSec").value,zone=zoneV(),raw=$("gKm").value.trim(),v=parseKm(raw),err=$("gKmErr");
+  const msg=kmMsg(sec,zone,raw,show);
   err.textContent=msg;err.hidden=!msg;$("gKm").setAttribute("aria-invalid",msg?"true":"false");
-  $("gLoop").textContent=(!msg&&raw!=="")?loopOf(sec,v,zone)+", set from the km post":"Loop: enter the km post";return !msg&&raw!==""};
+  $("gLoop").textContent=(!msg&&raw!=="")?loopLine(sec,v,zone):"Loop: enter the km post";return !msg&&raw!==""};
  const syncSec=()=>{const x=SECTIONS[$("gSec").value];$("gDir").innerHTML=o(x.dirs);$("gZoneW").hidden=!x.zones;if(x.zones)$("gZone").innerHTML=o(Object.keys(x.zones));chk(false)};
  $("gSec").addEventListener("change",syncSec);$("gZone").addEventListener("change",()=>chk(false));$("gKm").addEventListener("input",()=>chk(false));
- $("gType").addEventListener("change",()=>{const t=$("gType").value;$("gSub").innerHTML=t?o(TYPES[t]):"<option>Choose the type first</option>";$("gSub").disabled=!t;$("gTypeErr").hidden=!!t;$("gType").setAttribute("aria-invalid","false")});
+ $("gType").addEventListener("change",()=>{const t=$("gType").value;fillSub("g",t);$("gTypeErr").hidden=!!t;$("gType").setAttribute("aria-invalid","false")});
+ $("gSub").addEventListener("change",()=>syncExtras("g",$("gType").value,true));
+ $("gL3").addEventListener("change",()=>syncExtras("g",$("gType").value,false));
  $("gNo").addEventListener("click",()=>dlg.close());
  $("gForm").addEventListener("submit",e=>{e.preventDefault();
   const kmOk=chk(true),t=$("gType").value;$("gTypeErr").hidden=!!t;$("gType").setAttribute("aria-invalid",t?"false":"true");
   if(!kmOk){$("gKm").focus();return} if(!t){$("gType").focus();return}
+  const ex=readExtras("g");if(ex.specMissing){$("gSpecErr").hidden=false;$("gSpec").focus();return}
   const y=$("gYes");y.disabled=true;$("gNo").disabled=true;y.innerHTML=`${ico("loader","i sm spin")}Logging…`;
   setTimeout(()=>{
    seq++;const id="OMNI-2026-"+String(seq).padStart(6,"0"),tm=new Date(),post=$("gPost").value,det=$("gDet").value,note=$("gNote").value.trim();
-   const inc={id,t:tm,sec:$("gSec").value,zone:zoneV(),km:parseKm($("gKm").value),dir:$("gDir").value,type:t,sub:$("gSub").value,loc:$("gLoc").value,sloc:"",det,wx:$("gWx").value,
-    post,by:who(),crew:[...POSTS[post]],status:"open",media:[],vehicles:[],people:[],resp:[],cls:null,cause:{main:"",sub:""},dmg:{yes:null,what:""},notes:note?[{t:tm,who:who(),text:note}]:[],
+   const inc={id,t:tm,sec:$("gSec").value,zone:zoneV(),km:parseKm($("gKm").value),dir:$("gDir").value,type:t,sub:subOf("g",t),l3:ex.l3,spec:ex.spec,tire:ex.tire,loc:$("gLoc").value,sloc:"",det,wx:$("gWx").value,
+    post,by:who(),crew:[...POSTS[post]],status:"open",media:[],vehicles:[],people:[],resp:[],cls:null,cause:{main:"",sub:"",spec:""},dmg:{yes:null,what:""},flags:{},notes:note?[{t:tm,who:who(),text:note}]:[],
     noPeople:false,pick:null,fin:null,subm:null,returnNote:null,log:[{t:tm,who:who(),what:`Logged the incident (detected by ${det}); ${post} sent`}]};
    if(note)inc.log.push({t:tm,who:who(),what:"Added a detail entry"});
    incidents.unshift(inc);currentId=id;dlg.close();updateCount();renderBoard();toast(`${id} logged. It is on the live board.`);
@@ -1152,7 +1428,7 @@ function stepsOf(i){
  const rd=i.resp.every(r=>!open(r))&&(i.resp.length>0||!needsVeh(i));
  const dt=checks(i,i.pick||i.cls).filter(c=>["vehicles","people","cause"].includes(c.fix)).every(c=>c.ok);
  const S=[{l:"Logged",d:true},{l:"Responders",d:rd},{l:"Details",d:dt}];
- if(isCrash(i)){S.push({l:"Submitted",d:i.status!=="open"},{l:"Supervisor approval",d:isDone(i)})}else S.push({l:"Finalized",d:isDone(i)});
+ if(needsApproval(i)){S.push({l:"Submitted",d:i.status!=="open"||(isDone(i)&&!!i.fin)},{l:"Supervisor approval",d:isDone(i)})}else S.push({l:"Finalized",d:isDone(i)});
  return S;
 }
 function instr(i){
@@ -1165,10 +1441,10 @@ function instr(i){
  if(nc)return`Mark ${nc.unit} as cleared when it leaves the scene.`;
  if(needsVeh(i)&&!i.vehicles.length)return"Add the vehicles involved.";
  if(isCrash(i)&&!i.people.length&&!i.noPeople)return"Add the injured, or confirm that nobody was hurt.";
- if(isCrash(i)&&!(i.cause.main&&i.cause.sub))return"Record the main cause and sub cause of the crash.";
+ if(isCrash(i)&&!causeOk(i.cause))return"Record the main cause and sub cause of the crash.";
  if(isCrash(i)&&i.dmg.yes===null)return"Answer whether property was damaged.";
  if(!i.pick)return"Choose a classification, then finalize.";
- return viewer.key==="specialist"&&isCrash(i)?"Submit for supervisor approval.":"Finalize the incident.";
+ return submitsForApproval(i)?"Submit for supervisor approval.":"Finalize the incident.";
 }
 function renderStepper(i){
  const S=stepsOf(i),cur=S.findIndex(s=>!s.d);
@@ -1176,12 +1452,12 @@ function renderStepper(i){
 }
 function renderReady(i){
  const box=$("readyBox");if(!box)return;
- const ck=checks(i,i.pick),ok=ck.every(c=>c.ok),label=viewer.key==="specialist"&&isCrash(i)?"Submit for supervisor approval":"Finalize incident";
+ const ck=checks(i,i.pick),ok=ck.every(c=>c.ok),sub=submitsForApproval(i),label=sub?"Submit for supervisor approval":"Finalize incident";
  box.innerHTML=`<h2 class="h3" style="margin-bottom:12px">Before you finalize</h2><ul class="ready">${ck.map(c=>`<li class="${c.ok?"ok":"no"}">${ico(c.ok?"check-c":"alert","i")}<span>${c.label}${c.ok?"":`<span class="why"> — ${c.why}</span>`}</span>${c.ok?"":`<button class="btn btn-outline btn-sm" data-fix="${c.fix}">Go to ${c.go}</button>`}</li>`).join("")}</ul>
   <div class="row-btns"><button class="btn btn-primary" id="finBtn" ${ok?"":"disabled"}>${label}</button><button class="btn btn-outline" data-go="board">Back to the live board</button></div>
-  <div class="hint">${ok?"You will be asked to confirm before anything is saved.":"Finish the items above to continue."}</div>`;
+  <div class="hint">${ok?"You will be asked to confirm before anything is saved.":"Finish the items above to continue."}${sub?" A TCR Specialist finalizes all types except road crashes and major incidents (NLEX event flow).":""}</div>`;
  box.querySelectorAll("[data-fix]").forEach(b=>b.addEventListener("click",()=>{const el=$("sec-"+b.dataset.fix);if(el)el.scrollIntoView({behavior:"smooth",block:"start"})}));
- $("finBtn").addEventListener("click",()=>{viewer.key==="specialist"&&isCrash(i)?startSubmit(i):startFinalize(i)});
+ $("finBtn").addEventListener("click",()=>{submitsForApproval(i)?startSubmit(i):startFinalize(i)});
 }
 function renderIncident(){
  const i=incidents.find(x=>x.id===currentId)||incidents.find(x=>!isDone(x))||incidents[0];currentId=i.id;
@@ -1194,7 +1470,7 @@ function renderIncident(){
  if(i.status==="pending")band=`<div class="band info">${ico("clock","i")}<span><b>${viewer.key==="supervisor"?"Waiting for your approval.":"Waiting for a TCR Supervisor."}</b> Submitted by ${esc(i.subm.by)} at ${mil(i.subm.t)} as ${i.cls}.${viewer.key==="supervisor"?"":" The record cannot be edited until the supervisor decides."}</span></div>`;
  let fin;
  if(isDone(i))fin=`<div class="locked">${ico("lock","i")}<span>Finalized as <b>${i.cls}</b> by ${esc(i.fin.by)} at <span class="mono">${mil(i.fin.t)}</span>. Later changes need a TCR Supervisor and are logged.</span></div>${viewer.key==="supervisor"?`<div class="row-btns" style="margin-top:14px"><button class="btn btn-outline" id="corrBtn">Request correction</button></div>`:""}`;
- else if(i.status==="pending")fin=`<div class="label">Classification submitted</div><div class="v" style="margin:4px 0 14px;color:var(--ink-2)"><b>${i.cls}</b><div class="sub">${CLASSES[i.cls]}</div></div>${viewer.key==="supervisor"?`<div class="row-btns"><button class="btn btn-primary" id="appBtn">Approve and finalize</button><button class="btn btn-outline" id="retBtn">Return to specialist</button></div>`:`<div class="hint">Only a TCR Supervisor can approve a road crash.</div>`}`;
+ else if(i.status==="pending")fin=`<div class="label">Classification submitted</div><div class="v" style="margin:4px 0 14px;color:var(--ink-2)"><b>${i.cls}</b><div class="sub">${CLASSES[i.cls]}</div></div>${viewer.key==="supervisor"?`<div class="row-btns"><button class="btn btn-primary" id="appBtn">Approve and finalize</button><button class="btn btn-outline" id="retBtn">Return to specialist</button></div>`:`<div class="hint">Only a TCR Supervisor can finalize road crashes and major incidents.</div>`}`;
  else if(edit)fin=`<div id="clsBox"></div><div id="readyBox" style="margin-top:20px"></div>`;
  else fin=`<div class="hint">Your access level can view this record only.</div>`;
  const sel=(id,arr,v,blank)=>`<select id="${id}">${blank?`<option value="">${blank}</option>`:""}${arr.map(o=>`<option ${o===v?"selected":""}>${o}</option>`).join("")}</select>`;
@@ -1211,15 +1487,15 @@ function renderIncident(){
    <div><span class="label">Section</span><div class="v">${esc(i.sec)}</div>${i.zone?`<div class="sub">Zone ${esc(i.zone)}</div>`:""}</div>
    <div><span class="label">Direction</span><div class="v">${esc(i.dir)}</div></div>
    <div><span class="label">Km post</span><div class="v mono">km ${chain(i.km)}</div><div class="sub">${loopOf(i.sec,i.km,i.zone)}</div></div>
-   <div><span class="label">Type</span><div class="v">${esc(i.type)}</div><div class="sub">${esc(i.sub)}</div></div>
+   <div><span class="label">Type</span><div class="v">${esc(i.type)}</div><div class="sub">${esc(typeLine(i))}</div></div>
    <div><span class="label">Location</span><div class="v">${esc(i.loc)}</div>${i.sloc?`<div class="sub">${esc(i.sloc)}</div>`:""}</div>
    <div><span class="label">Detected by · weather</span><div class="v">${esc(i.det)} · ${esc(i.wx)}</div></div>
   </div>
  </div>
  <div class="card">
   <div class="card-h"><h2 class="h3">Photos and video</h2><span class="sub">${i.media.length} file${i.media.length===1?"":"s"}</span></div>
-  ${i.media.length?`<div class="media">${i.media.map(m=>`<div class="thumb"><div class="ph">${ico("camera","i")}</div><div class="cap">${esc(m)}</div></div>`).join("")}</div>${["investigator","supervisor"].includes(viewer.key)?`<div class="row-btns" style="margin-top:12px"><button class="btn btn-outline btn-sm" data-export="Media download"><svg class="i sm"><use href="#i-down"/></svg>Download all media</button></div>`:""}`:`<div class="sub">No media attached by the crew.</div>`}
-  <div class="hint">Media is kept with the record and archived after it is finalized. Investigators can download it.</div>
+  ${i.media.length?`<div class="media">${i.media.map(m=>`<div class="thumb"><div class="ph">${ico("camera","i")}</div><div class="cap">${esc(m)}</div></div>`).join("")}</div>${viewer.key==="supervisor"||(viewer.key==="investigator"&&isDone(i))?`<div class="row-btns" style="margin-top:12px"><button class="btn btn-outline btn-sm" data-export="Media download"><svg class="i sm"><use href="#i-down"/></svg>Download all media</button></div>`:""}`:`<div class="sub">No media attached by the crew.</div>`}
+  <div class="hint">${viewer.key==="investigator"&&!isDone(i)?"Download opens once the incident is finalized: investigators download media on finalized incidents (FRD).":"Media is kept with the record and archived after it is finalized. Investigators can download it once the incident is finalized."}</div>
  </div>
  <div class="card" id="sec-responders">
   <div class="card-h"><h2 class="h3">Responders</h2>${edit?`<div class="toolbar"><select id="rUnit" aria-label="Responder unit" style="width:auto">${UNITS.map(u=>`<option>${u}</option>`).join("")}</select><input id="rRem" placeholder="Remarks (optional)" aria-label="Remarks" style="width:auto;flex:0 1 200px"><button class="btn btn-outline btn-sm" id="rSend">Dispatch</button></div>`:""}</div>
@@ -1227,9 +1503,9 @@ function renderIncident(){
   <div class="hint">Response and service times are worked out automatically. A cancelled unit keeps its dispatch time and the reason.</div>
  </div>
  <div class="card" id="sec-cause">
-  <div class="card-h"><h2 class="h3">${isCrash(i)?"Cause and damage":"Damage to property"}</h2><span class="sub">${isCrash(i)?`Cause: ${esc(i.cause.main||"not recorded")}${i.cause.sub?` · ${esc(i.cause.sub)}`:""} · `:""}Damage: ${i.dmg.yes===true?`yes, ${esc(i.dmg.what)}`:i.dmg.yes===false?"none":"not answered"}</span></div>
+  <div class="card-h"><h2 class="h3">${isCrash(i)?"Cause and damage":"Damage to property"}</h2><span class="sub">${isCrash(i)?`Cause: ${esc(causeTxt(i.cause)||"not recorded")} · `:""}Damage: ${i.dmg.yes===true?`yes, ${esc(i.dmg.what)}`:i.dmg.yes===false?"none":"not answered"}</span></div>
   ${edit?`<form class="inline-form wide-form" id="cForm" novalidate>
-   ${isCrash(i)?`<div><label for="cMain">Main cause <span class="req">*</span></label>${sel("cMain",MAINCAUSE,i.cause.main,"Choose")}</div><div><label for="cSub">Sub cause <span class="req">*</span></label>${sel("cSub",SUBCAUSE,i.cause.sub,"Choose")}</div>`:""}
+   ${isCrash(i)?`<div><label for="cMain">Main cause <span class="req">*</span></label>${sel("cMain",MAINCAUSE,i.cause.main,"Choose")}</div><div id="cSubW"><label for="cSub">Sub cause <span class="req">*</span></label>${sel("cSub",CAUSES[i.cause.main]||[],i.cause.sub,"Choose")}</div><div id="cSpecW" hidden><label for="cSpec">Specify <span class="req">*</span></label><input id="cSpec" placeholder="Type the cause" value="${esc(i.cause.spec||"")}"></div>`:""}
    <div><label for="cDmg">Damage to property <span class="req">*</span></label><select id="cDmg"><option value="">Choose</option><option ${i.dmg.yes===true?"selected":""}>Yes</option><option ${i.dmg.yes===false?"selected":""}>No</option></select></div>
    <div><label for="cWhat">Property damaged</label><input id="cWhat" placeholder="For example: guardrail, 4 m" value="${esc(i.dmg.what)}"></div>
    <div class="end"><button class="btn btn-primary" type="submit" id="cSave">Save</button><span class="err" id="cErr" hidden></span></div>
@@ -1292,8 +1568,12 @@ function renderIncident(){
  </div>`;
  renderStepper(i);
  if(edit){
-  $("clsBox").innerHTML=`<div class="cls" role="radiogroup" aria-label="Classification">${Object.keys(CLASSES).map(k=>`<label class="opt"><input type="radio" name="cls" value="${k}" ${i.pick===k?"checked":""}><span class="t">${k}</span>${CLASSES[k]}</label>`).join("")}</div><div class="hint">Minimum for this record under the TOR: <b>${minClass(i)}</b>.</div>`;
+  $("clsBox").innerHTML=`<div class="cls" role="radiogroup" aria-label="Classification">${Object.keys(CLASSES).map(k=>`<label class="opt"><input type="radio" name="cls" value="${k}" ${i.pick===k?"checked":""}><span class="t">${k}</span>${CLASSES[k]}</label>`).join("")}</div>
+   <div class="hint" id="minLine">Minimum for this record under TOR item 24: <b>${minClass(i).cls}</b>${minClass(i).cls==="Minor"?" (nothing on the record is listed under Major or Material)":`, because of “${esc(minClass(i).why)}”`}. A medical case alone sets no minimum.</div>
+   <fieldset class="chks" style="margin-top:14px"><legend>Also seen on the road (TOR item 24 wording)</legend>${Object.entries(FLAGS).map(([k,[c,l]])=>`<label class="chk"><input type="checkbox" data-flag="${k}" ${i.flags[k]?"checked":""}><span>${esc(l)} <span class="sub">(${c})</span></span></label>`).join("")}</fieldset>`;
   document.querySelectorAll('input[name="cls"]').forEach(r=>r.addEventListener("change",()=>{i.pick=r.value;renderReady(i);renderStepper(i)}));
+  document.querySelectorAll("[data-flag]").forEach(x=>x.addEventListener("change",()=>{const k=x.dataset.flag;i.flags[k]=x.checked;
+   logI(i,`${x.checked?"Marked":"Unmarked"}: ${FLAGS[k][1]}`);renderIncident();toast(x.checked?`Marked: ${FLAGS[k][1]}.`:`Unmarked: ${FLAGS[k][1]}.`)}));
   renderReady(i);
  }
  const tog=(btn,form,first)=>{$(btn)&&$(btn).addEventListener("click",()=>{$(form).hidden=!$(form).hidden;if(!$(form).hidden)$(first).focus()})};
@@ -1312,12 +1592,18 @@ function renderIncident(){
    i.people.push(P(cat,nm,$("hRole").value,cat==="Fatality"?{belt:$("hBelt").value,age:$("hAge").value.trim(),sex:$("hSex").value,addr:$("hAddr").value.trim(),decl,cod:$("hCod").value.trim()}
     :{belt:$("hBelt").value,age:$("hAge").value.trim(),sex:$("hSex").value,addr:$("hAddr").value.trim(),contact:$("hContact").value.trim(),ext:$("hExt").value,endorsed:$("hEnd").value,waiver:$("hWaiver").value,cc:$("hCc").value.trim(),rem:$("hRem").value.trim()}));
    i.noPeople=false;logI(i,`Added ${cat.toLowerCase()} record: ${$("hRole").value.toLowerCase()}`);renderIncident();toast("Person saved.")})});
+ /* sub cause list follows the main cause (FRD levels 3 and 4); "Specify" box for the manual-typing items */
+ const syncCause=rebuild=>{if(!$("cMain"))return;const m=$("cMain").value,L=CAUSES[m]||[];
+  if(rebuild)$("cSub").innerHTML=`<option value="">Choose</option>`+L.map(v=>`<option>${esc(v)}</option>`).join("");
+  $("cSubW").hidden=!L.length;$("cSpecW").hidden=!(needSpec(m)||needSpec(L.length?$("cSub").value:""))};
+ if($("cMain")){syncCause(false);$("cMain").addEventListener("change",()=>syncCause(true));$("cSub").addEventListener("change",()=>syncCause(false))}
  $("cForm")&&$("cForm").addEventListener("submit",e=>{e.preventDefault();
-  const m=$("cMain")?$("cMain").value:"",s=$("cSub")?$("cSub").value:"",d=$("cDmg").value,w=$("cWhat").value.trim();
-  const miss=isCrash(i)&&(!m||!s)?"Choose the main cause and the sub cause.":!d?"Answer whether property was damaged.":d==="Yes"&&!w?"Describe the property damaged.":"";
+  const m=$("cMain")?$("cMain").value:"",s=$("cSub")&&!$("cSubW").hidden?$("cSub").value:"",sp=$("cSpec")&&!$("cSpecW").hidden?$("cSpec").value.trim():"",d=$("cDmg").value,w=$("cWhat").value.trim();
+  const c={main:m,sub:s,spec:sp};
+  const miss=isCrash(i)&&!causeOk(c)?(!m?"Choose the main cause.":!$("cSpecW").hidden&&!sp?"Type the cause in Specify.":"Choose the sub cause."):!d?"Answer whether property was damaged.":d==="Yes"&&!w?"Describe the property damaged.":"";
   if(miss){$("cErr").textContent=miss;$("cErr").hidden=false;return}
-  saving($("cSave"),()=>{if(isCrash(i))i.cause={main:m,sub:s};i.dmg={yes:d==="Yes",what:d==="Yes"?w:""};
-   logI(i,`${isCrash(i)?`Cause set to ${m} / ${s}; `:""}damage to property: ${d==="Yes"?w:"none"}`);renderIncident();toast("Saved.")})});
+  saving($("cSave"),()=>{if(isCrash(i))i.cause=c;i.dmg={yes:d==="Yes",what:d==="Yes"?w:""};
+   logI(i,`${isCrash(i)?`Cause set to ${causeTxt(c)}; `:""}damage to property: ${d==="Yes"?w:"none"}`);renderIncident();toast("Saved.")})});
  $("nForm")&&$("nForm").addEventListener("submit",e=>{e.preventDefault();const tx=$("nText").value.trim();
   if(!tx){$("nErr").hidden=false;$("nText").setAttribute("aria-invalid","true");$("nText").focus();return}
   saving($("nAdd"),()=>{i.notes.push({t:new Date(),who:who(),text:tx});logI(i,"Added a detail entry");renderIncident();toast("Detail added.")})});
@@ -1353,7 +1639,7 @@ opts($("rCls"),["All classes","Class 1","Class 2","Class 3"]);opts($("rCause"),[
 function renderCount(){const t=$("rType").value,s=$("rSec").value,c=$("rCls").value,ca=$("rCause").value,sv=$("rSev").value,q=$("rText").value.trim().toLowerCase();
  const n=incidents.filter(i=>(t==="All types"||i.type===t)&&(s==="All sections"||i.sec===s)&&(c==="All classes"||i.vehicles.some(v=>v.cls===c))&&(ca==="All causes"||i.cause.main===ca)
   &&(sv==="All severities"||(sv==="With injury"&&i.people.some(p=>p.cat!=="Fatality"))||(sv==="With fatality"&&i.people.some(p=>p.cat==="Fatality"))||(sv==="Damage to property"&&i.dmg.yes))
-  &&(!q||JSON.stringify([i.id,i.sub,i.sloc,i.vehicles,i.people,i.notes.map(x=>x.text),i.resp.map(r=>r.rem)]).toLowerCase().includes(q))).length;
+  &&(!q||hay(i).includes(q))).length;
  $("rCount").textContent=`${n===incidents.length?`All ${n}`:`${n} of the ${incidents.length}`} incidents on the live board match these filters. The heat maps use a sample week.`}
 document.querySelectorAll("#v-reports [data-export]").forEach(b=>b.addEventListener("click",()=>{if(b.disabled)return;const lbl=b.innerHTML;b.disabled=true;b.innerHTML=`${ico("loader","i sm spin")}Preparing…`;
  setTimeout(()=>{b.disabled=false;b.innerHTML=lbl;toast(`${b.dataset.export} report prepared. Downloads are turned off in this preview.`)},700)}));
@@ -1370,17 +1656,34 @@ function renderReports(){
  $("kmheat").innerHTML=KMHEAT.map(([l,v])=>`<div class="kmbar"><span>${l}</span><span class="t"><span class="b" style="display:block;width:${Math.round(v/mx*100)}%;opacity:${(0.35+0.65*v/mx).toFixed(2)}"></span></span><span class="n">${v}</span></div>`).join("");
  renderCount();renderShift();
 }
-function renderShift(){const post=$("crew").value,list=incidents.filter(i=>i.post===post).sort((a,b)=>a.t-b.t),crew=post===shift.post?shift.crew:POSTS[post];
- $("crewLine").innerHTML=`<b>Crew on board:</b> ${crew.map(esc).join(", ")}`;
- const pts=i=>POINTS[i.type]||1,total=list.reduce((s,i)=>s+pts(i),0);
- $("shift").innerHTML=list.length?list.map(i=>`<tr><td class="mono">${mil(i.t)}</td><td class="mono">${i.id}</td><td><span class="mono">km ${chain(i.km)}</span> · ${esc(i.dir)}</td><td>${esc(i.type)}</td><td class="c"><span class="pts">${pts(i)}</span></td></tr>`).join("")+`<tr><td colspan="4"><b style="color:var(--ink)">Total for the shift</b></td><td class="c"><span class="pts">${total}</span></td></tr>`
-  :`<tr><td colspan="5"><div class="empty">${ico("file","i")}<b style="color:var(--ink-2)">No incidents this shift</b><span>This post has not attended any incident yet.</span></div></td></tr>`;
+/* NLEX "Patrol Crew Shift Report" (TSO-F010, FRD p17): intervention rows and counts come from the incidents; stationary, odometer and apprehensions are entered by the crew */
+function renderShift(){const post=$("crew").value,list=incidents.filter(i=>i.post===post).sort((a,b)=>a.t-b.t),cur=post===shift.post,crew=cur?shift.crew:POSTS[post],L=slog(post);
+ const F=(l,v)=>`<div class="sf"><span class="label">${l}</span><div class="v">${v}</div></div>`;
+ $("srHead").innerHTML=F("Patrol crew 1",esc(crew[0]||"—"))+F("Patrol crew 2",esc(crew.slice(1).join(", ")||"—"))+F("Sign in",cur?`<span class="mono">${mil(shift.t0)}</span>`:"—")+F("Sign out",`<span class="sub">Not yet</span>`)
+  +F("Shift",cur?esc(shift.no):"—")+F("Sector",`<span class="sub">To align with NLEX</span>`)+F("Loop / Post",esc(post))+F("Date",ymd(new Date()));
+ const pts=i=>POINTS[i.type]||1;
+ const eoe=i=>{if(isDone(i)&&i.fin)return mil(i.fin.t);const c=i.resp.filter(r=>r.c).map(r=>+r.c);return c.length&&i.resp.every(r=>!open(r))?mil(new Date(Math.max(...c))):`<span class="sub">Open</span>`};
+ const has=(i,u)=>i.resp.some(r=>r.unit===u&&!r.x)?ico("check"):"";
+ const rmk=i=>{const n=i.notes[i.notes.length-1],r=i.resp.find(x=>x.rem);return n?esc(n.text):r?esc(r.rem):`<span class="sub">—</span>`};
+ $("shift").innerHTML=list.length?list.map(i=>`<tr><td class="mono">${mil(i.t)}</td><td class="mono">${eoe(i)}</td><td>${esc(i.type)}<div class="sub">${esc(typeLine(i))}</div></td><td>${esc(i.dir)}</td><td><span class="sub">—</span></td><td><span class="mono">km ${chain(i.km)}</span><div class="sub">${esc(i.sloc||i.loc)}</div></td>
+  <td>${i.vehicles.length?i.vehicles.map(v=>`${esc(v.make)} <span class="mono">${esc(v.plate)}</span>`).join("<br>"):`<span class="sub">—</span>`}</td><td>${rmk(i)}</td><td class="c">${has(i,"Tow Truck")}</td><td class="c">${has(i,"EMS")}</td><td class="c">${has(i,"Investigator")}</td><td class="mono">${i.id}</td><td class="c">${ico("check")}</td><td class="c"></td></tr>`).join("")
+  :`<tr><td colspan="14"><div class="empty">${ico("file","i")}<b style="color:var(--ink-2)">No interventions this shift</b><span>This post has not attended any incident yet.</span></div></td></tr>`;
+ const none=(n,t)=>`<tr><td colspan="${n}" class="sub">${t}</td></tr>`;
+ $("srStat").innerHTML=L.stat.length?L.stat.map(s=>`<tr><td>${esc(s.loc)}</td><td class="mono">${esc(s.s)}H</td><td class="mono">${s.e?esc(s.e)+"H":"—"}</td></tr>`).join(""):none(3,"No stationary entered yet. The crew adds it on the patrol app.");
+ const cnt=f=>list.filter(f).length;
+ const SUM=[["Intervention",list.length],["Object on carriageway",cnt(i=>i.sub==="Object On Carriageway")],["RA 2000",cnt(i=>i.sub==="RA2000")],["Column 4 (as on NLEX form)",null],["Shuttling / Transport",null],["Traffic management",null],["Flag down",null],["Accident",cnt(isCrash)]];
+ $("srSum").innerHTML=SUM.map(([l,v])=>`<tr><td>${l}</td><td class="c mono">${v===null?"—":v}</td></tr>`).join("");
+ $("srOdo").innerHTML=["In","Out"].map(k=>{const o=L.odo[k];return `<tr><td><b>${k.toUpperCase()}</b></td><td class="mono">${o?esc(o.t)+"H":"—"}</td><td class="mono">${o?esc(o.r):"—"}</td><td>${o&&o.by?esc(o.by):"—"}</td></tr>`}).join("");
+ $("srAppr").innerHTML=L.appr.length?L.appr.map(a=>`<tr><td class="mono">${a.t?esc(a.t)+"H":"—"}</td><td>${esc(a.ref||"—")}</td><td class="mono">${esc(a.plate)}</td><td>${esc(a.vt||"—")}</td><td>${esc(a.sex||"—")}</td><td>${esc(a.loc||"—")}</td><td>${esc(a.act)}</td><td>${esc(a.rem||"—")}</td></tr>`).join(""):none(8,"No apprehensions entered for this shift.");
  const names=[...new Set(list.flatMap(i=>i.crew).concat(crew))];
  $("credit").innerHTML=names.map(n=>{const mine=list.filter(i=>i.crew.includes(n));return `<tr><td>${esc(n)}</td><td class="c mono">${mine.length}</td><td class="c"><span class="pts">${mine.reduce((s,i)=>s+pts(i),0)}</span></td></tr>`}).join("")}
 /* access */
 function renderRoles(){const Y=`<span class="yes" aria-label="Yes">${ico("check","i")}</span>`,N=`<span class="no" aria-label="No">${ico("minus","i")}</span>`;
- const R=[["Field Personnel","Basic details only",Y,"Basic details",N,N,N,N,N],["TCR Specialist","Completes details; finalizes breakdowns and other incidents; submits road crashes for approval",Y,Y,Y,N,N,N,N],["TCR Supervisor / Manager","Approves and finalizes road crashes; finalizes all other incidents; approves later corrections",Y,Y,Y,Y,Y,N,N],["Data Analyst","Generates reports",N,N,N,N,Y,N,N],["Investigator","Views and downloads media",N,"View only",N,N,N,Y,N],["Administrator","Manages users and system settings",N,N,N,N,Y,N,Y]];
- $("roles").innerHTML=R.map(r=>`<tr><td><b style="color:var(--ink)">${r[0]}</b><div class="sub">${r[1]}</div></td>${r.slice(2).map(c=>`<td class="c">${c.startsWith("<")?c:`<span class="sub">${c}</span>`}</td>`).join("")}</tr>`).join("")}
+ const R=[["Field Personnel","Basic details only",Y,"Basic details",N,N,N,N,N],["TCR Specialist","Completes details; finalizes all types except road crashes and major incidents, which go to a supervisor",Y,Y,Y,N,N,N,N],["TCR Supervisor / Manager","Approves and finalizes road crashes and major incidents; finalizes all other incidents; approves later corrections",Y,Y,Y,Y,Y,N,N],["Data Analyst","Generates reports",N,N,N,N,Y,N,N],["Investigator","Downloads media of finalized incidents",N,"View only",N,N,N,"Finalized only",N],["Administrator","Manages users and system settings",N,N,N,N,Y,N,Y]];
+ $("roles").innerHTML=R.map(r=>`<tr><td><b style="color:var(--ink)">${r[0]}</b><div class="sub">${r[1]}</div></td>${r.slice(2).map(c=>`<td class="c">${c.startsWith("<")?c:`<span class="sub">${c}</span>`}</td>`).join("")}</tr>`).join("");
+ /* NLEX's "User Account Access" table (FRD p14), X marks copied as shown */
+ const A=[["Department Head",0,0,1],["Sector Heads",1,1,1],["Supervisor",1,1,1],["Team Leader",1,0,0],["Patrol Crew",1,0,0],["Investigator",1,0,0],["TCR Specialist",1,1,1],["Data Analyst",1,1,1],["Administrator",1,1,1]];
+ $("nlexAccess").innerHTML=A.map(([u,...m])=>`<tr><td><b style="color:var(--ink)">${u}</b></td>${m.map(x=>`<td class="c">${x?`<span class="xm" aria-label="Yes">X</span>`:`<span class="sr-none" aria-label="No"></span>`}</td>`).join("")}</tr>`).join("")}
 
 /* start */
 updateCount();
