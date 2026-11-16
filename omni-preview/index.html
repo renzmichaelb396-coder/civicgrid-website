@@ -110,6 +110,26 @@ input[aria-invalid="true"]{border-color:var(--bad)}
 .phone-top b{font-weight:600}
 .phone-body{padding:16px;display:flex;flex-direction:column;gap:14px}
 .loop{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-2);background:var(--surface-2);border-radius:8px;padding:8px 10px}
+/* GPS km-post suggestion: the phone suggests, the crew confirms; typing always works */
+.gps{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface-2);display:flex;flex-direction:column;gap:9px;font-size:13px;color:var(--ink-2)}
+.gps.is-sug{background:var(--primary-50);border-color:#93c5fd}
+.gps.is-ok{background:var(--ok-bg);border-color:#86efac}
+.gps.is-warn{background:var(--warn-bg);border-color:#fcd34d}
+.gps-h{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.gps-msg{display:flex;gap:8px;align-items:flex-start;line-height:1.45}
+.gps-msg svg.i{margin-top:1px}
+.gps.is-sug .gps-msg svg.i{color:var(--primary)}
+.gps.is-ok .gps-msg svg.i{color:var(--ok)}
+.gps.is-warn .gps-msg svg.i{color:var(--warn)}
+.gps-msg b{color:var(--ink);font-weight:600}
+.gps-act{display:flex;gap:8px}
+.gps-act .btn{flex:1}
+.gps-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.linkbtn{all:unset;cursor:pointer;color:var(--primary);font-size:12.5px;font-weight:600;display:inline-flex;align-items:center;gap:5px;min-height:28px}
+.linkbtn:hover:not(:disabled){text-decoration:underline}
+.linkbtn:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px}
+.linkbtn:disabled{opacity:.5;cursor:not-allowed}
+.from-gps{border-color:#86efac;background:var(--ok-bg)}
 
 /* steps list */
 .steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
@@ -414,11 +434,19 @@ tr.r-alarm .sub,tr.r-pend .sub{color:#475569}
 
     <!-- PATROL -->
     <section id="v-patrol" class="view">
-      <p class="lede">The patrol crew logs the incident on the road. They choose the section, direction and km post, and the loop fills in by itself from NLEX's own loop table.</p>
+      <p class="lede">The patrol crew logs the incident on the road. The phone suggests the section, direction and km post from GPS; the crew checks the km post sign and taps Correct, or types it. The loop fills in by itself from NLEX's own loop table.</p>
       <div class="cols">
         <div class="phone" aria-label="Patrol app on a phone">
           <div class="phone-top"><b id="pHead">Post 3 · J. Santos</b><span class="mono" id="clock">0000H</span></div>
           <form class="phone-body" id="pForm" novalidate>
+            <div class="gps" id="pGps">
+              <div class="gps-h"><span class="label">Location from GPS</span><span class="badge b-gray">Sample location (preview)</span></div>
+              <div id="pGpsBody" aria-live="polite"></div>
+              <div class="gps-foot">
+                <button type="button" class="linkbtn" id="pGpsUse"><svg class="i sm"><use href="#i-pin"/></svg>Use my location</button>
+                <button type="button" class="linkbtn" id="pGpsNext">Try another sample</button>
+              </div>
+            </div>
             <div>
               <label for="pSection">Section <span class="req">*</span></label>
               <select id="pSection"></select>
@@ -475,7 +503,7 @@ tr.r-alarm .sub,tr.r-pend .sub{color:#475569}
           <h2 style="margin-bottom:16px">What happens after the crew sends it</h2>
           <ol class="steps">
             <li><span class="n">1</span><span><b>An incident number is created</b>Automatic and in sequence, for example <span class="mono">OMNI-2026-000124</span>.</span></li>
-            <li><span class="n">2</span><span><b>Time and person are stamped</b>Date and military time, plus the crew member's ID.</span></li>
+            <li><span class="n">2</span><span><b>Time and person are stamped</b>Date and military time, the crew member's ID, and whether the km post came from GPS or was typed.</span></li>
             <li><span class="n">3</span><span><b>TCR sees it at once</b>It lands on the live board and on the km-post strip for that section.</span></li>
             <li><span class="n">4</span><span><b>Nothing is forgotten</b>If it is still open after 2 hours, TCR gets an alarm.</span></li>
           </ol>
@@ -770,7 +798,7 @@ function toast(msg){$("toastTxt").textContent=msg;$("toast").hidden=false;clearT
 const logI=(i,what)=>i.log.push({t:new Date(),who:who(),what});
 
 /* navigation */
-const RENDER={login:()=>renderLogin(),patrol:()=>{$("pForm").hidden=false;$("pDone").hidden=true;$("pHead").textContent=`${shift.post} · ${shift.crew[0]}${shift.crew.length>1?` +${shift.crew.length-1}`:""}`},board:()=>renderBoard(),incident:()=>renderIncident(),reports:()=>renderReports(),access:()=>renderRoles()};
+const RENDER={login:()=>renderLogin(),patrol:()=>{$("pForm").hidden=false;$("pDone").hidden=true;if(gps.state==="idle")gpsFind();$("pHead").textContent=`${shift.post} · ${shift.crew[0]}${shift.crew.length>1?` +${shift.crew.length-1}`:""}`},board:()=>renderBoard(),incident:()=>renderIncident(),reports:()=>renderReports(),access:()=>renderRoles()};
 function setViewer(k){viewer=VIEWERS[k];$("avatar").textContent=viewer.ini;$("viewAs").value=k}
 opts($("viewAs"),[]);$("viewAs").innerHTML=Object.values(VIEWERS).map(v=>`<option value="${v.key}">${v.title} · ${v.name}</option>`).join("");
 $("viewAs").addEventListener("change",()=>{setViewer($("viewAs").value);
@@ -820,21 +848,91 @@ $("pType").addEventListener("click",e=>{const b=e.target.closest("button");if(!b
  $("pType").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
  opts($("pSub"),TYPES[pType]);$("pSub").disabled=false;$("pTypeErr").hidden=true});
 $("pMedia").addEventListener("change",()=>{const n=$("pMedia").files.length;$("pMediaHint").textContent=n?`${n} file${n>1?"s":""} attached.`:"Optional. Attach what the crew can see."});
-$("pAgain").addEventListener("click",()=>{$("pDone").hidden=true;$("pForm").hidden=false;window.scrollTo(0,0)});
+$("pAgain").addEventListener("click",()=>{$("pDone").hidden=true;$("pForm").hidden=false;window.scrollTo(0,0);gpsFind()});
 syncDir();
+
+/* GPS km-post suggestion. Simulated in this preview: the viewer's real location is never read.
+   The phone suggests, the crew confirms; weak signal or near a ramp = no suggestion; typing always works. */
+const GPS_SAMPLES=[
+ {kind:"good",sec:"NLEX Mainline",dir:"Northbound",km:21.4,acc:8},
+ {kind:"weak",acc:65},
+ {kind:"ramp",acc:10,near:"Bocaue",nearKm:27.746}
+];
+let gps={state:"idle",sample:0,applied:null,base:null,timer:0};
+const loopNo=(sec,km,zone)=>{const l=(rangeOf(sec,zone).loops||[]).find(x=>km>=x[0]&&km<=x[1]);return l?l[2]:"?"};
+const sameKm=(a,b)=>Math.abs(a-b)<0.0005;
+function gpsMark(on){["pSection","pDir","pKm"].forEach(f=>$(f).classList.toggle("from-gps",on))}
+function gpsRender(){
+ const s=GPS_SAMPLES[gps.sample],st=gps.state,box=$("pGps");
+ box.classList.toggle("is-sug",st==="good");
+ box.classList.toggle("is-ok",st==="confirmed"||st==="editing");
+ box.classList.toggle("is-warn",st==="weak"||st==="ramp");
+ $("pGpsUse").disabled=$("pGpsNext").disabled=st==="finding";
+ const where=x=>`<b>${esc(x.sec)} · ${esc(x.dir)} · <span class="mono">km ${chain(x.km)}</span> · Loop ${loopNo(x.sec,x.km,"")}</b>`;
+ const H={
+  idle:()=>`<div class="gps-msg">${ico("pin")}<span>Tap "Use my location" for a suggestion, or type the location below.</span></div>`,
+  finding:()=>`<div class="gps-msg">${ico("loader","i sm spin")}<span>Finding location…</span></div>`,
+  good:()=>`<div class="gps-msg">${ico("pin")}<span>Suggested from GPS: ${where(s)} · <span class="mono">±${s.acc} m</span></span></div>
+   <div class="gps-act"><button type="button" class="btn btn-primary btn-sm" id="pGpsOk">${ico("check")}Correct</button><button type="button" class="btn btn-outline btn-sm" id="pGpsEdit">${ico("edit")}Edit</button></div>
+   <div class="hint" style="margin:0">Check the km post sign first. You can also type the location below.</div>`,
+  weak:()=>`<div class="gps-msg">${ico("alert")}<span><b class="mono">±${s.acc} m</b>: too weak to suggest, please type the km post.</span></div>`,
+  ramp:()=>`<div class="gps-msg">${ico("alert")}<span>Near an interchange or ramp (${esc(s.near)}, <span class="mono">km ${chain(s.nearKm)}</span>): please type the km post.</span></div>`,
+  confirmed:()=>`<div class="gps-msg">${ico("check-c")}<span>From GPS, confirmed by crew: ${where(gps.applied)}</span></div>`,
+  editing:()=>`<div class="gps-msg">${ico("edit")}<span>From GPS: ${where(gps.applied)}. Check the km post sign and change the km if needed.</span></div>`,
+  changed:()=>`<div class="gps-msg">${ico("edit")}<span>Changed by crew. GPS suggested <span class="mono">km ${chain(gps.applied.km)}</span>.</span></div>`
+ };
+ $("pGpsBody").innerHTML=H[st]();
+}
+function gpsFind(){
+ clearTimeout(gps.timer);gps.applied=null;gps.base=null;gpsMark(false);
+ gps.state="finding";gpsRender();
+ gps.timer=setTimeout(()=>{gps.state=GPS_SAMPLES[gps.sample].kind;gpsRender()},1000);
+}
+function gpsApply(edit){
+ const s=GPS_SAMPLES[gps.sample];
+ $("pSection").value=s.sec;syncDir();$("pDir").value=s.dir;$("pKm").value=String(s.km);checkKm(false);
+ gps.applied={sec:s.sec,dir:s.dir,km:s.km};gpsMark(true);
+ gps.base=gps.state=edit?"editing":"confirmed";gpsRender();
+ if(edit){$("pKm").focus();$("pKm").select()}else toast("Location filled from GPS. You can still change it.");
+}
+/* the crew can change any field after the suggestion; the record says what happened */
+function gpsWatch(){
+ const a=gps.applied;if(!a)return;
+ const secOk=$("pSection").value===a.sec,dirOk=$("pDir").value===a.dir,kmOk=sameKm(parseKm($("pKm").value),a.km);
+ $("pSection").classList.toggle("from-gps",secOk);$("pDir").classList.toggle("from-gps",dirOk);$("pKm").classList.toggle("from-gps",kmOk);
+ const st=secOk&&dirOk&&kmOk?gps.base:"changed";
+ if(st!==gps.state){gps.state=st;gpsRender()}
+}
+function gpsNote(){
+ const a=gps.applied;
+ if(a){const sec=$("pSection").value,dir=$("pDir").value,km=parseKm($("pKm").value);
+  if(sec===a.sec&&dir===a.dir&&sameKm(km,a.km))return"Location suggested by GPS, confirmed by crew";
+  const to=[];if(sec!==a.sec)to.push(sec);if(dir!==a.dir)to.push(dir);to.push(`km ${chain(km)}`);
+  return `Location suggested by GPS (km ${chain(a.km)}), changed by crew to ${to.join(" · ")}`}
+ if(gps.state==="weak")return"Location typed by crew (GPS signal too weak to suggest)";
+ if(gps.state==="ramp")return"Location typed by crew (near an interchange, no GPS suggestion)";
+ return"Location typed by crew";
+}
+$("pGpsBody").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;if(b.id==="pGpsOk")gpsApply(false);else if(b.id==="pGpsEdit")gpsApply(true)});
+$("pGpsUse").addEventListener("click",gpsFind);
+$("pGpsNext").addEventListener("click",()=>{gps.sample=(gps.sample+1)%GPS_SAMPLES.length;gpsFind()});
+$("pSection").addEventListener("change",gpsWatch);
+$("pDir").addEventListener("change",gpsWatch);
+$("pKm").addEventListener("input",gpsWatch);
+gpsRender();
 $("pForm").addEventListener("submit",e=>{
  e.preventDefault();
  const kmOk=checkKm(true);if(!pType)$("pTypeErr").hidden=false;
  if(!kmOk){$("pKm").focus();return} if(!pType)return;
  const btn=$("pSend");btn.disabled=true;btn.innerHTML=`${ico("loader","i sm spin")}Sending…`;
  setTimeout(()=>{
-  seq++;const id="OMNI-2026-"+String(seq).padStart(6,"0"),t=new Date(),files=[...$("pMedia").files].map(f=>f.name),sl=$("pSloc");
+  seq++;const id="OMNI-2026-"+String(seq).padStart(6,"0"),t=new Date(),files=[...$("pMedia").files].map(f=>f.name),sl=$("pSloc"),locNote=gpsNote();
   incidents.unshift({id,t,sec:$("pSection").value,zone:pZoneVal(),km:parseKm($("pKm").value),dir:$("pDir").value,type:pType,sub:$("pSub").value,loc:$("pLoc").value,sloc:sl.disabled||sl.selectedIndex===0?"":sl.value,det:$("pDet").value,wx:$("pWx").value,
    post:shift.post,by:shiftBy(),crew:[...shift.crew],status:"open",media:files,vehicles:[],people:[],resp:[],cls:null,cause:{main:"",sub:""},dmg:{yes:null,what:""},notes:[],
    noPeople:false,pick:null,fin:null,subm:null,returnNote:null,
-   log:[{t,who:shiftBy(),what:"Logged the incident"+(files.length?` with ${files.length} media file${files.length>1?"s":""}`:"")}]});
+   log:[{t,who:shiftBy(),what:"Logged the incident"+(files.length?` with ${files.length} media file${files.length>1?"s":""}`:"")+`. ${locNote}`}]});
   currentId=id;updateCount();
-  $("pForm").reset();pType=null;$("pType").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed","false"));
+  $("pForm").reset();pType=null;clearTimeout(gps.timer);gps.applied=null;gps.base=null;gps.state="idle";gpsMark(false);gpsRender();$("pType").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed","false"));
   opts($("pSub"),["Choose the type first"]);$("pSub").disabled=true;$("pMediaHint").textContent="Optional. Attach what the crew can see.";syncDir();
   btn.disabled=false;btn.textContent="Send to TCR";
   $("pDoneId").textContent=id;$("pForm").hidden=true;$("pDone").hidden=false;
