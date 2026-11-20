@@ -4,16 +4,18 @@
 <meta name="robots" content="noindex, nofollow">
 <meta charset="utf-8">
 <title>Project OMNI</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231d4ed8'/%3E%3Cpath d='M11 26 14 6M21 26 18 6' stroke='white' stroke-width='2.4' stroke-linecap='round' fill='none'/%3E%3Cpath d='M16 8v3M16 15v3M16 22v3' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23264d8c'/%3E%3Cpath d='M11 26 14 6M21 26 18 6' stroke='white' stroke-width='2.4' stroke-linecap='round' fill='none'/%3E%3Cpath d='M16 8v3M16 15v3M16 22v3' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
-/* Layout: fixed white sidebar + top bar + one task screen; CivicGrid UI law (light, blue-700 primary). Single light theme on purpose: it matches the shipped EOC. */
+/* v10 layout follows the "Sample User Interface" NLEX showed at the 19 Nov pre-bid: navy title bar (NLEX mark, OMNI title, user),
+   a lighter blue menu strip (File, Search, Window, Dashboard, Log Out, Create Incident), white body, navy buttons, gold OMNI check. Single light theme on purpose. */
 :root{
   color-scheme:light;
-  --bg:#f8fafc; --surface:#ffffff; --surface-2:#f1f5f9; --line:#e2e8f0; --line-strong:#cbd5e1;
+  --bg:#f4f6fa; --surface:#ffffff; --surface-2:#f1f4f9; --line:#e1e6ef; --line-strong:#c8d0dd;
   --ink:#0f172a; --ink-2:#1e293b; --body:#475569; --muted:#64748b;
-  --primary:#1d4ed8; --primary-hover:#1e40af; --primary-light:#dbeafe; --primary-50:#eff6ff;
+  --primary:#1f3f7a; --primary-hover:#17305e; --primary-light:#dce5f5; --primary-50:#eef2fa;
+  --nx-navy:#264d8c; --nx-strip:#5b82cc; --nx-tab:#c9d6ef; --gold:#f2b01e; --nx-yellow:#fbe3a0;
   --ok:#15803d; --ok-bg:#f0fdf4; --warn:#b45309; --warn-bg:#fffbeb; --bad:#b91c1c; --bad-bg:#fef2f2; --gray:#4b5563; --gray-bg:#f3f4f6;
   --road:#334155; --road-mark:#facc15;
   --f-ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -29,32 +31,51 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 svg.i.sm{width:16px;height:16px}
 .mono{font-family:var(--f-data);font-variant-numeric:tabular-nums}
 
-/* sidebar */
-.side{position:fixed;inset:0 auto 0 0;width:var(--side);background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:20px 12px calc(16px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));z-index:30}
-.logo{display:flex;align-items:center;gap:10px;padding:0 8px 18px;border-bottom:1px solid var(--line);margin-bottom:12px}
-.logo-mark{width:32px;height:32px;border-radius:8px;background:var(--primary);display:grid;place-items:center;color:#fff}
-.logo b{display:block;color:var(--ink);font-size:15px;font-weight:700;line-height:1.2}
-.logo span{font-size:12px;color:var(--muted)}
-.nav{display:flex;flex-direction:column;gap:2px}
-.nav button{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;color:var(--body);font-weight:500;cursor:pointer;width:100%}
-.nav button:hover{background:var(--surface-2);color:var(--ink)}
-.nav button:focus-visible{outline:2px solid var(--primary);outline-offset:-2px}
-.nav button[aria-current="page"]{background:var(--primary-50);color:var(--primary)}
-.nav .count{margin-left:auto;font-family:var(--f-data);font-size:12px;background:var(--warn-bg);color:var(--warn);border:1px solid #fcd34d;border-radius:999px;padding:0 7px}
-.side-foot{margin-top:auto;font-size:12px;color:var(--muted);padding:12px 8px 0;border-top:1px solid var(--line)}
-
-/* main */
-.main{margin-left:var(--side);min-height:100vh}
-.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:#fff;z-index:25}
-.topbar-in{max-width:1280px;margin:0 auto;display:flex;align-items:center;gap:12px;padding-block:14px;padding-left:max(32px,env(safe-area-inset-left,0px));padding-right:max(32px,env(safe-area-inset-right,0px))}
-.topbar .menu-btn{display:none}
-input,select{scroll-margin-top:96px}
-.topbar h1{margin:0;font-size:24px;font-weight:700;color:var(--ink);line-height:1.2;text-wrap:balance}
+/* NLEX-style title bar + menu strip (from NLEX's pre-bid sample screens) */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--nx-navy);z-index:25}
+.nx-top{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;box-shadow:0 2px 10px -6px rgba(15,23,42,.5)}
+.nx-head{background:var(--nx-navy);color:#fff;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;padding:8px max(20px,env(safe-area-inset-right,0px)) 8px max(20px,env(safe-area-inset-left,0px))}
+.nx-mark{justify-self:start;font:800 15px/1 var(--f-ui);letter-spacing:.02em;color:var(--nx-navy);background:#fff;border-radius:3px;padding:4px 6px;position:relative}
+.nx-mark i{font-style:normal;color:var(--gold)}
+.nx-title{text-align:center;line-height:1.15}
+.nx-title .wm{display:inline-flex;align-items:center}
+.nx-title .wm svg{height:22px;width:auto;display:block}
+.nx-title span{display:block;font-size:13.5px;color:#e6edf9;margin-top:2px}
+.nx-right{justify-self:end;display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end}
+.nx-time{font:500 12px var(--f-data);color:#dbe5f7;white-space:nowrap}
+.nx-user{display:flex;align-items:center;gap:8px;color:#fff;font-size:12.5px}
+.nx-user svg.i{width:22px;height:22px}
+.nx-menu{background:var(--nx-strip);display:flex;align-items:center;gap:4px;flex-wrap:wrap;padding:5px max(16px,env(safe-area-inset-right,0px)) 5px max(16px,env(safe-area-inset-left,0px))}
+.nx-menu .mini{font:800 12px var(--f-ui);color:#fff;opacity:.85;margin-right:6px;letter-spacing:.03em}
+.nav{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.nav>button,.nav .dd>button,.nx-menu .dd>button{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:5px 14px;border-radius:4px;background:var(--nx-tab);color:#1b2f57;font-weight:500;font-size:13.5px;position:relative}
+.nav>button:hover,.dd>button:hover{background:#e3eaf8}
+.nav>button:focus-visible,.dd>button:focus-visible{outline:2px solid #fff;outline-offset:1px}
+.nav>button[aria-current="page"]{background:var(--primary);color:#fff}
+.nav .count{font-family:var(--f-data);font-size:11.5px;background:var(--warn-bg);color:var(--warn);border:1px solid #fcd34d;border-radius:999px;padding:0 6px;line-height:16px}
+.dd{position:relative}
+.dd-m{position:absolute;left:0;top:calc(100% + 4px);min-width:210px;background:#e9edf3;border:1px solid var(--line-strong);border-radius:4px;padding:8px;box-shadow:0 14px 28px -14px rgba(15,23,42,.45);z-index:40;display:flex;flex-direction:column;gap:6px}
+.dd-m button{all:unset;box-sizing:border-box;cursor:pointer;background:#fff;color:var(--ink-2);font-size:13.5px;padding:7px 12px;border-radius:2px;display:flex;align-items:center;gap:8px}
+.dd-m button:hover{background:var(--primary-50);color:var(--primary)}
+.dd-m button:focus-visible{outline:2px solid var(--primary);outline-offset:-2px}
+.dd-m .sub-m{margin-left:18px;display:flex;flex-direction:column;gap:6px}
+.dd-m .grp{font-size:13.5px;color:var(--ink-2);background:#fff;padding:7px 12px;border-radius:2px}
+.nx-actions{margin-left:auto;display:flex;align-items:center;gap:8px}
+.btn-nx{background:var(--primary);color:#fff;border-color:#c9d6ef}
+.btn-nx:hover:not(:disabled){background:var(--primary-hover)}
+.nx-sub{background:var(--surface);border-bottom:1px solid var(--line)}
+.nx-sub-in{max-width:1280px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-block:12px;padding-left:max(32px,env(safe-area-inset-left,0px));padding-right:max(32px,env(safe-area-inset-right,0px))}
+.menu-btn{display:none}
+input,select{scroll-margin-top:150px}
+.nx-sub h1{margin:0;font-size:22px;font-weight:700;color:var(--ink);line-height:1.2;text-wrap:balance}
 .top-right{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
-.user{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-2)}
 .avatar{width:28px;height:28px;border-radius:50%;background:var(--primary-light);color:var(--primary);display:grid;place-items:center;font-weight:700;font-size:12px}
-.content{max-width:1280px;margin:0 auto;padding-block:28px 40px;padding-left:max(32px,env(safe-area-inset-left,0px));padding-right:max(32px,env(safe-area-inset-right,0px))}
+.main{min-height:100vh}
+.content{max-width:1280px;margin:0 auto;padding-block:24px 40px;padding-left:max(32px,env(safe-area-inset-left,0px));padding-right:max(32px,env(safe-area-inset-right,0px))}
+/* faint OMNI watermark, as on NLEX's sample screens */
+.wmk{position:relative;isolation:isolate}
+.wmk::after{content:"OMNI";position:absolute;inset:0;display:grid;place-items:center;font:800 clamp(80px,14vw,200px)/1 var(--f-ui);letter-spacing:.04em;color:var(--primary);opacity:.04;pointer-events:none;z-index:-1}
+.included{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#7a5200;background:#fff6dc;border:1px solid #f2c94c;border-radius:999px;padding:1px 8px;vertical-align:2px}
 .lede{margin:0 0 20px;max-width:70ch}
 
 /* type */
@@ -70,7 +91,9 @@ label{margin-bottom:6px}
 .card-h{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
 .cols{display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:24px;align-items:start}
 .cols-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-@media (max-width:1100px){.cols{grid-template-columns:minmax(0,1fr)}}
+.cols.c-ph{grid-template-columns:minmax(0,420px) minmax(0,1fr)}
+.cols.c-lg{grid-template-columns:minmax(0,1fr) minmax(0,420px)}
+@media (max-width:1100px){.cols,.cols.c-ph,.cols.c-lg{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:900px){.cols-2{grid-template-columns:minmax(0,1fr)}}
 
 /* controls */
@@ -105,9 +128,40 @@ input[aria-invalid="true"]{border-color:var(--bad)}
 .b-gray{color:var(--gray);background:var(--gray-bg);border-color:#d1d5db}
 
 /* phone */
-.phone{width:100%;max-width:380px;margin:0 auto;border:1px solid var(--line-strong);border-radius:28px;background:var(--surface);overflow:hidden;box-shadow:0 12px 32px -12px rgba(15,23,42,.25)}
-.phone-top{background:var(--primary);color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.phone{width:100%;max-width:420px;margin:0 auto;border:10px solid #111827;border-radius:30px;background:var(--surface);overflow:hidden;box-shadow:0 12px 32px -12px rgba(15,23,42,.35)}
+.phone-top{background:var(--nx-navy);color:#fff;padding:8px 12px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;font-size:12px}
+.phone-top .nx-mark{font-size:11px;padding:3px 4px}
+.phone-top .pt-c{text-align:center;line-height:1.15}
+.phone-top .pt-c svg{height:15px;width:auto}
+.phone-top .pt-c span{display:block;font-size:10.5px;color:#e6edf9}
+.phone-top .pt-u{display:flex;flex-direction:column;align-items:center;font-size:10px;color:#fff}
+.phone-top .pt-u svg.i{width:18px;height:18px}
 .phone-top b{font-weight:600}
+.pstrip{background:var(--nx-strip);color:#fff;display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 10px;padding:6px 12px;font-size:11.5px}
+.pstrip b{font-weight:700}
+.phome{padding:22px 18px;display:flex;flex-direction:column;gap:12px}
+.cimenu{border-radius:4px;overflow:hidden;background:#e4eaf6;padding:0 0 8px}
+.cimenu>button{all:unset;box-sizing:border-box;cursor:pointer;width:100%;display:flex;justify-content:space-between;align-items:center;background:var(--primary);color:#fff;font-weight:600;padding:10px 14px;font-size:14.5px}
+.cimenu>button:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+.cimenu .ci-l{display:flex;flex-direction:column;gap:6px;padding:8px 28px 0}
+.cimenu .ci-l button{all:unset;box-sizing:border-box;cursor:pointer;text-align:center;background:var(--nx-navy);color:#fff;font-weight:600;padding:9px 10px;border-radius:3px;font-size:14px}
+.cimenu .ci-l button:hover{background:var(--primary)}
+.cimenu .ci-l button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.pgrp{border:1px solid var(--line);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:10px;background:#fbfcfe}
+.pgrp>.gl{font-size:12px;font-weight:600;color:var(--ink-2);text-transform:none;letter-spacing:0;margin:0}
+.pnav{display:flex;align-items:center;gap:8px;border-top:1px solid var(--line);padding:10px 14px;background:#f7f9fc}
+.pnav .home{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;font-size:10px;color:var(--primary);font-weight:600}
+.pnav .home svg.i{width:22px;height:22px}
+.pnav .home:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px}
+.pnav .sp{flex:1}
+.ptabs{display:flex;gap:4px;flex-wrap:wrap}
+.ptabs button{font:inherit;font-size:12px;font-weight:600;padding:5px 9px;border-radius:3px;border:0;background:var(--nx-tab);color:#1b2f57;cursor:pointer}
+.ptabs button[aria-selected="true"]{background:var(--primary);color:#fff}
+.plist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.plist li{border:1px solid var(--line);border-radius:6px;padding:7px 10px;font-size:12.5px;color:var(--ink-2);display:flex;justify-content:space-between;gap:8px;align-items:center}
+.plist li.none{color:var(--muted);border-style:dashed}
+.cnt3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.cnt3 input{text-align:center}
 .phone-body{padding:16px;display:flex;flex-direction:column;gap:14px}
 .loop{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-2);background:var(--surface-2);border-radius:8px;padding:8px 10px}
 /* GPS km-post suggestion: the phone suggests, the crew confirms; typing always works */
@@ -349,14 +403,21 @@ table.sheet.wide{min-width:1120px}
 .phone-done .ok-c.wait{background:var(--warn-bg);color:var(--warn);border-color:#fcd34d}
 
 /* responsive shell */
+@media (max-width:900px){
+  .nx-head{grid-template-columns:auto 1fr;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+  .nx-title{text-align:left}
+  .nx-right{grid-column:1/-1;justify-self:stretch;justify-content:space-between}
+}
 @media (max-width:767px){
-  .side{transform:translateX(-100%);transition:transform .2s ease-out;box-shadow:none}
-  .side.open{transform:none;box-shadow:0 0 0 100vmax rgba(15,23,42,.35)}
-  .main{margin-left:0}
-  .topbar .menu-btn{display:inline-flex}
-  .topbar-in,.content{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-  .topbar h1{font-size:20px}
-  .user .who-txt{display:none}
+  .nx-top{position:static}
+  input,select{scroll-margin-top:16px}
+  .nx-sub-in,.content{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .nx-sub h1{font-size:19px}
+  .nx-menu{padding-left:max(10px,env(safe-area-inset-left,0px));padding-right:max(10px,env(safe-area-inset-right,0px))}
+  .nx-menu .mini{display:none}
+  .nav>button,.dd>button{padding:5px 10px;font-size:13px}
+  .nx-actions{margin-left:0;width:100%}
+  .nx-actions .btn{flex:1}
   .grid-f{grid-template-columns:minmax(0,1fr)}
   .tbl{margin:0 -24px}
 }
@@ -364,6 +425,57 @@ table.sheet.wide{min-width:1120px}
 .h3{font-size:15px;font-weight:600;color:var(--ink-2);margin:0}
 tr.r-alarm .sub,tr.r-pend .sub{color:#475569}
 #v-access th:first-child,#v-access td:first-child{min-width:220px}
+
+/* ---- v10: NLEX sample-screen look ---- */
+.secbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--nx-strip);border-radius:6px 6px 0 0;padding:8px 10px;margin:-24px -24px 16px}
+.secbar .lbl{background:var(--primary);color:#fff;font-weight:700;font-size:13px;letter-spacing:.04em;text-transform:uppercase;padding:6px 14px;border-radius:3px}
+table.nx th{background:var(--nx-yellow);color:#1e293b;font-size:12px;font-weight:700;text-transform:none;letter-spacing:0;white-space:normal;text-align:center;border-bottom:2px solid #f2cf6b;padding:8px 10px}
+table.nx td{text-align:center;padding:9px 10px;font-size:13.5px;white-space:nowrap}
+table.nx td.l{text-align:left;white-space:normal;min-width:150px}
+table.nx tr.r-alarm td{color:#b91c1c;background:#fff5f5}
+table.nx tr.r-alarm td .sub{color:#b91c1c}
+.srch{display:grid;grid-template-columns:minmax(160px,200px) repeat(2,minmax(200px,1fr)) minmax(200px,1.2fr);gap:14px;align-items:start;margin-top:18px;padding-top:16px;border-top:2px solid var(--line-strong)}
+@media (max-width:1100px){.srch{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.srch{grid-template-columns:minmax(0,1fr)}}
+.srch .box{border:1px solid var(--line-strong);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.srch .box[data-off="true"] input{opacity:.45}
+.srch h3{font-size:13px}
+.logincard{max-width:380px;margin:0 auto;background:#f3f5f9;border:1px solid var(--line);border-radius:6px;padding:28px 26px;display:flex;flex-direction:column;gap:12px}
+.logincard .wm-big{display:flex;justify-content:center;margin-bottom:6px}
+.logincard .wm-big svg{height:46px;width:auto}
+.logincard label{text-transform:none;letter-spacing:0;font-size:13px;color:var(--ink-2);font-weight:500;margin:4px 0 0}
+.logincard .fp{all:unset;cursor:pointer;align-self:center;font-size:13.5px;color:var(--ink-2)}
+.logincard .fp:hover{text-decoration:underline}
+.logincard .fp:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:3px}
+.dash{display:grid;grid-template-columns:200px minmax(0,1fr);gap:16px;align-items:stretch}
+@media (max-width:900px){.dash{grid-template-columns:minmax(0,1fr)}}
+.dside{background:#0f2a6b;color:#fff;border-radius:6px;padding:18px 14px;display:flex;flex-direction:column;gap:8px}
+.dside .wm-s{display:flex;justify-content:center;margin-bottom:14px}
+.dside .wm-s svg{height:26px;width:auto}
+.dside button{all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:4px;font-weight:600;color:#fff}
+.dside button[aria-current="page"]{background:rgba(255,255,255,.14)}
+.dside button:hover{background:rgba(255,255,255,.1)}
+.dside button:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+.dmain{background:#e9ecf1;border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.dtop{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:14px}
+.dtiles{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+@media (max-width:1100px){.dtop{grid-template-columns:minmax(0,1fr)}.dtiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.dtiles{grid-template-columns:minmax(0,1fr)}}
+.tile{background:#fff;border-radius:4px;padding:12px;min-width:0;display:flex;flex-direction:column;gap:6px}
+.tile h3{font-size:13px;font-weight:600;color:var(--ink-2)}
+.tile .cap{font-size:12px;color:var(--muted)}
+.tile svg.ch{width:100%;height:auto;display:block}
+.pbar{display:grid;grid-template-columns:minmax(0,1fr) 34px;gap:6px;align-items:center;font-size:12px;color:var(--ink-2)}
+.pbar .t{grid-column:1/-1;height:8px;border-radius:4px;background:#e5e7eb;overflow:hidden}
+.pbar .t span{display:block;height:100%;border-radius:4px}
+.pbar .n{text-align:right;font-family:var(--f-data)}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:640px){.kpis{grid-template-columns:minmax(0,1fr)}}
+.kpi{background:#fff;border-radius:4px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.kpi b{font:700 26px var(--f-data);color:var(--ink)}
+.kpi.bad b{color:var(--bad)}
+.kpi.info b{color:var(--primary)}
+.users td .row-btns{justify-content:flex-end}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -391,48 +503,103 @@ tr.r-alarm .sub,tr.r-pend .sub{color:#475569}
   <symbol id="i-key" viewBox="0 0 24 24"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"/></symbol>
   <symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
   <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4" fill="currentColor" stroke="none"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></symbol>
+  <symbol id="i-caret" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></symbol>
+  <!-- OMNI wordmark with the gold check, drawn after NLEX's sample screens -->
+  <symbol id="wm-omni" viewBox="0 0 108 32"><text x="1" y="27" font-family="IBM Plex Sans, Arial, sans-serif" font-weight="700" font-size="31" letter-spacing="1" fill="currentColor">OMNI</text><path d="M33 17.5l6.5 7.5L56 5" fill="none" stroke="#f2b01e" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 </svg>
 
-<aside class="side" id="side" aria-label="Main navigation">
-  <div class="logo">
-    <div class="logo-mark"><svg class="i"><use href="#i-road"/></svg></div>
-    <div><b>Project OMNI</b><span>Traffic Incident Management</span></div>
-  </div>
-  <nav class="nav">
-    <button data-go="login"><svg class="i"><use href="#i-key"/></svg>Sign in</button>
-    <button data-go="patrol"><svg class="i"><use href="#i-phone"/></svg>Patrol app</button>
-    <button data-go="board"><svg class="i"><use href="#i-board"/></svg>Live board<span class="count" id="navCount">0</span></button>
-    <button data-go="incident"><svg class="i"><use href="#i-file"/></svg>Incident</button>
-    <button data-go="access"><svg class="i"><use href="#i-users"/></svg>Users &amp; access</button>
-    <button data-go="reports"><svg class="i"><use href="#i-chart"/></svg>Reports</button>
+<div class="nx-top">
+  <header class="nx-head">
+    <span class="nx-mark" aria-label="NLEX">NL<i>E</i>X</span>
+    <div class="nx-title"><span class="wm" aria-label="OMNI" style="color:#fff"><svg viewBox="0 0 108 32" role="img" aria-hidden="true"><use href="#wm-omni"/></svg></span><span>Traffic Incident Management System</span></div>
+    <div class="nx-right">
+      <span class="nx-time" id="nxTime"></span>
+      <span class="nx-user"><svg class="i"><use href="#i-user"/></svg><span id="nxWho">User</span></span>
+    </div>
+  </header>
+  <nav class="nx-menu" id="side" aria-label="Main menu">
+    <span class="mini" aria-hidden="true">OMNI</span>
+    <div class="nav">
+      <div class="dd" id="ddFile">
+        <button type="button" aria-haspopup="true" aria-expanded="false" data-dd="file">File<svg class="i sm"><use href="#i-caret"/></svg></button>
+        <div class="dd-m" hidden role="menu" aria-label="File">
+          <button type="button" role="menuitem" data-act="create">Create Incident</button>
+          <div class="grp">Manage User</div>
+          <div class="sub-m">
+            <button type="button" role="menuitem" data-act="newuser">Create User</button>
+            <button type="button" role="menuitem" data-act="resetpw">Reset Password</button>
+          </div>
+          <button type="button" role="menuitem" data-act="about">About Omni</button>
+        </div>
+      </div>
+      <button type="button" data-go="board">Search<span class="count" id="navCount">0</span></button>
+      <div class="dd" id="ddWin">
+        <button type="button" aria-haspopup="true" aria-expanded="false" data-dd="win">Window<svg class="i sm"><use href="#i-caret"/></svg></button>
+        <div class="dd-m" hidden role="menu" aria-label="Window">
+          <button type="button" role="menuitem" data-go="login"><svg class="i sm"><use href="#i-key"/></svg>Log in</button>
+          <button type="button" role="menuitem" data-go="patrol"><svg class="i sm"><use href="#i-phone"/></svg>Mobile application (patrol)</button>
+          <button type="button" role="menuitem" data-go="board"><svg class="i sm"><use href="#i-board"/></svg>Incident info (live board)</button>
+          <button type="button" role="menuitem" data-go="incident"><svg class="i sm"><use href="#i-file"/></svg>Incident record</button>
+          <button type="button" role="menuitem" data-go="reports"><svg class="i sm"><use href="#i-chart"/></svg>Reports and shift report</button>
+          <button type="button" role="menuitem" data-go="access"><svg class="i sm"><use href="#i-users"/></svg>Users and access</button>
+        </div>
+      </div>
+      <button type="button" data-go="dash">Dashboard</button>
+      <button type="button" data-act="logout">Log Out</button>
+    </div>
+    <div class="nx-actions">
+      <button type="button" class="btn btn-nx btn-sm" data-act="create">Create Incident</button>
+    </div>
+    <button class="menu-btn" id="menuBtn" type="button" aria-hidden="true" tabindex="-1"></button>
   </nav>
-  <div class="side-foot">Prepared by CivicGrid for NLEX Corporation</div>
-</aside>
+</div>
 
 <div class="main">
-  <header class="topbar">
-    <div class="topbar-in">
-      <button class="btn btn-outline btn-sm menu-btn" id="menuBtn" aria-label="Open menu" aria-controls="side" aria-expanded="false"><svg class="i"><use href="#i-menu"/></svg></button>
+  <div class="nx-sub">
+    <div class="nx-sub-in">
       <h1 id="pageTitle">Patrol app</h1>
       <div class="top-right">
         <span class="badge b-info">Demo data</span>
         <label class="viewas"><span>Viewing as</span><span class="avatar" id="avatar">JS</span><select id="viewAs" aria-label="Viewing as"></select></label>
       </div>
     </div>
-  </header>
+  </div>
 
   <main class="content">
 
     <!-- SIGN IN -->
     <section id="v-login" class="view" hidden>
-      <p class="lede">Each patrol post signs in once per shift and lists the crew on board, so every incident and every credit point goes to the right people. Control-room staff sign in with their NLEX company account.</p>
-      <div class="cols">
-        <div class="phone" aria-label="Patrol sign-in on a phone">
-          <div class="phone-top"><b>Patrol sign-in</b><span class="mono" id="clock2">0000H</span></div>
-          <form class="phone-body" id="lForm" novalidate>
+      <p class="lede">The same log-in screen as NLEX's sample: Username, Password, Log in, Forgot Password. On the web application control-room staff can also use their NLEX company account. On the mobile application the patrol post also lists the crew on board, so every incident and credit point goes to the right people.</p>
+      <div class="cols c-lg">
+        <div class="card wmk">
+          <div class="secbar"><span class="lbl">Web application</span><span class="sub" style="color:#fff">Control room</span></div>
+          <form class="logincard" id="wForm" novalidate>
+            <div class="wm-big" style="color:var(--primary)"><svg viewBox="0 0 108 32" role="img" aria-label="OMNI"><use href="#wm-omni"/></svg></div>
+            <div><input id="wUser" autocomplete="username" aria-describedby="wErr"><label for="wUser">Username <span class="req">*</span></label></div>
+            <div><input id="wPass" type="password" autocomplete="current-password" aria-describedby="wErr"><label for="wPass">Password <span class="req">*</span></label></div>
+            <div class="err" id="wErr" hidden>Enter your username and password.</div>
+            <button class="btn btn-primary" type="submit" id="wBtn">Log in</button>
+            <button class="fp" type="button" data-act="forgot">Forgot Password</button>
+            <div class="signin-or" style="margin:6px 0">or</div>
+            <button class="btn btn-outline" type="button" id="adBtn"><svg class="i sm"><use href="#i-lock"/></svg>Log in with NLEX company account</button>
+            <div class="hint" style="text-align:center">Company account uses NLEX's directory (Active Directory). To be confirmed with NLEX IT. <span class="included">Already included</span></div>
+          </form>
+        </div>
+        <div class="phone" aria-label="Mobile application log-in">
+          <div class="phone-top"><span class="nx-mark">NL<i>E</i>X</span><span class="pt-c"><svg viewBox="0 0 108 32" aria-hidden="true" style="color:#fff"><use href="#wm-omni"/></svg><span>Traffic Incident Management System</span></span><span class="pt-u"><svg class="i"><use href="#i-user"/></svg><span class="mono" id="clock2">0000H</span></span></div>
+          <form class="phone-body wmk" id="lForm" novalidate>
+            <div style="display:flex;justify-content:center;color:var(--primary)"><svg viewBox="0 0 108 32" style="height:40px;width:auto" role="img" aria-label="OMNI"><use href="#wm-omni"/></svg></div>
             <div>
-              <label for="lPost">Patrol post <span class="req">*</span></label>
+              <label for="lPost">Username (patrol post) <span class="req">*</span></label>
               <select id="lPost"></select>
+            </div>
+            <div>
+              <label for="lPass">Password <span class="req">*</span></label>
+              <input id="lPass" type="password" autocomplete="off" placeholder="Enter the post password" aria-describedby="lPassErr">
+              <div class="err" id="lPassErr" hidden>Enter the password.</div>
             </div>
             <div>
               <label for="lShift">Shift <span class="req">*</span></label>
@@ -441,25 +608,10 @@ tr.r-alarm .sub,tr.r-pend .sub{color:#475569}
             </div>
             <fieldset class="chks" id="lCrew" aria-describedby="lCrewErr"><legend>Crew on board <span class="req">*</span></legend></fieldset>
             <div class="err" id="lCrewErr" hidden>Tick at least one crew member who is on board.</div>
-            <div>
-              <label for="lPass">Post password <span class="req">*</span></label>
-              <input id="lPass" type="password" autocomplete="off" placeholder="Enter the post password" aria-describedby="lPassErr">
-              <div class="err" id="lPassErr" hidden>Enter the post password.</div>
-            </div>
-            <button class="btn btn-primary" type="submit" id="lBtn">Start shift</button>
+            <button class="btn btn-primary" type="submit" id="lBtn">Log in</button>
+            <button class="linkbtn" type="button" data-act="forgot" style="align-self:center">Forgot Password</button>
+            <div class="hint" style="text-align:center">Crew on board: each incident is credited to everyone listed. <span class="included">Already included</span></div>
           </form>
-        </div>
-        <div class="card">
-          <h2 style="margin-bottom:10px">Control room staff</h2>
-          <p style="margin:0 0 16px">TCR Specialists, Supervisors, Investigators, Data Analysts and Administrators sign in with their NLEX company account, so there is no extra password to remember.</p>
-          <button class="btn btn-outline" type="button" id="adBtn"><svg class="i sm"><use href="#i-lock"/></svg>Sign in with NLEX company account</button>
-          <div class="hint">Uses NLEX's company directory (Active Directory). To be confirmed with NLEX IT.</div>
-          <div class="signin-or">Why the crew list matters</div>
-          <ol class="steps">
-            <li><span class="n">1</span><span><b>Credit goes to everyone on board</b>Each incident the post attends is credited to every crew member listed for that shift.</span></li>
-            <li><span class="n">2</span><span><b>The end-of-shift report builds itself</b>The field supervisor sees every incident and credit point per crew member.</span></li>
-            <li><span class="n">3</span><span><b>Shift changes are on record</b>Who was on board, and from what time, is saved with the shift.</span></li>
-          </ol>
         </div>
       </div>
       <div class="next"><button data-go="patrol">Next: Patrol app <svg class="i sm"><use href="#i-arrow"/></svg></button></div>
@@ -467,13 +619,34 @@ tr.r-alarm .sub,tr.r-pend .sub{color:#475569}
 
     <!-- PATROL -->
     <section id="v-patrol" class="view">
-      <p class="lede">The patrol crew logs the incident on the road. The phone suggests the section, direction and km post from GPS; the crew checks the km post sign and taps Correct, or types it. The loop fills in by itself from NLEX's own loop table. With no signal, the report is saved on the phone and sends by itself later. The crew can add photos or a short update to its open incidents.</p>
-      <div class="cols">
-        <div class="phone" aria-label="Patrol app on a phone">
-          <div class="phone-top"><b id="pHead">Post 3 · J. Santos</b><span class="mono" id="clock">0000H</span></div>
+      <p class="lede">Laid out like NLEX's sample mobile screens: Create Incident (Road Crash, Breakdown, Security, Others), then the incident pages with Next and Save, and the Vehicle Info, Injured, Fatality and Medical Case tabs. Already included on top of the sample: GPS suggests the km post and the crew confirms it, the loop fills in by itself, and with no signal the report is saved on the phone and sends by itself later.</p>
+      <div class="cols c-ph">
+        <div class="phone" aria-label="Mobile application">
+          <div class="phone-top"><span class="nx-mark">NL<i>E</i>X</span><span class="pt-c"><svg viewBox="0 0 108 32" aria-hidden="true" style="color:#fff"><use href="#wm-omni"/></svg><span>Traffic Incident Management System</span></span><span class="pt-u"><svg class="i"><use href="#i-user"/></svg><span id="pHead">Post 3</span></span></div>
+          <div class="pstrip" id="pStrip" hidden><span>Incident No.: <b id="pStripNo">New</b></span><span>Incident Type: <b id="pStripType">—</b></span><span class="mono" id="clock">0000H</span></div>
           <div class="sim"><label class="chk inline"><input type="checkbox" id="pNoSig"><span>Simulate: no signal</span></label><span class="badge b-gray">Preview simulation</span></div>
           <div class="netbar" id="pNet" hidden aria-live="polite"><svg class="i sm"><use href="#i-clock"/></svg><span id="pNetTxt"></span></div>
-          <form class="phone-body" id="pForm" novalidate>
+          <div class="phome wmk" id="pHome">
+            <div class="cimenu">
+              <button type="button" id="pCiBtn" aria-expanded="true" aria-controls="pCiList">Create Incident<svg class="i sm"><use href="#i-caret"/></svg></button>
+              <div class="ci-l" id="pCiList">
+                <button type="button" data-ci="Road Crash">Road Crash</button>
+                <button type="button" data-ci="Vehicle Breakdown">Breakdown</button>
+                <button type="button" data-ci="Security">Security</button>
+                <button type="button" data-ci="Other Incidents">Others</button>
+              </div>
+            </div>
+            <div class="hint" style="text-align:center">Gantry Hit (new in NLEX's list) is under Others.</div>
+          </div>
+          <form class="phone-body" id="pForm" novalidate hidden>
+           <div id="pPg1" class="ppg">
+            <div class="pgrp"><div class="gl">Respondent</div>
+              <div><label for="pDeploy">Deployment</label><select id="pDeploy"><option>Patrol Vehicle</option><option>Rider</option><option>Special Operation</option><option>Others</option></select></div>
+              <div class="grid-f">
+                <div><label for="pVeh">Patrol Vehicle</label><select id="pVeh"></select></div>
+                <div><label for="pCrewTxt">Patrol Crew</label><input id="pCrewTxt" readonly></div>
+              </div>
+            </div>
             <div class="gps" id="pGps">
               <div class="gps-h"><span class="label">Location from GPS</span><span class="badge b-gray">Sample location (preview)</span></div>
               <div id="pGpsBody" aria-live="polite"></div>
@@ -496,29 +669,62 @@ tr.r-alarm .sub,tr.r-pend .sub{color:#475569}
                 <select id="pDir"></select>
               </div>
               <div>
-                <label for="pKm">Km post <span class="req">*</span></label>
-                <input id="pKm" inputmode="decimal" placeholder="e.g. 42.6" aria-describedby="pKmErr">
+                <label for="pKm">KM Post <span class="req">*</span></label>
+                <input id="pKm" inputmode="decimal" placeholder="e.g. 12+000" aria-describedby="pKmErr">
               </div>
             </div>
             <div class="err" id="pKmErr" hidden></div>
             <div class="loop"><svg class="i sm"><use href="#i-pin"/></svg><span id="pLoop">Loop: enter the km post</span></div>
-            <div>
-              <label id="pTypeLbl">Type of incident <span class="req">*</span></label>
-              <div class="seg" id="pType" role="group" aria-labelledby="pTypeLbl"></div>
-              <div class="err" id="pTypeErr" hidden>Choose the type of incident.</div>
-            </div>
-            <div>
-              <label for="pSub">Subtype</label>
-              <select id="pSub" disabled><option>Choose the type first</option></select>
-            </div>
-            <div id="pExtras" style="display:contents"></div>
             <div class="grid-f">
               <div><label for="pLoc">Location</label><select id="pLoc"></select></div>
-              <div><label for="pSloc">Sublocation</label><select id="pSloc"></select></div>
+              <div><label for="pSloc">Sub-Location</label><select id="pSloc"></select></div>
             </div>
-            <div class="grid-f">
-              <div><label for="pDet">Detected by</label><select id="pDet"></select></div>
-              <div><label for="pWx">Weather</label><select id="pWx"></select></div>
+           </div>
+           <div id="pPg2" class="ppg" hidden>
+            <div class="pgrp"><div class="gl">Incident Info</div>
+              <div>
+                <label id="pTypeLbl">Type of incident <span class="req">*</span></label>
+                <div class="seg" id="pType" role="group" aria-labelledby="pTypeLbl"></div>
+                <div class="err" id="pTypeErr" hidden>Choose the type of incident.</div>
+              </div>
+              <div>
+                <label for="pSub">Type</label>
+                <select id="pSub" disabled><option>Choose the type first</option></select>
+              </div>
+              <div id="pExtras" style="display:contents"></div>
+              <div class="grid-f" id="pCauseW" hidden>
+                <div><label for="pCMain">Main Cause</label><select id="pCMain"></select></div>
+                <div id="pCSubW"><label for="pCSub">Sub Cause</label><select id="pCSub"></select></div>
+              </div>
+              <div class="grid-f">
+                <div><label for="pNVeh">Number of Vehicles</label><input id="pNVeh" type="number" min="0" value="0" inputmode="numeric"></div>
+                <div><label for="pDet">Detection</label><select id="pDet"></select></div>
+              </div>
+              <div class="cnt3">
+                <div><label for="pNInj">Injured</label><input id="pNInj" type="number" min="0" value="0" inputmode="numeric"></div>
+                <div><label for="pNFat">Fatality</label><input id="pNFat" type="number" min="0" value="0" inputmode="numeric"></div>
+                <div><label for="pNMed">Medical Case</label><input id="pNMed" type="number" min="0" value="0" inputmode="numeric"></div>
+              </div>
+            </div>
+            <div class="pgrp"><div class="gl">Condition</div>
+              <div class="grid-f">
+                <div><label for="pWx">Weather</label><select id="pWx"></select></div>
+                <div><label for="pDmg">Damage to Property</label><select id="pDmg"><option value="">—</option><option>Yes</option><option>No</option></select></div>
+              </div>
+              <div id="pDmgW" hidden><label for="pDmgWhat">Property Damaged</label><input id="pDmgWhat" placeholder="e.g. Guardrails"></div>
+            </div>
+           </div>
+           <div id="pPg3" class="ppg" hidden>
+            <div class="ptabs" role="tablist" aria-label="Incident details" id="pTabs">
+              <button type="button" role="tab" aria-selected="true" data-tab="veh">Vehicle Info</button>
+              <button type="button" role="tab" aria-selected="false" data-tab="Injured">Injured</button>
+              <button type="button" role="tab" aria-selected="false" data-tab="Fatality">Fatality</button>
+              <button type="button" role="tab" aria-selected="false" data-tab="Medical case">Medical Case</button>
+            </div>
+            <div class="pgrp">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span class="gl" id="pTabCount">Vehicle Number: 0</span><button type="button" class="btn btn-nx btn-sm" id="pAddBtn">Add Vehicle</button></div>
+              <ul class="plist" id="pTabList"></ul>
+              <div id="pAddBox" hidden></div>
             </div>
             <div>
               <label for="pMedia">Photos or video</label>
@@ -526,7 +732,15 @@ tr.r-alarm .sub,tr.r-pend .sub{color:#475569}
               <div class="hint" id="pMediaHint">Optional. Attach what the crew can see.</div>
             </div>
             <button class="btn btn-primary" type="submit" id="pSend">Send to TCR</button>
+           </div>
           </form>
+          <div class="pnav" id="pNav" hidden>
+            <button type="button" class="home" id="pHomeBtn" aria-label="Home"><svg class="i"><use href="#i-home"/></svg>Home</button>
+            <button type="button" class="btn btn-outline btn-sm" id="pBack"><svg class="i sm"><use href="#i-back"/></svg>Back</button>
+            <span class="sp"></span>
+            <button type="button" class="btn btn-nx btn-sm" id="pNext">Next</button>
+            <button type="button" class="btn btn-nx btn-sm" id="pSave">Save</button>
+          </div>
           <div class="phone-done" id="pDone" hidden>
             <div class="ok-c" id="pDoneIco"><svg class="i"><use href="#i-check"/></svg></div>
             <div class="big" id="pDoneBig">Sent to TCR</div>
@@ -590,7 +804,7 @@ tr.r-alarm .sub,tr.r-pend .sub{color:#475569}
         <div class="card">
           <h2 style="margin-bottom:16px">What happens after the crew sends it</h2>
           <ol class="steps">
-            <li><span class="n">1</span><span><b>An incident number is created</b>Automatic and in sequence, for example <span class="mono">OMNI-2026-000124</span>.</span></li>
+            <li><span class="n">1</span><span><b>An incident number is created</b>Automatic and in sequence, in NLEX's format, for example <span class="mono">N0000124</span>.</span></li>
             <li><span class="n">2</span><span><b>Time and person are stamped</b>Date and military time, the crew member's ID, and whether the km post came from GPS or was typed.</span></li>
             <li><span class="n">3</span><span><b>TCR sees it at once</b>It lands on the live board and on the km-post strip for that section.</span></li>
             <li><span class="n">4</span><span><b>Nothing is forgotten</b>If it is still open after 2 hours, TCR gets an alarm.</span></li>
@@ -603,22 +817,40 @@ tr.r-alarm .sub,tr.r-pend .sub{color:#475569}
 
     <!-- BOARD -->
     <section id="v-board" class="view" hidden>
-      <p class="lede">What needs a person comes first. Red means open for more than 2 hours. Blue means a TCR Supervisor must approve. Amber is open and on track.</p>
+      <p class="lede">The incident list in NLEX's sample layout, with the same columns and the Search Incident panel. Red rows have been open for more than 2 hours; blue rows wait for a TCR Supervisor. Click a row to open the record. The red alarm, the status and next-step columns, the km strip and the map are already included on top of the sample.</p>
       <p class="hint" style="margin:-10px 0 18px;max-width:80ch">From NLEX's event flow: Field Personnel create the incidents they catch directly on patrol. TCR Personnel create the ones spotted on CCTV or reported through the hotline, dispatch resources in the field, and update and complete the event form. TCR Specialists finalize all incident types except road crashes and major incidents; TCR Supervisors finalize all types.</p>
       <div class="alarm" id="alarm" hidden role="alert"></div>
       <div class="card">
-        <div class="card-h">
-          <h2>Incidents</h2>
-          <div class="toolbar">
-            <button class="btn btn-primary btn-sm" type="button" id="logBtn"><svg class="i sm"><use href="#i-plus"/></svg>Log incident</button>
-            <div class="search"><svg class="i sm"><use href="#i-search"/></svg><input id="q" placeholder="Search any detail: number, plate, name, km, place" aria-label="Search incidents by any detail on the incident form"></div>
-          </div>
-        </div>
-        <div class="chips" id="chips" role="group" aria-label="Filter incidents"></div>
-        <div class="tbl"><table>
-          <thead><tr><th>Incident no.</th><th>Where</th><th>Type</th><th>Status</th><th>Open for</th><th>Next step</th></tr></thead>
+        <div class="secbar"><span class="lbl">Incident Info</span><button class="btn btn-nx btn-sm" type="button" id="logBtn">Create Incident</button></div>
+        <div class="chips" id="chips" role="group" aria-label="Filter incidents" hidden></div>
+        <div class="tbl"><table class="nx">
+          <thead><tr><th>Incident No.</th><th>Patrol Vehicle</th><th>Patrol Crew</th><th>KM Post</th><th>Direction</th><th>Location</th><th>Sub Location</th><th>Incident Type</th><th>Creation Date</th><th>Last Saved</th><th>Status <span class="included">Included</span></th><th>Next step <span class="included">Included</span></th></tr></thead>
           <tbody id="rows"></tbody>
         </table></div>
+        <form class="srch" id="sForm" novalidate>
+          <div class="box" style="border:0;padding:0">
+            <h3>Search Incident</h3>
+            <div><label for="sStatus">Incident Status</label><select id="sStatus"><option value="active">Open (all active)</option><option value="alarm">Open over 2 hours</option><option value="pending">Waiting for supervisor</option><option value="final">Finalized</option><option value="all">All</option></select></div>
+            <div><label for="sType">Incident Type</label><select id="sType"></select></div>
+            <button class="btn btn-nx btn-sm" type="submit" id="sBtn">Search</button>
+          </div>
+          <div class="box" id="sCreBox" data-off="false">
+            <label class="chk inline"><input type="checkbox" id="sCreOn" checked><span>Creation date</span></label>
+            <div><label for="sCreFrom">From</label><input id="sCreFrom" type="datetime-local"></div>
+            <div><label for="sCreTo">To</label><input id="sCreTo" type="datetime-local"></div>
+          </div>
+          <div class="box" id="sSavBox" data-off="true">
+            <label class="chk inline"><input type="checkbox" id="sSavOn"><span>Last saved</span></label>
+            <div><label for="sSavFrom">From</label><input id="sSavFrom" type="datetime-local" disabled></div>
+            <div><label for="sSavTo">To</label><input id="sSavTo" type="datetime-local" disabled></div>
+          </div>
+          <div class="box">
+            <h3>Any detail <span class="included">Included</span></h3>
+            <div class="search" style="max-width:none"><svg class="i sm"><use href="#i-search"/></svg><input id="q" placeholder="Number, plate, name, km, place" aria-label="Search incidents by any detail on the incident form"></div>
+            <div class="hint" style="margin:0">Searches every field on the incident form as you type.</div>
+            <div class="err" id="sErr" hidden></div>
+          </div>
+        </form>
       </div>
       <div class="card">
         <div class="card-h">
@@ -644,6 +876,33 @@ tr.r-alarm .sub,tr.r-pend .sub{color:#475569}
       <p class="lede">Complete the record, send responders, then confirm before it is final. Road crashes and major incidents are approved by a TCR Supervisor. Every change is saved with the time and the person's name.</p>
       <div id="incBody"></div>
       <div class="next"><button data-go="access">Next: Users &amp; access <svg class="i sm"><use href="#i-arrow"/></svg></button></div>
+    </section>
+
+    <!-- DASHBOARD (NLEX sample: navy side panel, trend chart, incident heat map, five tiles) -->
+    <section id="v-dash" class="view" hidden>
+      <p class="lede">Laid out like NLEX's sample dashboard. The live counts at the top come from the incident list; the charts show a sample week of 178 incidents.</p>
+      <div class="dash">
+        <aside class="dside" aria-label="Dashboard menu">
+          <div class="wm-s" style="color:#fff"><svg viewBox="0 0 108 32" role="img" aria-label="OMNI"><use href="#wm-omni"/></svg></div>
+          <button type="button" aria-current="page" data-go="dash"><svg class="i"><use href="#i-home"/></svg>Dashboard</button>
+          <button type="button" data-go="reports"><svg class="i"><use href="#i-chart"/></svg>Chart</button>
+        </aside>
+        <div class="dmain">
+          <div class="kpis" id="dKpis"></div>
+          <div class="dtop">
+            <div class="tile"><h3>Incidents by type · sample week</h3><svg class="ch" id="dLine" viewBox="0 0 560 230" role="img" aria-label="Incidents per day by type"></svg><div class="legend" id="dLineLg" style="margin:0"></div></div>
+            <div class="tile"><h3>Incident Heat Map</h3><div class="map-wrap" style="border:0"><svg id="dMap" viewBox="0 0 590 740" role="group" aria-label="Incident heat map with live incident pins" preserveAspectRatio="xMidYMid meet" style="height:300px"></svg></div><div class="cap">Shaded by the sample week's incidents per loop; numbered pins are live incidents. Tap a pin to open it.</div></div>
+          </div>
+          <div class="dtiles">
+            <div class="tile"><h3>Finalized within 2 hours</h3><svg class="ch" id="dDonut" viewBox="0 0 160 160" role="img"></svg><div class="cap" style="text-align:center">Sample week</div></div>
+            <div class="tile"><h3>Average response time</h3><svg class="ch" id="dResp" viewBox="0 0 200 140" role="img"></svg><div class="cap">Minutes from dispatch to arrival, by day</div></div>
+            <div class="tile"><h3>Incident Type</h3><svg class="ch" id="dBar" viewBox="0 0 200 150" role="img"></svg><div class="cap">Sample week</div></div>
+            <div class="tile"><h3>Incidents by loop</h3><div id="dLoops" style="display:flex;flex-direction:column;gap:8px"></div></div>
+            <div class="tile"><h3>Road crash causes</h3><div id="dCause" style="display:flex;flex-direction:column;gap:8px"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="next"><button data-go="reports">Next: Chart and reports <svg class="i sm"><use href="#i-arrow"/></svg></button></div>
     </section>
 
     <!-- REPORTS -->
@@ -724,6 +983,13 @@ tr.r-alarm .sub,tr.r-pend .sub{color:#475569}
     <section id="v-access" class="view" hidden>
       <p class="lede">Patrol posts sign in per shift with the crew on board; control-room staff sign in with their NLEX company account. The six access levels come from the Terms of Reference. NLEX's requirements document has a second list, shown below it.</p>
       <div class="note-line"><svg class="i sm"><use href="#i-info"/></svg><span>Proposed permissions, based on our reading of the Terms of Reference. To be confirmed with NLEX.</span></div>
+      <div class="card users">
+        <div class="card-h"><h2>Manage User</h2><div class="row-btns"><button class="btn btn-nx btn-sm" type="button" data-act="newuser">Create User</button><button class="btn btn-outline btn-sm" type="button" data-act="resetpw">Reset Password</button></div></div>
+        <div class="tbl"><table>
+          <thead><tr><th>Name</th><th>Username</th><th>Access level</th><th>Status</th><th></th></tr></thead>
+          <tbody id="userRows"></tbody>
+        </table></div>
+      </div>
       <div class="card">
         <div class="card-h"><h2>TOR access levels</h2><span class="sub">Terms of Reference · proposed</span></div>
         <div class="tbl"><table>
@@ -742,7 +1008,7 @@ tr.r-alarm .sub,tr.r-pend .sub{color:#475569}
       <div class="next"><button data-go="reports">Next: Reports <svg class="i sm"><use href="#i-arrow"/></svg></button></div>
     </section>
 
-    <div class="foot">Prepared by CivicGrid Software Development Services for NLEX Corporation. Preview with demo data. Fields follow NLEX's Terms of Reference and Functional Requirements Document (Annex B), both dated 12 November 2026.</div>
+    <div class="foot">Preview prepared by CivicGrid Software Development Services for NLEX Corporation, with demo data. Screens follow the sample user interface shown at the 19 November 2026 pre-bid; fields follow NLEX's Terms of Reference and Functional Requirements Document (Annex B), both dated 12 November 2026. Items marked "Already included" are in our system on top of the sample.</div>
   </main>
 </div>
 <div class="toast" id="toast" hidden role="status" aria-live="polite"><svg class="i sm"><use href="#i-check-c"/></svg><span id="toastTxt"></span></div>
@@ -847,6 +1113,13 @@ const LOADS=["None","Light","Heavy","Hazardous"];
 /* patrol posts and the crew on board (who gets credit) */
 const POSTS={"Post 2":["M. Reyes","D. Tan"],"Post 3":["J. Santos","P. Aquino","R. Flores"],"Post 4":["C. Ramos","L. Gomez"],"Post 5":["R. Dela Cruz","V. Ortiz"],"Post 7":["A. Lim","N. Castro"]};
 const POINTS={"Road Crash":3,"Vehicle Breakdown":2,"Security":2,"Other Incidents":1};
+/* patrol vehicle numbers per post (sample), shown as "Patrol Vehicle" like NLEX's sample incident list */
+const PV={"Post 2":"01","Post 3":"27","Post 4":"19","Post 5":"42","Post 7":"12"};
+const pcName=n=>"PC "+String(n).split(" ").pop();
+const dirAb=d=>({Northbound:"NB",Southbound:"SB",Eastbound:"EB",Westbound:"WB"})[d]||d;
+const kmNx=km=>{const[a,b]=chain(km).split("+");return `KM ${a} + ${b}`};
+const dt16=d=>`${ymd(d)} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+const typeNx=t=>({"Vehicle Breakdown":"Breakdown","Other Incidents":"Others"})[t]||t;
 let shift={post:"Post 3",crew:[...POSTS["Post 3"]],no:"1",t0:new Date(Date.now()-330*60000)};
 /* crew entries for NLEX's shift report (stationary, odometer, apprehensions): entered on the patrol app before sign-out */
 const SHIFTLOG={"Post 3":{stat:[{loc:"Balintawak Toll Barrier (11+890 NB)",s:"0700",e:"0745"}],odo:{In:{t:"0600",r:"48210",by:"R. Villanueva"}},appr:[]}};
@@ -884,9 +1157,11 @@ const VIEWERS={
  investigator:{key:"investigator",name:"E. Cruz",title:"Investigator",ini:"EC"},
  admin:{key:"admin",name:"L. Mendoza",title:"Administrator",ini:"LM"}
 };
-const VIEWS={login:"Sign in",patrol:"Patrol app",board:"Live board",incident:"Incident",reports:"Reports",access:"Users & access"};
-const VIEW_OK={login:["field","specialist","supervisor","analyst","investigator","admin"],patrol:["field"],board:["specialist","supervisor","investigator"],incident:["specialist","supervisor","investigator"],reports:["analyst","supervisor","admin"],access:["admin"]};
-const VIEW_DEFAULT={login:"field",patrol:"field",board:"specialist",incident:"specialist",reports:"analyst",access:"admin"};
+const VIEWS={login:"Log in",patrol:"Mobile application",board:"Incident info",incident:"Incident record",dash:"Dashboard",reports:"Chart and reports",access:"Manage user"};
+const VIEW_OK={login:["field","specialist","supervisor","analyst","investigator","admin"],patrol:["field"],board:["specialist","supervisor","investigator"],incident:["specialist","supervisor","investigator"],dash:["specialist","supervisor","analyst","admin"],reports:["analyst","supervisor","admin"],access:["admin"]};
+const VIEW_DEFAULT={login:"field",patrol:"field",board:"specialist",incident:"specialist",dash:"supervisor",reports:"analyst",access:"admin"};
+/* user accounts for File > Manage User (sample) */
+let USERS=Object.values({field:["J. Santos","post3","Field Personnel"],specialist:["K. Garcia","kgarcia","TCR Specialist"],supervisor:["R. Villanueva","rvillanueva","TCR Supervisor / Manager"],analyst:["P. Navarro","pnavarro","Data Analyst"],investigator:["E. Cruz","ecruz","Investigator"],admin:["L. Mendoza","lmendoza","Administrator"]}).map(([name,user,level])=>({name,user,level,status:"Active"}));
 let viewer=VIEWERS.field;
 const who=()=>`${viewer.title} · ${viewer.name}`;
 const canEdit=i=>i.status==="open"&&["specialist","supervisor"].includes(viewer.key);
@@ -894,23 +1169,23 @@ const canEdit=i=>i.status==="open"&&["specialist","supervisor"].includes(viewer.
 const V=(cls,make,plate,o={})=>Object.assign({cls,make,plate,year:"",dsex:"",denom:"Private",pax:"",owner:"",oaddr:"",load:"None",speed:"",belt:""},o);
 const P=(cat,name,role,o={})=>Object.assign({cat,name,role,addr:"",age:"",sex:"",contact:"",belt:"",ext:"",cc:"",endorsed:"",waiver:"",rem:"",decl:"",cod:""},o);
 let incidents=[
- {id:"OMNI-2026-000119",t:ago(185),sec:"NLEX Mainline",zone:"",km:21.4,dir:"Northbound",type:"Road Crash",sub:"Rear End Collision",loc:"Carriageway",sloc:"",det:"CCTV",wx:"Fair",post:"Post 2",status:"open",media:["IMG_0412.jpg","IMG_0413.jpg"],
+ {id:"N0000119",t:ago(185),sec:"NLEX Mainline",zone:"",km:21.4,dir:"Northbound",type:"Road Crash",sub:"Rear End Collision",loc:"Carriageway",sloc:"",det:"CCTV",wx:"Fair",post:"Post 2",status:"open",media:["IMG_0412.jpg","IMG_0413.jpg"],
   vehicles:[V("Class 1","Toyota Vios","NAB 1234",{year:"2019",dsex:"Male",pax:"2",owner:"Ramon Aguilar",oaddr:"Valenzuela City",speed:"60",belt:"Yes"}),V("Class 2","Isuzu Elf","TRK 5521",{year:"2016",dsex:"Male",denom:"Public utility",pax:"1",owner:"JRL Trucking",oaddr:"Meycauayan, Bulacan",load:"Heavy",speed:"70",belt:"No"})],
   people:[P("Injured","Ramon Aguilar","Driver",{age:"41",sex:"Male",belt:"Yes",ext:"Minor",cc:"Pain on left wrist",endorsed:"No",waiver:"Yes"})],
   resp:[{unit:"Looping",d:ago(178),a:ago(172),c:null,x:null,rem:""},{unit:"Tow Truck",d:ago(170),a:ago(150),c:null,x:null,rem:""}],cls:null,log:[],
   cause:{main:"Human Error",sub:"Insufficient Braking Distance"},dmg:{yes:false,what:""},
   notes:[{t:ago(176),who:"Post 2 · M. Reyes",text:"Two lanes blocked northbound. Traffic building back to km 20."}]},
- {id:"OMNI-2026-000120",t:ago(95),sec:"NLEX Mainline",zone:"",km:33.2,dir:"Southbound",type:"Road Crash",sub:"Side Swipe",loc:"Carriageway",sloc:"",det:"Direct",wx:"Fair",post:"Post 4",status:"pending",media:["IMG_0431.jpg"],
+ {id:"N0000120",t:ago(95),sec:"NLEX Mainline",zone:"",km:33.2,dir:"Southbound",type:"Road Crash",sub:"Side Swipe",loc:"Carriageway",sloc:"",det:"Direct",wx:"Fair",post:"Post 4",status:"pending",media:["IMG_0431.jpg"],
   vehicles:[V("Class 1","Honda Civic","DEF 4410",{year:"2021",dsex:"Female",pax:"1",speed:"80",belt:"Yes"}),V("Class 1","Suzuki Ertiga","GHI 2205",{year:"2020",dsex:"Male",pax:"4",speed:"75",belt:"Yes"})],
   people:[P("Injured","Maria Dela Cruz","Passenger",{age:"29",sex:"Female",belt:"Yes",ext:"Minor",cc:"Bruise on forehead",endorsed:"No",waiver:"Yes"})],
   resp:[{unit:"Looping",d:ago(90),a:ago(84),c:ago(60),x:null,rem:""},{unit:"Tow Truck",d:ago(88),a:ago(75),c:ago(55),x:null,rem:""}],cls:"Material",log:[],
   cause:{main:"Human Error",sub:"Miscalculation"},dmg:{yes:true,what:"Guardrail, about 4 m"},notes:[]},
- {id:"OMNI-2026-000121",t:ago(64),sec:"SCTEX Mainline",zone:"S (Subic side)",km:99.9,dir:"Subic Bound",type:"Vehicle Breakdown",sub:"Tire",l3:"Flat Tire",tire:{brand:"Bridgestone",size:"265/65 R17"},loc:"Interchange",sloc:"Porac (99+894 S)",det:"Hotline",wx:"Rainy",post:"Post 7",status:"open",media:[],
+ {id:"N0000121",t:ago(64),sec:"SCTEX Mainline",zone:"S (Subic side)",km:99.9,dir:"Subic Bound",type:"Vehicle Breakdown",sub:"Tire",l3:"Flat Tire",tire:{brand:"Bridgestone",size:"265/65 R17"},loc:"Interchange",sloc:"Porac (99+894 S)",det:"Hotline",wx:"Rainy",post:"Post 7",status:"open",media:[],
   vehicles:[V("Class 1","Mitsubishi Montero","ABC 7788",{year:"2018",dsex:"Male",pax:"3"})],people:[],
   resp:[{unit:"Looping",d:ago(60),a:ago(52),c:null,x:null,rem:""}],cls:null,log:[],cause:{main:"",sub:""},dmg:{yes:null,what:""},notes:[]},
- {id:"OMNI-2026-000122",t:ago(22),sec:"NLEX Mainline",zone:"",km:44.8,dir:"Southbound",type:"Security",sub:"Stray Animal",loc:"Carriageway",sloc:"",det:"Direct",wx:"Fair",post:"Post 3",status:"open",media:["IMG_0420.jpg"],
+ {id:"N0000122",t:ago(22),sec:"NLEX Mainline",zone:"",km:44.8,dir:"Southbound",type:"Security",sub:"Stray Animal",loc:"Carriageway",sloc:"",det:"Direct",wx:"Fair",post:"Post 3",status:"open",media:["IMG_0420.jpg"],
   vehicles:[],people:[],resp:[],cls:null,log:[],cause:{main:"",sub:""},dmg:{yes:null,what:""},notes:[]},
- {id:"OMNI-2026-000118",t:ago(300),sec:"NLEX Mainline",zone:"",km:67.0,dir:"Northbound",type:"Other Incidents",sub:"Object On Carriageway",loc:"Carriageway",sloc:"",det:"CCTV",wx:"Fair",post:"Post 5",status:"final",media:[],
+ {id:"N0000118",t:ago(300),sec:"NLEX Mainline",zone:"",km:67.0,dir:"Northbound",type:"Other Incidents",sub:"Object On Carriageway",loc:"Carriageway",sloc:"",det:"CCTV",wx:"Fair",post:"Post 5",status:"final",media:[],
   vehicles:[],people:[],resp:[{unit:"Looping",d:ago(295),a:ago(285),c:ago(270),x:null,rem:"Tire tread removed from lane 2"}],cls:"Minor",log:[],cause:{main:"",sub:""},dmg:{yes:false,what:""},notes:[]}
 ];
 incidents.forEach(i=>{i.by=postBy(i.post);i.crew=[...POSTS[i.post]];i.noPeople=false;i.pick=null;i.fin=null;i.subm=null;i.returnNote=null;
@@ -984,8 +1259,8 @@ function toast(msg){$("toastTxt").textContent=msg;$("toast").hidden=false;clearT
 const logI=(i,what)=>i.log.push({t:new Date(),who:who(),what});
 
 /* navigation */
-const RENDER={login:()=>renderLogin(),patrol:()=>{$("pForm").hidden=false;$("pDone").hidden=true;$("pUpd").hidden=true;if(gps.state==="idle")gpsFind();renderNet();renderMine();$("pHead").textContent=`${shift.post} · ${shift.crew[0]}${shift.crew.length>1?` +${shift.crew.length-1}`:""}`},board:()=>renderBoard(),incident:()=>renderIncident(),reports:()=>renderReports(),access:()=>renderRoles()};
-function setViewer(k){viewer=VIEWERS[k];$("avatar").textContent=viewer.ini;$("viewAs").value=k}
+const RENDER={login:()=>renderLogin(),patrol:()=>{if(!pStarted)fillPResp();pShow("home");renderNet();renderMine();$("pHead").textContent=shift.post},board:()=>renderBoard(),incident:()=>renderIncident(),dash:()=>renderDash(),reports:()=>renderReports(),access:()=>{renderRoles();renderUsers()}};
+function setViewer(k){viewer=VIEWERS[k];$("avatar").textContent=viewer.ini;$("viewAs").value=k;$("nxWho").textContent=`${viewer.name} · ${viewer.title}`}
 opts($("viewAs"),[]);$("viewAs").innerHTML=Object.values(VIEWERS).map(v=>`<option value="${v.key}">${v.title} · ${v.name}</option>`).join("");
 $("viewAs").addEventListener("change",()=>{setViewer($("viewAs").value);
  if(!VIEW_OK[currentView].includes(viewer.key))go(Object.keys(VIEW_OK).find(x=>VIEW_OK[x].includes(viewer.key)));else RENDER[currentView]()});
@@ -1005,7 +1280,60 @@ const side=$("side"),menuBtn=$("menuBtn");
 function closeMenu(){side.classList.remove("open");menuBtn.setAttribute("aria-expanded","false")}
 menuBtn.addEventListener("click",e=>{e.stopPropagation();const o=side.classList.toggle("open");menuBtn.setAttribute("aria-expanded",String(o))});
 document.addEventListener("click",e=>{if(side.classList.contains("open")&&!side.contains(e.target)&&e.target!==menuBtn)closeMenu()});
-document.addEventListener("keydown",e=>{if(e.key==="Escape")closeMenu()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeMenu();closeDD()}});
+/* File and Window dropdowns (NLEX sample menu bar) */
+function closeDD(){document.querySelectorAll(".dd").forEach(d=>{d.querySelector(".dd-m").hidden=true;d.querySelector("[data-dd]").setAttribute("aria-expanded","false")})}
+document.addEventListener("click",e=>{const t=e.target.closest("[data-dd]");
+ if(t){e.stopPropagation();const m=t.parentElement.querySelector(".dd-m"),was=!m.hidden;closeDD();if(!was){m.hidden=false;t.setAttribute("aria-expanded","true");const f=m.querySelector("button");f&&f.focus()}return}
+ if(!e.target.closest(".dd-m"))closeDD()});
+document.addEventListener("click",e=>{if(e.target.closest(".dd-m [data-go]"))closeDD()});
+/* menu actions: Create Incident, Manage User, About Omni, Log Out, Forgot Password */
+document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(!b)return;e.preventDefault();closeDD();
+ const a=b.dataset.act;
+ if(a==="create"){if(!canLog())setViewer("specialist");go("board");startLog()}
+ else if(a==="newuser"){setViewer("admin");go("access");startNewUser()}
+ else if(a==="resetpw"){setViewer("admin");go("access");startResetPw()}
+ else if(a==="about")startAbout();
+ else if(a==="logout")startLogout();
+ else if(a==="forgot")startForgot()});
+function simpleDlg(title,sub,body,footer){dlg.innerHTML=`<form class="dlg-in" novalidate onsubmit="return false"><div class="dlg-h"><h2 id="dlgT">${title}</h2>${sub?`<p class="sub">${sub}</p>`:""}</div><div class="dlg-b">${body}</div><div class="dlg-f">${footer}</div></form>`;dlg.showModal()}
+function startAbout(){simpleDlg("About Omni","Traffic Incident Management System",
+ `<dl class="sum"><div><dt>Version</dt><dd>Preview 10 · 20 November 2026</dd></div><div><dt>Prepared by</dt><dd>CivicGrid Software Development Services</dd></div><div><dt>Prepared for</dt><dd>NLEX Corporation, Project OMNI</dd></div><div><dt>Data</dt><dd>Demo data only. Nothing you enter is saved; reloading the page resets it.</dd></div><div><dt>Based on</dt><dd>The sample user interface shown at the 19 November 2026 pre-bid, the Terms of Reference and the Functional Requirements Document (12 November 2026).</dd></div></dl>`,
+ `<button type="button" class="btn btn-primary" id="abOk">Close</button>`);$("abOk").addEventListener("click",()=>dlg.close())}
+function startLogout(){simpleDlg("Log out?","You will go back to the log-in screen. Anything not saved on this screen stays as it is in this preview.","",
+ `<button type="button" class="btn btn-outline" id="loNo">No, stay</button><button type="button" class="btn btn-primary" id="loYes">Yes, log out</button>`);
+ $("loNo").addEventListener("click",()=>dlg.close());
+ $("loYes").addEventListener("click",()=>{const y=$("loYes");y.disabled=true;$("loNo").disabled=true;y.innerHTML=`${ico("loader","i sm spin")}Logging out…`;setTimeout(()=>{dlg.close();setViewer("field");go("login");toast("Logged out.")},500)})}
+function startForgot(){simpleDlg("Forgot Password","Enter your username. Your Administrator gets a reset request and sends you a temporary password.",
+ `<div><label for="fpUser">Username <span class="req">*</span></label><input id="fpUser" autocomplete="username" aria-describedby="fpErr"><div class="err" id="fpErr" hidden>Enter your username.</div></div>`,
+ `<button type="button" class="btn btn-outline" id="fpNo">Cancel</button><button type="button" class="btn btn-primary" id="fpYes">Send reset request</button>`);
+ $("fpNo").addEventListener("click",()=>dlg.close());$("fpUser").focus();
+ $("fpYes").addEventListener("click",()=>{const u=$("fpUser").value.trim();if(!u){$("fpErr").hidden=false;$("fpUser").setAttribute("aria-invalid","true");$("fpUser").focus();return}
+  const y=$("fpYes");y.disabled=true;$("fpNo").disabled=true;y.innerHTML=`${ico("loader","i sm spin")}Sending…`;setTimeout(()=>{dlg.close();toast(`Reset request for "${u}" sent to the Administrator (preview).`)},600)})}
+const LEVELS=["Field Personnel","TCR Specialist","TCR Supervisor / Manager","Data Analyst","Investigator","Administrator"];
+function startNewUser(){simpleDlg("Create User","The new user gets a temporary password and must change it at first log-in.",
+ `<div><label for="nuName">Full name <span class="req">*</span></label><input id="nuName" placeholder="e.g. Ana Reyes"><div class="err" id="nuNameErr" hidden>Enter the full name.</div></div>
+  <div class="grid-f"><div><label for="nuUser">Username <span class="req">*</span></label><input id="nuUser" placeholder="e.g. areyes"><div class="err" id="nuUserErr" hidden></div></div>
+  <div><label for="nuLvl">Access level <span class="req">*</span></label><select id="nuLvl"><option value="">Choose</option>${LEVELS.map(l=>`<option>${l}</option>`).join("")}</select><div class="err" id="nuLvlErr" hidden>Choose the access level.</div></div></div>`,
+ `<button type="button" class="btn btn-outline" id="nuNo">Cancel</button><button type="button" class="btn btn-primary" id="nuYes">Create user</button>`);
+ $("nuNo").addEventListener("click",()=>dlg.close());$("nuName").focus();
+ $("nuYes").addEventListener("click",()=>{const n=$("nuName").value.trim(),u=$("nuUser").value.trim().toLowerCase(),l=$("nuLvl").value;
+  const ue=!u?"Enter a username.":!/^[a-z0-9._-]{3,}$/.test(u)?"Use at least 3 letters or numbers, no spaces.":USERS.some(x=>x.user===u)?"This username is already taken.":"";
+  $("nuNameErr").hidden=!!n;$("nuUserErr").textContent=ue;$("nuUserErr").hidden=!ue;$("nuLvlErr").hidden=!!l;
+  [["nuName",!n],["nuUser",!!ue],["nuLvl",!l]].forEach(([id,bad])=>$(id).setAttribute("aria-invalid",String(bad)));
+  if(!n||ue||!l){$(!n?"nuName":ue?"nuUser":"nuLvl").focus();return}
+  const y=$("nuYes");y.disabled=true;$("nuNo").disabled=true;y.innerHTML=`${ico("loader","i sm spin")}Creating…`;
+  setTimeout(()=>{USERS.push({name:n,user:u,level:l,status:"Active"});dlg.close();renderUsers();toast(`User ${u} created as ${l}. Temporary password issued (preview).`)},600)})}
+function startResetPw(pre){simpleDlg("Reset Password","The user gets a temporary password and must change it at the next log-in. The reset is logged with your name.",
+ `<div><label for="rpUser">User <span class="req">*</span></label><select id="rpUser"><option value="">Choose the user</option>${USERS.map(x=>`<option value="${esc(x.user)}" ${x.user===pre?"selected":""}>${esc(x.name)} (${esc(x.user)}) · ${esc(x.level)}</option>`).join("")}</select><div class="err" id="rpErr" hidden>Choose the user.</div></div>
+  <label class="chk"><input type="checkbox" id="rpOk"><span>I confirmed this request with the user.</span></label>`,
+ `<button type="button" class="btn btn-outline" id="rpNo">Cancel</button><button type="button" class="btn btn-primary" id="rpYes" disabled>Yes, reset password</button>`);
+ $("rpNo").addEventListener("click",()=>dlg.close());$("rpOk").addEventListener("change",()=>$("rpYes").disabled=!$("rpOk").checked);
+ $("rpYes").addEventListener("click",()=>{const u=$("rpUser").value;if(!u){$("rpErr").hidden=false;$("rpUser").focus();return}
+  const y=$("rpYes");y.disabled=true;$("rpNo").disabled=true;y.innerHTML=`${ico("loader","i sm spin")}Resetting…`;
+  setTimeout(()=>{dlg.close();toast(`Password reset for ${u}. Temporary password issued (preview).`)},600)})}
+function renderUsers(){$("userRows").innerHTML=USERS.map(x=>`<tr><td><b style="color:var(--ink)">${esc(x.name)}</b></td><td class="mono">${esc(x.user)}</td><td>${esc(x.level)}</td><td><span class="badge b-done">${x.status}</span></td><td><div class="row-btns"><button class="btn btn-outline btn-sm" type="button" data-rp="${esc(x.user)}">Reset password</button></div></td></tr>`).join("");
+ $("userRows").querySelectorAll("[data-rp]").forEach(b=>b.addEventListener("click",()=>startResetPw(b.dataset.rp)))}
 function updateCount(){const a=incidents.filter(i=>!isDone(i)),al=a.some(isAlarm),n=$("navCount");
  n.textContent=a.length;n.classList.toggle("is-alarm",al);n.setAttribute("aria-label",`${a.length} active incidents${al?", some need attention":""}`)}
 
@@ -1035,14 +1363,106 @@ $("pSection").addEventListener("change",syncDir);
 $("pZone").addEventListener("change",()=>checkKm(false));
 $("pLoc").addEventListener("change",syncSloc);
 $("pKm").addEventListener("input",()=>checkKm(false));
-$("pType").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;pType=b.dataset.t;
- $("pType").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
- fillSub("p",pType);$("pTypeErr").hidden=true});
+function setPType(t){pType=t;$("pType").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.t===t)));
+ fillSub("p",t);$("pTypeErr").hidden=true;$("pStripType").textContent=t?typeNx(t):"—";syncPCause(true)}
+$("pType").addEventListener("click",e=>{const b=e.target.closest("button");if(b)setPType(b.dataset.t)});
 $("pSub").addEventListener("change",()=>syncExtras("p",pType,true));
 $("pExtras").addEventListener("change",e=>{if(e.target.id==="pL3")syncExtras("p",pType,false)});
 $("pMedia").addEventListener("change",()=>{const n=$("pMedia").files.length;$("pMediaHint").textContent=n?`${n} file${n>1?"s":""} attached.`:"Optional. Attach what the crew can see."});
-$("pAgain").addEventListener("click",()=>{$("pDone").hidden=true;$("pForm").hidden=false;doneWaiting=false;window.scrollTo(0,0);gpsFind()});
+$("pAgain").addEventListener("click",()=>{doneWaiting=false;pShow("home");window.scrollTo(0,0)});
 syncDir();
+
+/* v10: NLEX sample mobile flow. Home (Create Incident) -> page 1 respondent and location -> page 2 incident info and condition -> page 3 tabs */
+let pPage=1,pStarted=false,pTab="veh",pVehs=[],pPeople=[];
+function pShow(s){const H={home:"pHome",form:"pForm",done:"pDone",upd:"pUpd"};
+ Object.entries(H).forEach(([k,id])=>$(id).hidden=k!==s);
+ $("pNav").hidden=s!=="form";$("pStrip").hidden=s!=="form";$("pMineBox").hidden=s!=="home";
+ if(s==="home")renderResume();
+ if(s==="form")pGoPage(pPage)}
+function renderResume(){let r=$("pResume");if(!r){r=document.createElement("button");r.type="button";r.id="pResume";r.className="btn btn-outline";r.addEventListener("click",()=>pShow("form"));$("pHome").appendChild(r)}
+ r.hidden=!pStarted;r.textContent=`Continue the ${pType?typeNx(pType):"open"} incident`}
+function pGoPage(n){pPage=n;[1,2,3].forEach(k=>$("pPg"+k).hidden=k!==n);
+ $("pBack").hidden=n===1;$("pNext").hidden=n===3;if(n===3)renderPTab()}
+function pReset(){$("pForm").reset();pType=null;pVehs=[];pPeople=[];pTab="veh";pStarted=false;
+ clearTimeout(gps.timer);gps.applied=null;gps.base=null;gps.state="idle";gpsMark(false);gpsRender();
+ $("pType").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed","false"));fillSub("p",null);syncPCause(true);
+ $("pMediaHint").textContent="Optional. Attach what the crew can see.";$("pDmgW").hidden=true;$("pAddBox").hidden=true;syncDir();fillPResp()}
+function fillPResp(){opts($("pVeh"),Object.values(PV));$("pVeh").value=PV[shift.post]||"01";$("pCrewTxt").value=shift.crew.map(pcName).join(", ")}
+$("pCiBtn").addEventListener("click",()=>{const l=$("pCiList"),o=l.hidden;l.hidden=!o;$("pCiBtn").setAttribute("aria-expanded",String(o))});
+$("pCiList").addEventListener("click",e=>{const b=e.target.closest("[data-ci]");if(!b)return;
+ pReset();setPType(b.dataset.ci);pStarted=true;pPage=1;pShow("form");gpsFind();window.scrollTo(0,0)});
+$("pHomeBtn").addEventListener("click",()=>{pShow("home");if(pStarted)toast("The incident stays on this page. Tap Continue to finish it.")});
+$("pBack").addEventListener("click",()=>pGoPage(Math.max(1,pPage-1)));
+$("pNext").addEventListener("click",()=>{
+ if(pPage===1){if(!checkKm(true)){$("pKm").focus();return}}
+ if(pPage===2){if(!pType){$("pTypeErr").hidden=false;return}const ex=readExtras("p");if(ex.specMissing){$("pSpecErr").hidden=false;$("pSpec").focus();return}}
+ pGoPage(pPage+1);window.scrollTo(0,0)});
+$("pSave").addEventListener("click",()=>{const b=$("pSave");b.disabled=true;b.innerHTML=`${ico("loader","i sm spin")}Saving…`;
+ setTimeout(()=>{b.disabled=false;b.textContent="Save";toast("Saved on this phone. Send it to TCR from the last page.")},450)});
+/* Road crash cause (FRD levels 3 and 4) on page 2 */
+opts($("pCMain"),["",...MAINCAUSE]);$("pCMain").options[0].textContent="Choose";
+function syncPCause(rebuild){const crash=pType==="Road Crash";$("pCauseW").hidden=!crash;
+ if(rebuild){$("pCMain").value="";}
+ const L=CAUSES[$("pCMain").value]||[];
+ if(rebuild||$("pCSub").dataset.m!==$("pCMain").value){$("pCSub").innerHTML=`<option value="">Choose</option>`+L.map(v=>`<option>${esc(v)}</option>`).join("");$("pCSub").dataset.m=$("pCMain").value}
+ $("pCSubW").hidden=!L.length}
+$("pCMain").addEventListener("change",()=>syncPCause(false));
+$("pDmg").addEventListener("change",()=>{$("pDmgW").hidden=$("pDmg").value!=="Yes"});
+/* page 3 tabs: Vehicle Info, Injured, Fatality, Medical Case (fields as on NLEX's sample) */
+const TABLBL={veh:["Vehicle Number","Add Vehicle"],Injured:["Injured","Add Injured"],Fatality:["Fatality","Add Fatality"],"Medical case":["Medical Case","Add Medical Case"]};
+$("pTabs").addEventListener("click",e=>{const b=e.target.closest("[data-tab]");if(!b)return;pTab=b.dataset.tab;$("pAddBox").hidden=true;renderPTab()});
+function renderPTab(){
+ $("pTabs").querySelectorAll("[data-tab]").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.tab===pTab)));
+ const veh=pTab==="veh",list=veh?pVehs:pPeople.filter(p=>p.cat===pTab);
+ $("pTabCount").textContent=`${TABLBL[pTab][0]}: ${list.length}`;$("pAddBtn").textContent=TABLBL[pTab][1];
+ $("pTabList").innerHTML=list.length?list.map((x,k)=>`<li><span>${veh?`<b>${k+1}.</b> ${esc(x.cls)} · ${esc(x.make)} · <span class="mono">${esc(x.plate)}</span>`:`<b>${esc(x.name)}</b> · ${esc(x.role)}${x.age?`, ${esc(x.age)}`:""}${x.ext?` · ${esc(x.ext)}`:""}`}</span><button type="button" class="btn btn-danger btn-sm" data-prm="${veh?"v":"p"}:${veh?k:pPeople.indexOf(x)}">Remove</button></li>`).join("")
+  :`<li class="none">None added yet.</li>`;
+ $("pTabList").querySelectorAll("[data-prm]").forEach(b=>b.addEventListener("click",()=>{const[kind,ix]=b.dataset.prm.split(":");const arr=kind==="v"?pVehs:pPeople,it=arr[+ix];
+  confirmDlg({title:"Remove this entry?",sub:"It is taken off this incident before it is sent. You can add it again.",danger:true,
+   body:`<div style="color:var(--ink-2)">${esc(kind==="v"?`${it.make} (${it.plate})`:`${it.name}, ${it.cat.toLowerCase()}`)}</div>`,yes:"Yes, remove",onConfirm:()=>{arr.splice(+ix,1);renderPTab();toast("Entry removed.")}})}))}
+$("pAddBtn").addEventListener("click",()=>{const box=$("pAddBox");if(!box.hidden){box.hidden=true;return}
+ const veh=pTab==="veh",dead=pTab==="Fatality",vnums=`<option value="">—</option>`+pVehs.map((v,k)=>`<option>${k+1}</option>`).join("");
+ const yn=id=>`<select id="${id}"><option value="">—</option><option>Yes</option><option>No</option></select>`;
+ box.innerHTML=veh?`<div class="grid-f">
+   <div><label for="aCls">Vehicle Class</label><select id="aCls"><option>Class 1</option><option>Class 2</option><option>Class 3</option></select></div>
+   <div><label for="aVt">Vehicle Type</label><select id="aVt"><option>Sedan/Car</option><option>SUV</option><option>Van</option><option>Pick-up</option><option>Truck</option><option>Bus</option><option>Motorcycle</option></select></div>
+   <div><label for="aMake">Vehicle Make <span class="req">*</span></label><input id="aMake" placeholder="e.g. Toyota Vios"></div>
+   <div><label for="aYear">Vehicle Model</label><input id="aYear" inputmode="numeric" placeholder="e.g. 2019"></div>
+   <div><label for="aPlate">Plate No. <span class="req">*</span></label><input id="aPlate" placeholder="e.g. NAB 1234"></div>
+   <div><label for="aDen">Denomination</label><select id="aDen">${DENOM.map(d=>`<option>${d}</option>`).join("")}</select></div>
+   <div><label for="aDrv">Driver</label><input id="aDrv" placeholder="Full name"></div>
+   <div><label for="aPax">Passenger Number</label><input id="aPax" type="number" min="0" inputmode="numeric" value="0"></div>
+   <div><label for="aSpd">Vehicle Speed</label><input id="aSpd" inputmode="numeric" placeholder="kph"></div>
+   <div><label for="aBelt">Seatbelt/Helmet</label>${yn("aBelt")}</div>
+   <div><label for="aOwn">Vehicle Owner</label><input id="aOwn" placeholder="Name or company"></div>
+   <div><label for="aOad">Owner Address</label><input id="aOad" placeholder="City"></div>
+   <div><label for="aLoad">Vehicle Load</label><select id="aLoad">${LOADS.map(d=>`<option>${d}</option>`).join("")}</select></div></div>`
+  :`<div class="grid-f">
+   <div><label for="aVn">Vehicle Number</label><select id="aVn">${vnums}</select></div>
+   <div><label for="aRole">Person Involved</label><select id="aRole"><option>Driver</option><option>Passenger</option><option>Pedestrian</option></select></div>
+   <div><label for="aName">Name <span class="req">*</span></label><input id="aName" placeholder="Full name"></div>
+   <div><label for="aAge">Age</label><input id="aAge" inputmode="numeric" placeholder="e.g. 35"></div>
+   <div><label for="aSex">Gender</label><select id="aSex"><option value="">—</option><option>Male</option><option>Female</option></select></div>
+   <div><label for="aAddr">Address</label><input id="aAddr" placeholder="City"></div>
+   <div><label for="aBelt">Seatbelt/Helmet</label>${yn("aBelt")}</div>
+   ${dead?`<div><label for="aDecl">Declared By <span class="req">*</span></label><input id="aDecl" placeholder="Name and agency"></div>
+   <div><label for="aCod">Cause of Death</label><input id="aCod" placeholder="As declared"></div>`
+   :`<div><label for="aTel">Contact Number</label><input id="aTel" inputmode="tel" placeholder="09XX XXX XXXX"></div>
+   <div><label for="aExt">Extent of Injury</label><select id="aExt"><option>Minor</option><option>Severe</option></select></div>
+   <div><label for="aEnd">Endorsed To</label><input id="aEnd" placeholder="Hospital or person"></div>
+   <div><label for="aCc">Chief Complaint</label><input id="aCc" placeholder="e.g. Pain on left wrist"></div>
+   <div><label for="aWv">Signed Waiver</label>${yn("aWv")}</div>
+   <div><label for="aRem">Remarks</label><input id="aRem"></div>`}</div>`;
+ box.innerHTML+=`<div class="err" id="aErr" hidden></div><div class="row-btns" style="margin-top:8px"><button type="button" class="btn btn-primary btn-sm" id="aSave">Save</button><button type="button" class="btn btn-outline btn-sm" id="aCancel">Cancel</button></div>`;
+ box.hidden=false;(veh?$("aMake"):$("aName")).focus();
+ $("aCancel").addEventListener("click",()=>{box.hidden=true});
+ $("aSave").addEventListener("click",()=>{const v=id=>($(id)?$(id).value.trim():"");
+  const miss=veh?(!v("aMake")?"Enter the vehicle make.":!v("aPlate")?"Enter the plate number.":""):(!v("aName")?"Enter the name.":dead&&!v("aDecl")?"Enter who declared the death.":"");
+  if(miss){$("aErr").textContent=miss;$("aErr").hidden=false;return}
+  if(veh)pVehs.push(V(v("aCls"),v("aMake")+(v("aVt")?` (${v("aVt")})`:""),v("aPlate").toUpperCase(),{year:v("aYear"),dsex:"",denom:v("aDen"),pax:v("aPax"),owner:v("aOwn"),oaddr:v("aOad"),load:v("aLoad"),speed:v("aSpd"),belt:v("aBelt"),driver:v("aDrv")}));
+  else pPeople.push(P(pTab,v("aName"),v("aRole"),dead?{age:v("aAge"),sex:v("aSex"),addr:v("aAddr"),belt:v("aBelt"),decl:v("aDecl"),cod:v("aCod"),veh:v("aVn")}
+   :{age:v("aAge"),sex:v("aSex"),addr:v("aAddr"),belt:v("aBelt"),contact:v("aTel"),ext:v("aExt"),endorsed:v("aEnd"),cc:v("aCc"),waiver:v("aWv"),rem:v("aRem"),veh:v("aVn")}));
+  box.hidden=true;renderPTab();toast("Saved to this incident.")})});
 
 /* GPS km-post suggestion. Simulated in this preview: the viewer's real location is never read.
    The phone suggests, the crew confirms; weak signal or near a ramp = no suggestion; typing always works. */
@@ -1117,16 +1537,20 @@ $("pForm").addEventListener("submit",e=>{
  e.preventDefault();
  const kmOk=checkKm(true);if(!pType)$("pTypeErr").hidden=false;
  const ex=pType?readExtras("p"):null;if(ex&&ex.specMissing)$("pSpecErr").hidden=false;
- if(!kmOk){$("pKm").focus();return} if(!pType)return; if(ex.specMissing){$("pSpec").focus();return}
+ if(!kmOk){pGoPage(1);$("pKm").focus();return} if(!pType){pGoPage(2);return} if(ex.specMissing){pGoPage(2);$("pSpec").focus();return}
  const btn=$("pSend"),sl=$("pSloc");btn.disabled=true;btn.innerHTML=`${ico("loader","i sm spin")}${offline?"Saving on phone…":"Sending…"}`;
  /* the report is captured now, with the time it was logged; with no signal it waits on the phone */
+ const dmg=$("pDmg").value,crash=pType==="Road Crash";
  const rep={t:new Date(),sec:$("pSection").value,zone:pZoneVal(),km:parseKm($("pKm").value),dir:$("pDir").value,type:pType,sub:subOf("p",pType),l3:ex.l3,spec:ex.spec,tire:ex.tire,
   loc:$("pLoc").value,sloc:sl.disabled||sl.selectedIndex===0?"":sl.value,det:$("pDet").value,wx:$("pWx").value,post:shift.post,by:shiftBy(),crew:[...shift.crew],
-  files:[...$("pMedia").files].map(f=>f.name),locNote:gpsNote()};
+  files:[...$("pMedia").files].map(f=>f.name),locNote:gpsNote(),deploy:$("pDeploy").value,pv:$("pVeh").value,
+  cause:crash?{main:$("pCMain").value,sub:$("pCSubW").hidden?"":$("pCSub").value,spec:""}:{main:"",sub:"",spec:""},
+  dmg:{yes:dmg===""?null:dmg==="Yes",what:dmg==="Yes"?$("pDmgWhat").value.trim():""},
+  counts:{veh:+$("pNVeh").value||0,inj:+$("pNInj").value||0,fat:+$("pNFat").value||0,med:+$("pNMed").value||0},
+  vehicles:[...pVehs],people:[...pPeople]};
  const wasOffline=offline;
  setTimeout(()=>{
-  $("pForm").reset();pType=null;clearTimeout(gps.timer);gps.applied=null;gps.base=null;gps.state="idle";gpsMark(false);gpsRender();$("pType").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed","false"));
-  fillSub("p",null);$("pMediaHint").textContent="Optional. Attach what the crew can see.";syncDir();
+  pReset();
   btn.disabled=false;btn.textContent="Send to TCR";
   if(wasOffline){outbox.push({kind:"report",rep});showDone(null);toast("No signal. The report is saved on this phone and sends by itself.")}
   else{const id=deliver(rep,null);showDone(id);toast(`${id} sent to the live board.`)}
@@ -1136,11 +1560,16 @@ $("pForm").addEventListener("submit",e=>{
 
 /* sending: the number is given when the report reaches TCR; the time logged is the time the crew saved it */
 function deliver(r,sentAt){
- seq++;const id="OMNI-2026-"+String(seq).padStart(6,"0"),f=r.files;
+ seq++;const id="N"+String(seq).padStart(7,"0"),f=r.files;
  incidents.unshift({id,t:r.t,sec:r.sec,zone:r.zone,km:r.km,dir:r.dir,type:r.type,sub:r.sub,l3:r.l3,spec:r.spec,tire:r.tire,loc:r.loc,sloc:r.sloc,det:r.det,wx:r.wx,
-  post:r.post,by:r.by,crew:r.crew,status:"open",media:f,vehicles:[],people:[],resp:[],cls:null,cause:{main:"",sub:"",spec:""},dmg:{yes:null,what:""},notes:[],flags:{},
+  post:r.post,by:r.by,crew:r.crew,pv:r.pv,deploy:r.deploy,counts:r.counts,status:"open",media:f,vehicles:r.vehicles||[],people:r.people||[],resp:[],cls:null,cause:r.cause||{main:"",sub:"",spec:""},dmg:r.dmg||{yes:null,what:""},notes:[],flags:{},
   noPeople:false,pick:null,fin:null,subm:null,returnNote:null,
   log:[{t:r.t,who:r.by,what:"Logged the incident"+(f.length?` with ${f.length} media file${f.length>1?"s":""}`:"")+`. ${r.locNote}`+(sentAt?`. Saved offline at ${mil(r.t)}, sent ${mil(sentAt)}`:"")}]});
+ const inc=incidents[0];
+ (r.vehicles||[]).forEach(v=>inc.log.push({t:r.t,who:r.by,what:`Added vehicle ${v.plate}`}));
+ (r.people||[]).forEach(p=>inc.log.push({t:r.t,who:r.by,what:`Added ${p.cat.toLowerCase()} record: ${p.role.toLowerCase()}`}));
+ if(r.cause&&r.cause.main)inc.log.push({t:r.t,who:r.by,what:`Cause entered on the road: ${causeTxt(r.cause)}`});
+ $("pStripNo").textContent="New";
  currentId=id;updateCount();return id;
 }
 /* "Simulate: no signal" (preview only). Our answer to the FRD patrol concern "Time-consuming input, poor connectivity". */
@@ -1156,7 +1585,7 @@ function showDone(id){const ok=!!id;doneWaiting=!ok;
  $("pDoneBig").textContent=ok?"Sent to TCR":"Saved on this phone";
  $("pDoneId").textContent=ok?id:`Waiting for signal (${nQueued()})`;$("pDoneId").classList.toggle("mono",ok);
  $("pDoneTxt").textContent=ok?"TCR has it on the live board. The time and your ID are stamped on the record.":"It sends by itself when the signal is back. The time you logged it is kept.";
- $("pForm").hidden=true;$("pUpd").hidden=true;$("pDone").hidden=false}
+ pShow("done")}
 function flush(){if(flushing||!outbox.length)return;flushing=true;renderNet();
  setTimeout(()=>{const now=new Date();let reps=0,upds=0,last=null;
   outbox.forEach(j=>{if(j.kind==="report"){last=deliver(j.rep,now);reps++}else{applyUpdate(j,now);upds++}});
@@ -1178,11 +1607,11 @@ let updId=null;
 $("pMine").addEventListener("click",e=>{const b=e.target.closest("[data-upd]");if(!b)return;const i=incidents.find(x=>x.id===b.dataset.upd);if(!i)return;
  updId=i.id;$("pUpdId").textContent=i.id;$("pUpdSub").textContent=`${i.type}${i.sub?` · ${i.sub}`:""} · km ${chain(i.km)} · ${i.dir}`;
  $("pUpd").reset();$("pUpdErr").hidden=true;$("pUpdHint").textContent="Optional.";
- $("pForm").hidden=true;$("pDone").hidden=true;$("pUpd").hidden=false;$("pUpdNote").focus()});
+ pShow("upd");$("pUpdNote").focus()});
 $("pQuick").addEventListener("click",e=>{const b=e.target.closest("[data-q]");if(!b)return;const t=$("pUpdNote");
  t.value=t.value.trim()?`${t.value.trim().replace(/[.]$/,"")}. ${b.dataset.q}`:b.dataset.q;$("pUpdErr").hidden=true;t.focus()});
 $("pUpdMedia").addEventListener("change",()=>{const n=$("pUpdMedia").files.length;$("pUpdHint").textContent=n?`${n} file${n>1?"s":""} attached.`:"Optional.";if(n)$("pUpdErr").hidden=true});
-$("pUpdBack").addEventListener("click",()=>{$("pUpd").hidden=true;$("pForm").hidden=false});
+$("pUpdBack").addEventListener("click",()=>pShow("home"));
 function applyUpdate(j,sentAt){const i=incidents.find(x=>x.id===j.id);if(!i)return;
  if(j.note)i.notes.push({t:j.saved,who:j.by,text:j.note});
  if(j.files.length)i.media.push(...j.files);
@@ -1195,7 +1624,7 @@ $("pUpd").addEventListener("submit",e=>{e.preventDefault();const note=$("pUpdNot
  setTimeout(()=>{btn.disabled=false;btn.textContent="Send update";
   if(wasOffline){outbox.push(job);toast("No signal. The update is saved on this phone and sends by itself.")}
   else{applyUpdate(job,null);toast(`Update sent to TCR for ${job.id}.`)}
-  $("pUpd").hidden=true;$("pForm").hidden=false;renderNet();renderMine()},wasOffline?400:600)});
+  pShow("home");renderNet();renderMine()},wasOffline?400:600)});
 
 /* before sign-out: crew entries for NLEX's shift report */
 const hhmm=v=>(v||"").replace(":","");
@@ -1211,7 +1640,7 @@ $("eAppr").addEventListener("submit",e=>{e.preventDefault();const pl=$("eApPlate
  const miss=!pl?"Enter the plate number.":!act?"Choose the action taken.":act==="Verbal warning"&&!rem?"State the reason for the verbal warning in Remarks.":"";
  if(miss){$("eApErr").textContent=miss;$("eApErr").hidden=false;(!pl?$("eApPlate"):!act?$("eApAct"):$("eApRem")).focus();return}$("eApErr").hidden=true;
  quickSave(e.target,()=>slog(shift.post).appr.push({t:hhmm($("eApT").value),ref:$("eApRef").value.trim(),plate:pl.toUpperCase(),vt:$("eApVt").value.trim(),sex:$("eApSex").value,loc:$("eApLoc").value.trim(),act,rem}))});
-const tick=()=>{const m=mil(new Date());$("clock").textContent=m;$("clock2").textContent=m};setInterval(tick,1000);tick();
+const tick=()=>{const d=new Date(),m=mil(d);$("clock").textContent=m;$("clock2").textContent=m;$("nxTime").textContent=`${ymd(d)} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`};setInterval(tick,1000);tick();
 
 /* sign in */
 opts($("lPost"),Object.keys(POSTS));$("lPost").value=shift.post;
@@ -1226,6 +1655,16 @@ $("lForm").addEventListener("submit",e=>{e.preventDefault();
  const b=$("lBtn");b.disabled=true;b.innerHTML=`${ico("loader","i sm spin")}Starting shift…`;
  setTimeout(()=>{shift={post:$("lPost").value,crew,no:$("lShift").value,t0:new Date()};$("lPass").value="";b.disabled=false;b.textContent="Start shift";
   setViewer("field");toast(`Shift started for ${shift.post}: ${crew.length} crew on board.`);go("patrol")},700)});
+/* web application log-in (NLEX sample: Username, Password, Log in, Forgot Password). Any matching sample username works; the level comes from Manage User. */
+$("wForm").addEventListener("submit",e=>{e.preventDefault();const u=$("wUser").value.trim().toLowerCase(),p=$("wPass").value;
+ $("wUser").setAttribute("aria-invalid",String(!u));$("wPass").setAttribute("aria-invalid",String(!p));
+ if(!u||!p){$("wErr").textContent="Enter your username and password.";$("wErr").hidden=false;(!u?$("wUser"):$("wPass")).focus();return}
+ const acct=USERS.find(x=>x.user===u);
+ if(!acct){$("wErr").textContent=`No user "${u}". Try kgarcia (TCR Specialist), rvillanueva (Supervisor), pnavarro (Data Analyst) or lmendoza (Administrator).`;$("wErr").hidden=false;$("wUser").focus();return}
+ $("wErr").hidden=true;const b=$("wBtn");b.disabled=true;b.innerHTML=`${ico("loader","i sm spin")}Logging in…`;
+ setTimeout(()=>{b.disabled=false;b.textContent="Log in";$("wPass").value="";
+  const key=Object.keys(VIEWERS).find(k=>VIEWERS[k].title.startsWith(acct.level.split(" /")[0]))||"specialist";setViewer(key==="field"?"specialist":key);
+  toast(`Logged in as ${viewer.title}.`);go(Object.keys(VIEW_OK).find(x=>x!=="login"&&x!=="patrol"&&VIEW_OK[x].includes(viewer.key))||"board")},600)});
 $("adBtn").addEventListener("click",()=>{const b=$("adBtn"),lbl=b.innerHTML;b.disabled=true;b.innerHTML=`${ico("loader","i sm spin")}Opening company sign-in…`;
  setTimeout(()=>{b.disabled=false;b.innerHTML=lbl;setViewer("specialist");toast("Signed in as TCR Specialist through the NLEX company account (preview).");go("board")},800)});
 
@@ -1271,8 +1710,13 @@ function geoAt(key,km){const L=GEO[key];if(!L)return null;if(km<=L[0][0])return 
  for(let k=0;k<L.length-1;k++){const a=L[k],b=L[k+1];if(km<=b[0]){const f=(km-a[0])/(b[0]-a[0]||1);return[a[1]+(b[1]-a[1])*f,a[2]+(b[2]-a[2])*f]}}
  return L[L.length-1].slice(1)}
 const MAPCOL={alarm:"#b91c1c",open:"#b45309",pending:"#1d4ed8",done:"#15803d"};
-function renderMap(){
+/* sample-week heat along the loops (same 178 incidents as the reports) */
+const HEATPTS=[["NLEX Mainline",[9.6,13,17,21.4,25]],["NLEX Mainline",[30,33.2,38,42]],["NLEX Mainline",[48,55,62]],["NLEX Mainline",[70,80]],["SCTEX S",[95,105]],["SCTEX S",[125]],["SCTEX N",[100,112]],["Segment 9",[16.5]]];
+function renderMap(el,heat){
+ el=el||$("map");
  let h="";
+ if(heat)HEATPTS.forEach(([k,kms],ix)=>{const w=KMHEAT[ix]?KMHEAT[ix][1]:5;kms.forEach(km=>{const g=geoAt(k,km);if(!g)return;const [x,y]=px(g[0],g[1]);
+  h+=`<circle cx="${x}" cy="${y}" r="${(10+w*0.9).toFixed(1)}" fill="#ef4444" opacity="${(0.10+w/150).toFixed(2)}"/>`})});
  Object.entries(GEO).forEach(([k,L])=>{const main=k==="NLEX Mainline"||k.startsWith("SCTEX");
   h+=`<polyline points="${L.map(p=>px(p[1],p[2]).join(",")).join(" ")}" fill="none" stroke="#334155" stroke-width="${main?7:4}" stroke-linecap="round" stroke-linejoin="round"/>`});
  Object.entries(GEO).forEach(([k,L])=>{h+=`<polyline points="${L.map(p=>px(p[1],p[2]).join(",")).join(" ")}" fill="none" stroke="#facc15" stroke-width="1.2" stroke-dasharray="4 5"/>`});
@@ -1280,7 +1724,7 @@ function renderMap(){
  incidents.filter(i=>showFin||!isDone(i)).forEach(i=>{const g=geoAt(lineKey(i),i.km);if(!g)return;const [x,y]=px(g[0],g[1]);
   const c=isDone(i)?"done":i.status==="pending"?"pending":isAlarm(i)?"alarm":"open";
   h+=`<g class="map-pin" tabindex="0" role="button" data-id="${i.id}" aria-label="${i.id}, ${esc(i.sec)} km ${chain(i.km)}, ${esc(i.type)}"><title>${i.id} · ${esc(i.sec)} km ${chain(i.km)} · ${esc(i.sub)}</title><circle class="ring" cx="${x}" cy="${y}" r="11" fill="${MAPCOL[c]}" stroke="#fff" stroke-width="2.5"/><text x="${x}" y="${+y+4}" text-anchor="middle" font-size="10" font-weight="700" fill="#fff" font-family="IBM Plex Mono, monospace">${i.id.slice(-3)}</text></g>`});
- const m=$("map");m.innerHTML=h;
+ const m=el;m.innerHTML=h;
  m.querySelectorAll(".map-pin").forEach(p=>{const o=()=>{currentId=p.dataset.id;go("incident")};p.addEventListener("click",o);p.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();o()}})});
 }
 function renderChips(){
@@ -1297,13 +1741,33 @@ function renderStrip(){
  $("strip").querySelectorAll(".pin").forEach(p=>p.addEventListener("click",()=>{currentId=p.dataset.id;go("incident")}));
  $("legend").innerHTML=`<span class="lg">${PIN.alarm}Needs attention (over 2 h)</span><span class="lg">${PIN.pending}Waiting for supervisor</span><span class="lg">${PIN.open}Open</span><span class="lg">${PIN.done}Finalized</span>`;
 }
+/* NLEX sample "Search Incident" panel: status, type, creation date range, last saved range */
+const lastSaved=i=>new Date(Math.max(+i.t,...i.log.map(l=>+l.t)));
+const dtIn=d=>`${ymd(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+let sApplied={type:"All",cre:null,sav:null};
+opts($("sType"),["All","Road Crash","Breakdown","Security","Others"]);
+(()=>{const now=new Date(),d0=new Date(now.getTime()-12*3600000);$("sCreFrom").value=dtIn(d0);$("sCreTo").value=dtIn(new Date(now.getTime()+3600000));$("sSavFrom").value=dtIn(d0);$("sSavTo").value=dtIn(new Date(now.getTime()+3600000))})();
+const syncRange=(on,box,a,b)=>{const x=$(on).checked;$(box).dataset.off=String(!x);$(a).disabled=$(b).disabled=!x};
+$("sCreOn").addEventListener("change",()=>syncRange("sCreOn","sCreBox","sCreFrom","sCreTo"));
+$("sSavOn").addEventListener("change",()=>syncRange("sSavOn","sSavBox","sSavFrom","sSavTo"));
+$("sForm").addEventListener("submit",e=>{e.preventDefault();
+ const rng=(on,a,b)=>{if(!$(on).checked)return null;const f=new Date($(a).value),t=new Date($(b).value);return{f,t}};
+ const cre=rng("sCreOn","sCreFrom","sCreTo"),sav=rng("sSavOn","sSavFrom","sSavTo");
+ const bad=[cre,sav].find(r=>r&&(isNaN(r.f)||isNaN(r.t)||r.f>r.t));
+ if(bad){$("sErr").textContent="Check the dates: From must be earlier than To.";$("sErr").hidden=false;return}$("sErr").hidden=true;
+ const b=$("sBtn");b.disabled=true;b.innerHTML=`${ico("loader","i sm spin")}Searching…`;
+ setTimeout(()=>{b.disabled=false;b.textContent="Search";filt=$("sStatus").value;sApplied={type:$("sType").value,cre,sav};renderChips();renderRows();
+  toast(`${$("rows").querySelectorAll("tr.click").length} incident(s) found.`)},450)});
 function renderRows(){
  const q=$("q").value.trim().toLowerCase();
- const vis=i=>filt==="active"?!isDone(i):filt==="alarm"?isAlarm(i):filt==="pending"?i.status==="pending":isDone(i);
- const list=incidents.filter(vis).filter(i=>!q||hay(i).includes(q)).sort((a,b)=>rankOf(a)-rankOf(b)||a.t-b.t);
- const none={active:["No active incidents","Everything logged has been finalized."],alarm:["Nothing needs attention","No incident has been open for more than 2 hours."],pending:["Nothing is waiting for a supervisor","Road crashes submitted for approval show up here."],final:["No finalized incidents yet","Incidents appear here once they are final."]}[filt];
- $("rows").innerHTML=list.length?list.map(i=>{const n=nextStep(i);return `<tr class="click ${isAlarm(i)?"r-alarm":i.status==="pending"?"r-pend":""}" tabindex="0" data-id="${i.id}"><td class="mono">${i.id}</td><td>${esc(i.sec)}<div class="sub"><span class="mono">km ${chain(i.km)}</span> · ${esc(i.dir)}</div></td><td>${esc(i.type)}<div class="sub">${esc(typeLine(i))}</div></td><td>${badge(i)}</td><td>${isDone(i)?`<span class="sub">Closed</span>`:`<b class="age" data-age="${i.t.getTime()}">${fmtAge(ageMin(i))}</b><div class="sub">since <span class="mono">${mil(i.t)}</span></div>`}</td><td><span class="next-s ${n.k}">${n.t}</span></td></tr>`}).join("")
-  :`<tr><td colspan="6"><div class="empty">${ico("search","i")}<b style="color:var(--ink-2)">${q?"No incidents match":none[0]}</b><span>${q?"Search looks in every field of the incident form, in this list's filter. Try another word, or another filter.":none[1]}</span></div></td></tr>`;
+ const vis=i=>filt==="all"?true:filt==="active"?!isDone(i):filt==="alarm"?isAlarm(i):filt==="pending"?i.status==="pending":isDone(i);
+ const inR=(d,r)=>!r||(d>=r.f&&d<=r.t);
+ const list=incidents.filter(vis).filter(i=>sApplied.type==="All"||typeNx(i.type)===sApplied.type||(sApplied.type==="Others"&&i.type==="Gantry Hit"))
+  .filter(i=>inR(i.t,sApplied.cre)&&inR(lastSaved(i),sApplied.sav)).filter(i=>!q||hay(i).includes(q)).sort((a,b)=>rankOf(a)-rankOf(b)||a.t-b.t);
+ const none={all:["No incidents","Nothing has been logged yet."],active:["No active incidents","Everything logged has been finalized."],alarm:["Nothing needs attention","No incident has been open for more than 2 hours."],pending:["Nothing is waiting for a supervisor","Road crashes submitted for approval show up here."],final:["No finalized incidents yet","Incidents appear here once they are final."]}[filt];
+ const filtered=q||sApplied.type!=="All";
+ $("rows").innerHTML=list.length?list.map(i=>{const n=nextStep(i);return `<tr class="click ${isAlarm(i)?"r-alarm":i.status==="pending"?"r-pend":""}" tabindex="0" data-id="${i.id}"><td class="mono"><b>${i.id}</b></td><td class="mono">${esc(i.pv||PV[i.post]||"—")}</td><td class="l">${esc(i.crew.map(pcName).join(", "))}</td><td class="mono">${kmNx(i.km)}</td><td>${esc(dirAb(i.dir))}</td><td>${esc(i.loc)}</td><td class="l">${esc(i.sloc||"—")}</td><td>${esc(typeNx(i.type))}<div class="sub">${esc(i.sub||"")}</div></td><td class="mono">${dt16(i.t)}</td><td class="mono">${dt16(lastSaved(i))}</td><td>${badge(i)}${isDone(i)?"":`<div class="sub">open <b class="age" data-age="${i.t.getTime()}">${fmtAge(ageMin(i))}</b></div>`}</td><td class="l"><span class="next-s ${n.k}">${n.t}</span></td></tr>`}).join("")
+  :`<tr><td colspan="12"><div class="empty">${ico("search","i")}<b style="color:var(--ink-2)">${filtered?"No incidents match":none[0]}</b><span>${filtered?"Try another word, type or date range.":none[1]}</span></div></td></tr>`;
  $("rows").querySelectorAll("tr.click").forEach(r=>{const o=()=>{currentId=r.dataset.id;go("incident")};r.addEventListener("click",o);r.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();o()}})});
 }
 setInterval(()=>{document.querySelectorAll("[data-age]").forEach(e=>e.textContent=fmtAge((Date.now()-(+e.dataset.age))/60000));
@@ -1370,7 +1834,7 @@ const canLog=()=>["specialist","supervisor"].includes(viewer.key);
 function startLog(){
  const o=a=>a.map(v=>`<option>${esc(v)}</option>`).join("");
  dlg.innerHTML=`<form class="dlg-in" id="gForm" novalidate>
-  <div class="dlg-h"><h2 id="dlgT">Log an incident</h2><p class="sub">For incidents seen on CCTV or reported through the hotline or an ECB. It gets the next incident number and goes on the live board.</p></div>
+  <div class="dlg-h"><h2 id="dlgT">Create Incident</h2><p class="sub">For incidents seen on CCTV or reported through the hotline or an ECB. It gets the next incident number and goes on the live board.</p></div>
   <div class="dlg-b">
    <div class="grid-f">
     <div><label for="gSec">Section <span class="req">*</span></label><select id="gSec">${o(Object.keys(SECTIONS))}</select></div>
@@ -1412,7 +1876,7 @@ function startLog(){
   const ex=readExtras("g");if(ex.specMissing){$("gSpecErr").hidden=false;$("gSpec").focus();return}
   const y=$("gYes");y.disabled=true;$("gNo").disabled=true;y.innerHTML=`${ico("loader","i sm spin")}Logging…`;
   setTimeout(()=>{
-   seq++;const id="OMNI-2026-"+String(seq).padStart(6,"0"),tm=new Date(),post=$("gPost").value,det=$("gDet").value,note=$("gNote").value.trim();
+   seq++;const id="N"+String(seq).padStart(7,"0"),tm=new Date(),post=$("gPost").value,det=$("gDet").value,note=$("gNote").value.trim();
    const inc={id,t:tm,sec:$("gSec").value,zone:zoneV(),km:parseKm($("gKm").value),dir:$("gDir").value,type:t,sub:subOf("g",t),l3:ex.l3,spec:ex.spec,tire:ex.tire,loc:$("gLoc").value,sloc:"",det,wx:$("gWx").value,
     post,by:who(),crew:[...POSTS[post]],status:"open",media:[],vehicles:[],people:[],resp:[],cls:null,cause:{main:"",sub:"",spec:""},dmg:{yes:null,what:""},flags:{},notes:note?[{t:tm,who:who(),text:note}]:[],
     noPeople:false,pick:null,fin:null,subm:null,returnNote:null,log:[{t:tm,who:who(),what:`Logged the incident (detected by ${det}); ${post} sent`}]};
@@ -1478,7 +1942,7 @@ function renderIncident(){
  const vehRows=i.vehicles.map(v=>`<tr><td>${v.cls}</td><td>${esc(v.make)}${v.owner?`<div class="sub">Owner: ${esc(v.owner)}${v.oaddr?`, ${esc(v.oaddr)}`:""}</div>`:""}</td><td class="mono">${esc(v.plate)}</td><td>${esc(v.year||"—")}</td><td>${esc(v.dsex||"—")}</td><td>${esc(v.denom)}</td><td class="mono">${esc(v.pax||"—")}</td><td>${esc(v.load)}</td><td class="mono">${v.speed?esc(v.speed)+" kph":"—"}</td><td>${esc(v.belt||"—")}</td></tr>`).join("");
  const pplRows=i.people.map(p=>`<tr><td>${esc(p.name)}<div class="sub">${[p.age&&`${esc(p.age)} yrs`,p.sex&&esc(p.sex),p.addr&&esc(p.addr),p.contact&&esc(p.contact)].filter(Boolean).join(" · ")||""}</div></td><td><span class="badge ${p.cat==="Fatality"?"b-alarm":p.cat==="Medical case"?"b-info":"b-open"}">${p.cat}</span></td><td>${p.role}<div class="sub">Seatbelt: ${esc(p.belt||"—")}</div></td><td>${p.cat==="Fatality"?`Declared by ${esc(p.decl||"—")}<div class="sub">${esc(p.cod||"Cause of death not recorded")}</div>`:`${esc(p.ext||"—")}<div class="sub">${esc(p.cc||"No chief complaint recorded")}</div>`}</td><td>${p.cat==="Fatality"?`<span class="sub">—</span>`:`Endorsed: ${esc(p.endorsed||"—")}<div class="sub">Waiver: ${esc(p.waiver||"—")}${p.rem?` · ${esc(p.rem)}`:""}</div>`}</td></tr>`).join("");
  const noteRows=i.notes.map((n,ix)=>`<li data-ix="${ix}"><span class="mono">${mil(n.t)}</span><span><span class="ntext">${esc(n.text)}</span><div class="who">${esc(n.who)}${n.edited?` · edited ${mil(n.edited)}`:""}</div></span>${edit?`<span class="row-btns"><button class="btn btn-outline btn-sm" data-nedit="${ix}" aria-label="Edit this entry">${ico("edit")}Edit</button><button class="btn btn-danger btn-sm" data-ndel="${ix}" aria-label="Delete this entry">${ico("trash")}Delete</button></span>`:"<span></span>"}</li>`).join("");
- $("incBody").innerHTML=`${band}
+ $("incBody").innerHTML=`<div class="pstrip" style="border-radius:6px;margin-bottom:14px;font-size:13.5px;padding:9px 14px"><span>Incident No.: <b class="mono">${i.id}</b></span><span>Incident Type: <b>${esc(typeNx(i.type))}</b></span><span class="mono">${dt16(i.t)}</span></div>${band}
  <div class="card"><div id="stepBox"></div></div>
  <div class="card">
   <div class="inc-h"><span class="mono">${i.id}</span>${badge(i)}</div>
@@ -1677,6 +2141,43 @@ function renderShift(){const post=$("crew").value,list=incidents.filter(i=>i.pos
  $("srAppr").innerHTML=L.appr.length?L.appr.map(a=>`<tr><td class="mono">${a.t?esc(a.t)+"H":"—"}</td><td>${esc(a.ref||"—")}</td><td class="mono">${esc(a.plate)}</td><td>${esc(a.vt||"—")}</td><td>${esc(a.sex||"—")}</td><td>${esc(a.loc||"—")}</td><td>${esc(a.act)}</td><td>${esc(a.rem||"—")}</td></tr>`).join(""):none(8,"No apprehensions entered for this shift.");
  const names=[...new Set(list.flatMap(i=>i.crew).concat(crew))];
  $("credit").innerHTML=names.map(n=>{const mine=list.filter(i=>i.crew.includes(n));return `<tr><td>${esc(n)}</td><td class="c mono">${mine.length}</td><td class="c"><span class="pts">${mine.reduce((s,i)=>s+pts(i),0)}</span></td></tr>`}).join("")}
+/* dashboard (NLEX sample layout). Live counts from the incident list; charts from the sample week. */
+const WEEK={days:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],
+ series:[["Road Crash","#dc2626",[5,6,4,7,6,8,5]],["Breakdown","#f59e0b",[11,13,12,14,12,15,11]],["Security","#2563eb",[3,4,4,5,3,4,4]],["Others","#64748b",[2,3,3,4,3,4,3]]],
+ resp:[14,12,13,11,12,10,11],within2h:65,causes:[["Human Error",62,"#dc2626"],["Vehicle Error",24,"#f59e0b"],["Road Error",9,"#2563eb"],["Others",5,"#64748b"]]};
+function renderDash(){
+ const act=incidents.filter(i=>!isDone(i));
+ $("dKpis").innerHTML=`<div class="kpi"><span class="label">Open now</span><b>${act.length}</b><span class="sub">From the live incident list</span></div>
+  <div class="kpi bad"><span class="label">Open over 2 hours</span><b>${act.filter(isAlarm).length}</b><span class="sub">Shown in red <span class="included">Included</span></span></div>
+  <div class="kpi info"><span class="label">Waiting for supervisor</span><b>${incidents.filter(i=>i.status==="pending").length}</b><span class="sub">Road crashes and major incidents</span></div>`;
+ /* line chart */
+ const W=560,H=230,L=36,B=26,T=14,mx=16,xs=k=>L+k*((W-L-14)/6),ys=v=>T+(H-T-B)*(1-v/mx);
+ let s=`<g font-family="IBM Plex Sans, sans-serif" font-size="11" fill="#64748b">`;
+ [0,4,8,12,16].forEach(v=>{s+=`<line x1="${L}" x2="${W-10}" y1="${ys(v)}" y2="${ys(v)}" stroke="#e5e7eb"/><text x="${L-8}" y="${ys(v)+4}" text-anchor="end">${v}</text>`});
+ WEEK.days.forEach((d,k)=>{s+=`<text x="${xs(k)}" y="${H-8}" text-anchor="middle">${d}</text>`});s+="</g>";
+ WEEK.series.forEach(([n,c,v])=>{s+=`<polyline fill="none" stroke="${c}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" points="${v.map((y,k)=>`${xs(k).toFixed(1)},${ys(y).toFixed(1)}`).join(" ")}"/>`+v.map((y,k)=>`<circle cx="${xs(k).toFixed(1)}" cy="${ys(y).toFixed(1)}" r="3" fill="#fff" stroke="${c}" stroke-width="2"><title>${n}, ${WEEK.days[k]}: ${y}</title></circle>`).join("")});
+ $("dLine").innerHTML=s;
+ $("dLineLg").innerHTML=WEEK.series.map(([n,c,v])=>`<span class="lg"><span style="width:12px;height:3px;background:${c};display:inline-block;border-radius:2px"></span>${n} (${v.reduce((a,b)=>a+b,0)})</span>`).join("");
+ /* heat map */
+ renderMap($("dMap"),true);
+ /* donut */
+ const r=58,C=2*Math.PI*r,p=WEEK.within2h/100;
+ $("dDonut").innerHTML=`<circle cx="80" cy="80" r="${r}" fill="none" stroke="#e5e7eb" stroke-width="16"/><circle cx="80" cy="80" r="${r}" fill="none" stroke="#16a34a" stroke-width="16" stroke-dasharray="${(C*p).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 80 80)" stroke-linecap="butt"/><text x="80" y="88" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="26" font-weight="600" fill="#0f172a">${WEEK.within2h}%</text>`;
+ $("dDonut").setAttribute("aria-label",`${WEEK.within2h}% of incidents finalized within 2 hours`);
+ /* response time trend */
+ const rx=k=>14+k*28,ry=v=>12+(110-12)*(1-(v-8)/8);
+ $("dResp").innerHTML=`<rect x="6" y="6" width="188" height="114" rx="4" fill="#f1f5f9"/><polyline fill="none" stroke="#0ea5e9" stroke-width="2.5" points="${WEEK.resp.map((v,k)=>`${rx(k)},${ry(v).toFixed(1)}`).join(" ")}"/>`+WEEK.resp.map((v,k)=>`<rect x="${rx(k)-4}" y="${(ry(v)-4).toFixed(1)}" width="8" height="8" fill="#f59e0b"><title>${WEEK.days[k]}: ${v} min</title></rect>`).join("")+`<text x="100" y="136" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="#64748b">Average ${Math.round(WEEK.resp.reduce((a,b)=>a+b,0)/7)} min</text>`;
+ $("dResp").setAttribute("aria-label","Average response time by day, sample week");
+ /* bar chart: incident type */
+ const tot=WEEK.series.map(([n,c,v])=>[n,c,v.reduce((a,b)=>a+b,0)]),bm=Math.max(...tot.map(t=>t[2]));
+ $("dBar").innerHTML=`<line x1="14" x2="196" y1="122" y2="122" stroke="#cbd5e1"/>`+tot.map(([n,c,v],k)=>{const h=Math.round(v/bm*100),x=24+k*44;return `<rect x="${x}" y="${122-h}" width="28" height="${h}" fill="${c}" rx="2"><title>${n}: ${v}</title></rect><text x="${x+14}" y="${118-h}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="#334155">${v}</text><text x="${x+14}" y="138" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9.5" fill="#64748b">${n.split(" ")[0]}</text>`}).join("");
+ $("dBar").setAttribute("aria-label","Incidents by type, sample week: "+tot.map(t=>`${t[0]} ${t[2]}`).join(", "));
+ /* loops and causes as progress bars */
+ const lm=Math.max(...KMHEAT.map(k=>k[1])),COLS=["#0ea5e9","#16a34a","#f59e0b","#dc2626","#6366f1","#14b8a6","#a855f7","#64748b"];
+ $("dLoops").innerHTML=KMHEAT.slice(0,5).map(([l,v],k)=>`<div class="pbar"><span>${esc(l.split(" · ")[0])}</span><span class="n">${v}</span><span class="t"><span style="width:${Math.round(v/lm*100)}%;background:${COLS[k]}"></span></span></div>`).join("");
+ $("dCause").innerHTML=WEEK.causes.map(([l,v,c])=>`<div class="pbar"><span>${l}</span><span class="n">${v}%</span><span class="t"><span style="width:${v}%;background:${c}"></span></span></div>`).join("");
+}
+
 /* access */
 function renderRoles(){const Y=`<span class="yes" aria-label="Yes">${ico("check","i")}</span>`,N=`<span class="no" aria-label="No">${ico("minus","i")}</span>`;
  const R=[["Field Personnel","Basic details only",Y,"Basic details",N,N,N,N,N],["TCR Specialist","Completes details; finalizes all types except road crashes and major incidents, which go to a supervisor",Y,Y,Y,N,N,N,N],["TCR Supervisor / Manager","Approves and finalizes road crashes and major incidents; finalizes all other incidents; approves later corrections",Y,Y,Y,Y,Y,N,N],["Data Analyst","Generates reports",N,N,N,N,Y,N,N],["Investigator","Downloads media of finalized incidents",N,"View only",N,N,N,"Finalized only",N],["Administrator","Manages users and system settings",N,N,N,N,Y,N,Y]];
@@ -1686,6 +2187,7 @@ function renderRoles(){const Y=`<span class="yes" aria-label="Yes">${ico("check"
  $("nlexAccess").innerHTML=A.map(([u,...m])=>`<tr><td><b style="color:var(--ink)">${u}</b></td>${m.map(x=>`<td class="c">${x?`<span class="xm" aria-label="Yes">X</span>`:`<span class="sr-none" aria-label="No"></span>`}</td>`).join("")}</tr>`).join("")}
 
 /* start */
+setViewer(viewer.key);renderUsers();
 updateCount();
 go((location.hash||"").replace("#",""));
 </script>
