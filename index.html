@@ -50,6 +50,7 @@
 /* Hallmark · answered F5 · the record's circles are timeline nodes joined by a line, and the play disc is the play control itself */
 /* Hallmark · reworded "Free. Nothing to install." to "Free, 20 minutes, at your office or online." and "Coordinates" to "Covers" · review round 2026-11-06: say what the walkthrough is at the button, and plain words for the cluster fact */
 /* Hallmark · copy: verbatim · every line is Renz-approved wording carried over from the live page */
+/* 2026-11-27 · sell-order pass (Renz approved): the offer's three promises and the live board sit on the first screen, the six steps live only in How it works, a What's included list follows it, the founder comes before custom systems, and the questions follow what offices actually ask */
 @import url("./tokens.css");
 @import url("./base.css");
 
@@ -139,37 +140,26 @@ body { background: var(--color-paper); font-weight: 500; }
 .split--top { align-items: start; }
 .text > p:not([class]) { color: var(--color-ink-2); }
 
-/* Hero: Stage, the head on five columns, the record on seven */
+/* Hero: Stage, the head on five columns, the live board on seven */
 .hero { min-height: calc(100svh - var(--nav-h)); display: grid; align-items: center; padding-block: var(--space-2xl); }
 /* The head starts at the top so the headline and the Book button share the first screen on an office laptop;
-   on a taller screen it eases down to sit mid-screen beside the record. */
+   on a taller screen it eases down to sit mid-screen beside the board. */
 .hero .split { align-items: start; }
 .hero .split > .text { padding-top: clamp(0px, calc((100svh - 48rem) / 2), 7.5rem); }
 .hero h1 { max-width: 12ch; }
 .hero-sub { font-size: var(--text-lead); line-height: 1.45; color: var(--color-ink-2); max-width: 36ch; }
 .hero-go { display: grid; gap: var(--space-md); justify-items: start; margin-top: var(--space-md); }
 .hero-note { font-size: var(--text-sm); color: var(--color-ink-2); max-width: 40ch; }
+/* The offer's three promises sit right under the one gold button */
+.hero-ticks { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-xs); }
+.hero-ticks li { display: flex; gap: var(--space-sm); align-items: flex-start; line-height: 1.4; color: var(--color-ink); }
+.hero-ticks .ico { width: 18px; height: 18px; margin-top: 0.2em; color: var(--color-accent); stroke-width: 2.25; }
 
-/* The record: one sample incident's audit trail, the page's signature */
-.record { margin: 0; border: 1px solid var(--color-rule-strong); border-radius: var(--radius-card); background: var(--color-paper-2); overflow: hidden; }
-.record-head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-md); padding: var(--space-lg) var(--space-xl); border-bottom: 1px solid var(--color-rule); }
-.record-title { display: grid; gap: var(--space-2xs); font: 600 var(--text-title)/1.2 var(--font-display); letter-spacing: -0.01em; }
-.record-title small { font: 500 var(--text-sm)/1.45 var(--font-body); letter-spacing: 0; color: var(--color-muted); }
-.record-state { display: inline-flex; align-items: center; gap: var(--space-xs); font: 600 var(--text-sm)/1 var(--font-body); color: var(--color-accent); white-space: nowrap; }
-.record-state svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.4; flex-shrink: 0; }
-.record-list { list-style: none; margin: 0; padding: var(--space-xs) var(--space-xl) var(--space-lg); }
-.record-list li { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr); gap: var(--space-lg); padding-block: var(--space-sm); border-bottom: 1px solid var(--color-rule); position: relative; }
-.record-list li:last-child { border-bottom: 0; }
-.record-list time { font-family: var(--font-outlier); font-size: var(--text-sm); color: var(--color-muted); padding-top: var(--space-3xs); font-variant-numeric: tabular-nums; }
-.record-step { display: grid; gap: var(--space-2xs); }
-.record-step strong { font: 600 var(--text-md)/1.3 var(--font-display); color: var(--color-ink); }
-.record-step span { font-size: var(--text-sm); color: var(--color-ink-2); line-height: 1.5; }
-.record-step em { font-style: normal; font-size: var(--text-sm); color: var(--color-muted); }
-.record-list li.is-final strong { color: var(--color-accent); }
-.record figcaption { padding: var(--space-md) var(--space-xl); border-top: 1px solid var(--color-rule); font-size: var(--text-sm); color: var(--color-muted); background: var(--color-paper); }
-.js .record-list li { opacity: 0; transform: translateY(8px); transition: opacity var(--dur-long) var(--ease-out), transform var(--dur-long) var(--ease-out); transition-delay: calc(var(--i, 0) * 80ms + 80ms); }
-.js .record.is-in .record-list li { opacity: 1; transform: none; }
-@media (prefers-reduced-motion: reduce) { .js .record-list li { opacity: 1; transform: none; transition: none; } }
+/* The live board: the real screen from the demo system, the first thing a visitor sees beside the headline */
+.shot { margin: 0; display: grid; gap: var(--space-sm); }
+.hero .split > .shot { grid-column: 6 / -1; align-self: center; padding-left: var(--space-lg); }
+.shot img { width: 100%; border-radius: var(--radius-card); border: 1px solid var(--color-blue-deep); border-top: 2px solid var(--color-blue); box-shadow: 0 28px 64px -24px var(--color-film-shadow); }
+.shot figcaption { font-size: var(--text-sm); color: var(--color-muted); }
 
 /* The Mandaluyong case: the facts beside the film */
 .facts { margin: var(--space-xl) 0 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--gap-columns); }
@@ -215,6 +205,18 @@ body { background: var(--color-paper); font-weight: 500; }
 .step-film { margin: 0 auto; width: min(100%, 360px); aspect-ratio: 9 / 16; border-radius: var(--radius-card); overflow: hidden; border: 1px solid var(--color-rule); background: var(--color-paper-2); }
 .step-film video { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; transform: scale(1.18); transform-origin: 50% 30%; }
 .step-cap { margin-top: var(--space-sm); text-align: center; font-size: var(--text-sm); color: var(--color-muted); }
+
+/* What your office gets: eight plain lines on hairlines, no cards */
+.incl-head { display: grid; gap: var(--space-md); max-width: 44rem; }
+.incl-head p { color: var(--color-ink-2); }
+.incl { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--gap-columns); }
+#included { padding-block: var(--section-gap-s); }
+.incl li { display: grid; gap: var(--space-3xs); align-content: start; padding-block: var(--space-sm); border-top: 1px solid var(--color-rule); }
+.incl h3 { font: 600 var(--text-md)/1.3 var(--font-display); letter-spacing: var(--tracking-title); max-width: none; color: var(--color-ink); }
+.incl p { font-size: var(--text-sm); color: var(--color-ink-2); line-height: 1.5; }
+.incl-foot { display: flex; flex-wrap: wrap; gap: var(--space-sm) var(--space-xl); align-items: center; justify-content: space-between; padding-top: var(--space-md); border-top: 1px solid var(--color-rule-strong); }
+.incl-foot p { max-width: 52ch; color: var(--color-ink); }
+@media (max-width: 40rem) { .incl { grid-template-columns: minmax(0, 1fr); } }
 
 /* Custom systems */
 .custom-list { list-style: none; margin: 0; padding: 0; display: grid; }
@@ -332,7 +334,7 @@ footer { border-top: 1px solid var(--color-rule); padding-block: var(--space-3xl
     .split > .text, .split > .proof, .split--4-8 > .text, .split--4-8 > .proof, .split--6-6 > .text, .split--6-6 > .proof { grid-column: 1 / -1; }
     .split { grid-template-columns: minmax(0, 1fr); gap: var(--space-xl) 0; }
     .hero { min-height: 0; padding-block: var(--space-2xl); }
-    .record-head, .record-list, .record figcaption { padding-inline: var(--space-lg); }
+    .hero .split > .shot { grid-column: 1 / -1; padding-left: 0; }
     .about-media { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
     .privacy-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .colophon-text, .foot { grid-column: 1 / -1; }
@@ -340,8 +342,6 @@ footer { border-top: 1px solid var(--color-rule); padding-block: var(--space-3xl
 @media (max-width: 40rem) {
     .brand { font-size: var(--text-lg); }
     .nav-compact .btn { padding: 0 var(--space-sm); }
-    .record-list li { grid-template-columns: 3.5rem minmax(0, 1fr); gap: var(--space-md); }
-    .record-head { flex-direction: column; gap: var(--space-sm); }
     .pain thead { display: none; }
     .pain, .pain tbody, .pain tr, .pain td { display: block; width: 100%; }
     .pain tr { border-top: 1px solid var(--color-rule); padding-block: var(--space-md); }
@@ -400,11 +400,6 @@ footer { border-top: 1px solid var(--color-rule); padding-block: var(--space-3xl
 .field-ctl { position: absolute; left: max(var(--gutter), calc((100% - var(--container)) / 2 + var(--gutter))); bottom: var(--space-md); z-index: var(--z-raised); }
 html:not(.js) .field-ctl { display: none; }
 
-/* The record: a lit civic-blue edge; the report arrives in red, the close in gold */
-.record { border-color: var(--color-blue-deep); border-top: 2px solid var(--color-blue); background: color-mix(in oklab, var(--color-paper-2) 80%, transparent); }
-.record figcaption, .record-head { background: transparent; }
-.record-list li:first-child time, .record-list li:first-child strong { color: var(--color-red-ink); }
-
 /* The Mandaluyong case owns the civic blue field; its key figures in gold */
 #proof { background: var(--color-blue-field); }
 .case .facts > div { border-top-color: var(--color-blue); }
@@ -447,24 +442,6 @@ footer { border-top-color: var(--color-blue-deep); }
 /* Hero: the headline says what it is */
 .hero h1 { font-size: clamp(2.5rem, 3.4vw + 1rem, 4.5rem); max-width: 14ch; }
 .hero-sub { max-width: 40ch; }
-
-/* The record: six steps on a timeline, played once */
-.record-state .ico { width: 16px; height: 16px; }
-.record-state.is-open { color: var(--color-blue-lit); }
-.record-state.is-open .ico { display: none; }
-.record-list { padding-top: var(--space-sm); }
-.record-list li { grid-template-columns: 32px 3.75rem minmax(0, 1fr); gap: var(--space-md); padding-block: var(--space-sm); border-bottom: 0; align-items: start; }
-.js .record-list li, .js .record.is-in .record-list li { opacity: 1; transform: none; transition: opacity var(--dur-long) var(--ease-out); transition-delay: 0s; }
-.js .record.is-playing .record-list li:not(.is-done) { opacity: 0.5; }
-.record-list li:not(:last-child)::after { content: ""; position: absolute; left: 15.5px; top: calc(var(--space-sm) + 32px); bottom: calc(-1 * var(--space-sm)); width: 1px; background: var(--color-rule-strong); }
-.record-list time { padding-top: var(--space-2xs); }
-.rec-ico { position: relative; z-index: 1; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--color-blue-deep); background: var(--color-paper); color: var(--color-blue); }
-.rec-ico .ico { width: 16px; height: 16px; }
-.record-list li.is-alert .rec-ico { border-color: var(--color-red); color: var(--color-red-ink); }
-.record-list li.is-final .rec-ico { border-color: var(--color-accent); color: var(--color-accent); }
-.record-list li.is-current .rec-ico { background: var(--color-blue-deep); border-color: var(--color-blue); color: var(--color-ink); }
-.record-foot { display: flex; justify-content: flex-end; padding: 0 var(--space-xl) var(--space-md); }
-.record-foot:has(.record-replay[hidden]) { display: none; }
 
 /* The Mandaluyong case, full width: facts, then the film large */
 .case-wide { display: grid; gap: var(--space-xl); }
@@ -538,9 +515,9 @@ footer { border-top-color: var(--color-blue-deep); }
 }
 
 /* Stand-alone text links and footer links: a comfortable click height, and a full 44px on touch screens and narrow windows */
-:is(.hero-alt, .wide-head .link, .reg-note .link, .direct .link, .faq-a p > .link:only-child, .foot a) { display: inline-flex; align-items: center; min-height: 32px; }
+:is(.hero-alt, .wide-head .link, .incl-foot .link, .reg-note .link, .direct .link, .faq-a p > .link:only-child, .foot a) { display: inline-flex; align-items: center; min-height: 32px; }
 @media (pointer: coarse), (max-width: 60rem) {
-    :is(.hero-alt, .wide-head .link, .reg-note .link, .direct .link, .faq-a p > .link:only-child, .foot a) { min-height: 44px; }
+    :is(.hero-alt, .wide-head .link, .incl-foot .link, .reg-note .link, .direct .link, .faq-a p > .link:only-child, .foot a) { min-height: 44px; }
 }
 @media (max-width: 60rem) { #how .split > .text { display: contents; } #how .split > .text > h2 { order: -2; } #how .split > .proof { order: -1; } #how .step-film { width: min(100%, 360px); } }
     </style>
@@ -610,26 +587,18 @@ footer { border-top-color: var(--color-blue-deep); }
                     <p class="hero-sub">Know who responded, and when. In daily use at Mandaluyong City since July 2026.</p>
                     <div class="hero-go">
                         <a href="#contact" class="btn btn-lg" data-mode="lgu">Book a free walkthrough</a>
-                        <p class="hero-note">Free, 20 minutes, at your office or online. Renz, the founder, replies within one working day.</p>
+                        <ul class="hero-ticks" aria-label="What the walkthrough includes">
+                            <li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Free 20-minute walkthrough</li>
+                            <li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>A one-page note within two working days</li>
+                            <li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Your team tests it before you accept it</li>
+                        </ul>
+                        <p class="hero-note">At your office or online. Renz, the founder, replies within one working day.</p>
                         <a href="#custom" class="link hero-alt">Not an LGU? Custom systems</a>
                     </div>
                 </div>
-                <figure class="proof record" data-slot="record" data-kind="product" aria-label="Diagram of how the CivicGrid system records one incident from report to locked record, shown with sample data">
-                    <div class="record-head" data-keep>
-                        <span class="record-title">Flooded street<small>Sample incident from the demo system. Every step keeps a role and a time.</small></span>
-                        <span class="record-state" id="recordState"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg><span id="recordStateText">Closed and locked</span></span>
-                    </div>
-                    <ol class="record-list" data-keep>
-                        <li data-state="Reported" class="is-alert"><span class="rec-ico"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg></span><time datetime="14:02">14:02</time><span class="record-step"><strong>Reported</strong><span>A resident’s phone report, with its approximate location.</span><em>Resident</em></span></li>
-                        <li data-state="Dispatched"><span class="rec-ico"><svg class="ico" aria-hidden="true"><use href="#i-send"/></svg></span><time datetime="14:04">14:04</time><span class="record-step"><strong>Dispatched</strong><span>Confirmed and sent to the right lead office, with a text message.</span><em>EOC operator</em></span></li>
-                        <li data-state="Acknowledged"><span class="rec-ico"><svg class="ico" aria-hidden="true"><use href="#i-check-check"/></svg></span><time datetime="14:06">14:06</time><span class="record-step"><strong>Acknowledged</strong><span>The lead office confirms it has the report.</span><em>Lead office</em></span></li>
-                        <li data-state="Responding"><span class="rec-ico"><svg class="ico" aria-hidden="true"><use href="#i-activity"/></svg></span><time datetime="14:19">14:19</time><span class="record-step"><strong>Responding</strong><span>Each update is logged as it happens.</span><em>Lead office</em></span></li>
-                        <li data-state="Reviewed"><span class="rec-ico"><svg class="ico" aria-hidden="true"><use href="#i-clipboard-check"/></svg></span><time datetime="15:31">15:31</time><span class="record-step"><strong>Reviewed</strong><span>Checked and approved before anything closes.</span><em>Approver</em></span></li>
-                        <li data-state="Closed and locked" class="is-final"><span class="rec-ico"><svg class="ico" aria-hidden="true"><use href="#i-lock"/></svg></span><time datetime="15:40">15:40</time><span class="record-step"><strong>Closed and locked</strong><span>The after-action report is ready.</span><em>Approver</em></span></li>
-                    </ol>
-                    <div class="record-foot" data-keep>
-                        <button type="button" class="ctl record-replay" id="recordReplay" hidden><svg class="ico" aria-hidden="true"><use href="#i-replay"/></svg><span>Replay</span></button>
-                    </div>
+                <figure class="shot">
+                    <img src="img/board-sample.webp" width="1462" height="748" alt="The CivicGrid live board: one incident, dispatched to its lead office, with the live workflow above and the counts of active, awaiting and responding incidents" fetchpriority="high">
+                    <figcaption>The live board, shown with sample data.</figcaption>
                 </figure>
             </div>
         </section>
@@ -703,19 +672,26 @@ footer { border-top-color: var(--color-blue-deep); }
             </div>
         </section>
 
-        <!-- CUSTOM SYSTEMS -->
-        <section class="section" id="custom" aria-labelledby="custom-title">
-            <div class="container split split--6-6">
-                <div class="text">
-                    <h2 id="custom-title">Not an LGU? I also build custom systems.</h2>
-                    <p>For companies and organizations that run on logbooks, spreadsheets and group chats. I learn your process first, then build the software that puts it online: the same method behind Mandaluyong’s system.</p>
-                    <p><a href="#contact" class="btn btn--quiet btn-lg" data-mode="org">Tell me what you need</a></p>
+        <!-- WHAT YOUR OFFICE GETS: the package in plain lines -->
+        <section class="section" id="included" aria-labelledby="included-title">
+            <div class="container wide">
+                <div class="incl-head">
+                    <h2 id="included-title">What your office gets.</h2>
                 </div>
-                <ul class="proof custom-list">
-                    <li><h3>Requests and approvals</h3><p>Who asked, who signed, and when, without paper or chat threads.</p></li>
-                    <li><h3>Field work</h3><p>Assign the job, follow each update, and close it.</p></li>
-                    <li><h3>One closed record</h3><p>Every step logged, with reports that need no retyping.</p></li>
+                <ul class="incl">
+                    <li><h3>A live board and map</h3><p>Every report on one board and one map, made for your EOC screens.</p></li>
+                    <li><h3>A report page for residents</h3><p>Residents report from a link or QR code on any phone, with no app and no login.</p></li>
+                    <li><h3>Text alerts to the lead office</h3><p>Teams and contacts are alerted by text message.</p></li>
+                    <li><h3>Accounts for each office</h3><p>Each office logs in, sees its own incidents and responds.</p></li>
+                    <li><h3>A record of every step</h3><p>Every step shows who did what, and when.</p></li>
+                    <li><h3>The after-action report</h3><p>Built from the same record, with a printable case sheet for every incident.</p></li>
+                    <li><h3>Setup and training</h3><p>Set up around your forms, clusters and steps, with training for your staff.</p></li>
+                    <li><h3>Support</h3><p>As written in your contract.</p></li>
                 </ul>
+                <div class="incl-foot">
+                    <p>The exact list for your office comes in writing with the price.</p>
+                    <a href="#contact" class="link" data-mode="lgu">Book a free walkthrough</a>
+                </div>
             </div>
         </section>
 
@@ -743,6 +719,22 @@ footer { border-top-color: var(--color-blue-deep); }
             </div>
         </section>
 
+        <!-- CUSTOM SYSTEMS -->
+        <section class="section" id="custom" aria-labelledby="custom-title">
+            <div class="container split split--6-6">
+                <div class="text">
+                    <h2 id="custom-title">Not an LGU? I also build custom systems.</h2>
+                    <p>For companies and organizations that run on logbooks, spreadsheets and group chats. I learn your process first, then build the software that puts it online: the same method behind Mandaluyong’s system.</p>
+                    <p><a href="#contact" class="btn btn--quiet btn-lg" data-mode="org">Tell me what you need</a></p>
+                </div>
+                <ul class="proof custom-list">
+                    <li><h3>Requests and approvals</h3><p>Who asked, who signed, and when, without paper or chat threads.</p></li>
+                    <li><h3>Field work</h3><p>Assign the job, follow each update, and close it.</p></li>
+                    <li><h3>One closed record</h3><p>Every step logged, with reports that need no retyping.</p></li>
+                </ul>
+            </div>
+        </section>
+
         <!-- QUESTIONS -->
         <section class="section light" id="questions" aria-labelledby="questions-title">
             <div class="container split split--4-8 split--top">
@@ -760,12 +752,13 @@ footer { border-top-color: var(--color-blue-deep); }
                 </div>
                 <div class="proof faq">
                     <details open><summary>Will this add work for my staff?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>I learn your forms, clusters and steps first, then build around them. Residents install nothing: it’s a link on any phone. Your team gets updates by text as an incident moves, and the command dashboard is made for your large EOC screens.</p></div></details>
-                    <details><summary>What if something goes wrong during a disaster?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>The system runs on cloud servers, not on my computer, so your team keeps working even when I’m offline. During an emergency, messages from your office come first. What support covers is written in your contract.</p></div></details>
-                    <details><summary>Does it work without internet?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>No. It needs an internet connection, so keep your hotline and radio in place.</p></div></details>
-                    <details><summary>Who can change a closed record?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>Only an EOC commander or system administrator can reopen an incident. Every step shows who did what, and when.</p></div></details>
-                    <details><summary>Who owns the data?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>Your records stay yours. You can export them whenever you need them.</p></div></details>
                     <details><summary>How much does it cost?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>It depends on your users and what you need. The walkthrough is free, and the exact price comes in writing after you’ve seen the system.</p></div></details>
                     <details><summary>We have no budget yet. Should we still talk?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>Yes. Tell me when next year’s budget is decided. A walkthrough now commits you to nothing.</p></div></details>
+                    <details><summary>Our residents still call the hotline. Does this replace it?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>No. Keep your hotline and radio. Your dispatcher logs each call into the same live list, so calls and phone reports end up in one record.</p></div></details>
+                    <details><summary>Does it work without internet?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>No. It needs an internet connection, so keep your hotline and radio in place.</p></div></details>
+                    <details><summary>What if something goes wrong during a disaster?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>The system runs on cloud servers, not on my computer, so your team keeps working even when I’m offline. During an emergency, messages from your office come first. What support covers is written in your contract.</p></div></details>
+                    <details><summary>Who owns the data?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>Your records stay yours. You can export them whenever you need them.</p></div></details>
+                    <details><summary>Who can change a closed record?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>Only an EOC commander or system administrator can reopen an incident. Every step shows who did what, and when.</p></div></details>
                     <details id="procurement"><summary>What can you give our procurement office?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="faq-a"><p>CivicGrid Software Development Services is a registered Philippine business in the City of Manila.</p><ul><li>DTI business name: <span class="data">7980659</span></li><li>PhilGEPS supplier: <span class="data">476941</span>, registered since June 2026</li><li>BIR: registered, certificate on request</li></ul><p>DTI, BIR and PhilGEPS certificates are available on request. The full address appears on your procurement documents.</p><p><a class="link" href="civicgrid-company-profile.pdf" download>Download the one-page company profile (PDF)</a></p></div></details>
                 </div>
             </div>
@@ -849,8 +842,6 @@ footer { border-top-color: var(--color-blue-deep); }
     </footer>
 
     <script>
-        // The record writes itself once, the first time it is seen; it is fully visible without this script.
-
         // Top-bar button turns amber once the first-screen button is out of view.
         const navBar = document.getElementById('top');
         const goldSeen = new Set();
@@ -866,31 +857,6 @@ footer { border-top-color: var(--color-blue-deep); }
         const whenSeen = (el, on, off) => new IntersectionObserver((entries) => {
             entries[0].isIntersecting ? on() : off();
         }, { threshold: 0.25 }).observe(el);
-
-        // The record plays its six steps in order, once, then offers a replay.
-        // Without script, or with reduced motion, the whole record is simply there.
-        const record = document.querySelector('.record');
-        const recSteps = [...record.querySelectorAll('.record-list li')];
-        const recState = document.getElementById('recordStateText');
-        const recBox = document.getElementById('recordState');
-        const recReplay = document.getElementById('recordReplay');
-        let recTimer = null;
-        const recShow = (n) => {
-            recSteps.forEach((li, i) => { li.classList.toggle('is-done', i < n); li.classList.toggle('is-current', i === n - 1 && n < recSteps.length); });
-            recState.textContent = recSteps[Math.max(0, n - 1)].dataset.state;
-            recBox.classList.toggle('is-open', n < recSteps.length);
-        };
-        const recEnd = () => { clearInterval(recTimer); record.classList.remove('is-playing'); recShow(recSteps.length); recReplay.hidden = false; };
-        const recPlay = () => {
-            clearInterval(recTimer);
-            let n = 1;
-            record.classList.add('is-playing');
-            recReplay.hidden = true;
-            recShow(n);
-            recTimer = setInterval(() => { n += 1; if (n >= recSteps.length) recEnd(); else recShow(n); }, 1000);
-        };
-        recReplay.addEventListener('click', recPlay);
-        if (calm) recEnd(); else recPlay();
 
         // Hero background: an abstract dispatch pulse, desktop only, still for reduced motion and data saver.
         const field = document.getElementById('fieldFilm');

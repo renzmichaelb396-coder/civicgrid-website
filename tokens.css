@@ -15,5 +15,6 @@
   --color-accent: oklch(78% 0.16 75); --color-accent-hover: oklch(83% 0.15 78); --color-accent-ink: oklch(16% 0.02 255); --color-focus: oklch(80% 0.19 75);
   --font-display: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif; --font-body: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; --font-outlier: "IBM Plex Mono", ui-monospace, monospace;
   --radius-card: 8px; --radius-input: 6px; --radius-pill: 999px; --rule-hair: 1px; --shadow-card: none;
-  --tracking-display: -0.03em; --display-weight: 600;
+  /* Tracking follows size: tight on big headings, near zero on the small h3 titles. */
+  --tracking-display: -0.03em; --tracking-title: -0.01em; --display-weight: 600;
 }
